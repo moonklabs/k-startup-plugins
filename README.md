@@ -10,7 +10,7 @@ VC/AC 투자 유치 일상을 자동화하는 Startup OS 플러그인.
 웹 검색만으로 단독 작동하며, CRM·이메일·문서 도구를 연결하면 더 강력해집니다.
 
 ```bash
-claude plugins marketplace add moonklabs/startup-plugins
+claude plugins marketplace add moonklabs/k-startup-plugins
 claude plugins install startup-fundraise
 ```
 
