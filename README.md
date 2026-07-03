@@ -1,6 +1,6 @@
-# startup-plugins
+# k-startup-plugins
 
-**스타트업 창업자를 위한 Claude Code 플러그인 마켓플레이스**
+**대한민국 스타트업 창업자를 위한 Claude Code 플러그인 마켓플레이스**
 
 ---
 
