@@ -26,11 +26,12 @@ claude plugins install startup-fundraise
 
 ---
 
-## 13개 슬래시 커맨드
+## 14개 슬래시 커맨드
 
 ```
 /daily-fundraise      # 일일 브리핑 — 오늘의 우선순위, 팔로업, 미팅 준비
 /deal-sourcing        # 투자자 타겟 발굴 + Thesis 매칭
+/vc-funds-setup       # VC/AC 공시·창업자 가이드 로컬 MCP 설치 설계 및 점검
 /lead-dashboard       # 파이프라인 건강점수 + 단계별 현황 + 리스크 플래그
 /investor-outreach    # VC 리서치 → 웜인트로 / 콜드 이메일 자동 생성
 /fundraise-pipeline   # 파이프라인 건강점수 (100점) + 커버리지 분석
@@ -65,6 +66,7 @@ claude plugins install startup-fundraise
 CRM          → HubSpot, Notion, Relate
 이메일·캘린더 → Microsoft 365, Gmail, Google Calendar
 데이터 보강   → OpenDART, THE VC, 혁신의숲 (웹 검색)
+VC/AC 공시·가이드 → 로컬 vc-fund-disclosure-mcp (Draft)
 문서          → Notion, Google Docs, Microsoft 365
 분석          → Mixpanel, Amplitude, ChartMogul
 ```

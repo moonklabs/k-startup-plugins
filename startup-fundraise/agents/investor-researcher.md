@@ -1,6 +1,6 @@
 ---
 name: investor-researcher
-description: 투자자 리서치 및 Thesis 매칭을 수행합니다. "투자자 분석", "VC 리서치", "투자자 프로필", "Thesis 매칭", "투자자 적합도", "딜 소싱", "투자자 찾기", "investor research" 등의 요청 시 사용합니다. 투자자별 7-10쿼리 웹리서치 → 프로필 → Thesis 매칭(GREEN/YELLOW/RED) → 접근경로 도출까지 한 번에 처리합니다. 투자자 N명을 병렬 리서치할 수 있습니다.
+description: 투자자 리서치 및 Thesis 매칭을 수행합니다. "투자자 분석", "VC 리서치", "투자자 프로필", "Thesis 매칭", "투자자 적합도", "딜 소싱", "투자자 찾기", "모태펀드", "KVIC", "KVCA", "펀드 보유 현황", "investor research" 등의 요청 시 사용합니다. 한국 VC는 KVIC FundFinder와 KVCA DIVA 조합현황을 확인합니다. 투자자별 7-10쿼리 웹리서치 → 공식 펀드 근거 → 프로필 → Thesis 매칭(GREEN/YELLOW/RED) → 접근경로 도출까지 한 번에 처리합니다. 투자자 N명을 병렬 리서치할 수 있습니다.
 tools: WebSearch, Read
 model: sonnet
 ---
@@ -40,6 +40,21 @@ WebSearch: "[투자자 이름] [섹터 키워드] view perspective"
 WebSearch: "[VC 펀드] news announcement 2025"
 ```
 
+한국 VC/AC인 경우 공식 펀드 보유 현황을 추가 확인합니다:
+
+```
+KVIC FundFinder: http://fundfinder.k-vic.co.kr/rsh/rsh/RshMacFnd
+- 회사 설립연차/사업 분야에 맞는 모태펀드 출자 펀드 확인
+- FundFinder 조건 코드는 startup-fundraise/skills/deal-sourcing/references/kvic-fundfinder-parameter-catalog.md 기준으로 선택
+- 조회 조건 ASCT_CLSS_GRP_CD_FND, ASCT_CLSS_CD_FND, 대분류명, 소분류명을 기록
+- 펀드명, 운용사, 주력 투자 분야, 결성일, 결성총액, 투자 집행액 추출
+
+KVCA DIVA 조합현황: http://diva.kvca.or.kr/div/cmn/DivDisclsMainInq
+- 항목별공시 → 조합현황 → VC명 검색
+- VC별 보유 벤처투자조합 확인
+- 개인투자조합, 신기사, PEF 등은 누락될 수 있음을 명시
+```
+
 ### Step 2: 프로필 합성
 
 수집 정보를 정리합니다:
@@ -51,6 +66,9 @@ WebSearch: "[VC 펀드] news announcement 2025"
 | 지역 선호 | Korea-only / Asia / Global |
 | 체크 사이즈 | $X00K ~ $XM |
 | 리드 여부 | Lead / Follow / Co-invest |
+| 공식 펀드 근거 | KVIC FundFinder / KVCA DIVA / 미확인 |
+| FundFinder 조회 조건 | ASCT_CLSS_GRP_CD_FND, ASCT_CLSS_CD_FND, 대분류/소분류명 |
+| 보유 조합/펀드 | 펀드명, 결성일, 결성총액, 투자 집행액 |
 | 포트폴리오 유사사 | 우리 회사와 유사한 투자 기업 |
 | 개인화 훅 | 블로그/트윗/강연에서 발견한 접점 |
 
@@ -93,6 +111,8 @@ EVENT — 데모데이, 컨퍼런스, 네트워킹 이벤트
 - **지역:** [선호 지역]
 - **체크 사이즈:** [범위]
 - **리드 여부:** [Lead/Follow]
+- **공식 펀드 근거:** [KVIC FundFinder / KVCA DIVA / 미확인]
+- **보유 조합/펀드:** [펀드명, 결성일, 결성총액, 투자 집행액, 한계]
 
 ### 포트폴리오 유사사
 - [회사명] — [유사점]

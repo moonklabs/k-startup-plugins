@@ -1,0 +1,612 @@
+version: 1
+generated_at: "2026-07-03"
+status: draft
+purpose: "API wrapper 후보의 공식성, 권한 장벽, tool surface, MVP 우선순위를 빠르게 고르기 위한 작업 매트릭스"
+
+decision_legend:
+  build_direct: "공식 API를 직접 감싼다."
+  use_official_mcp: "공식 MCP 또는 벤더 제공 AI/tooling 표면을 우선 사용한다."
+  provider_wrapper: "직접 기관 API가 아니라 인증된 provider/ASP/API 사업자를 감싼다."
+  recommend_only: "직접 래퍼보다 공식 UI, 유료 서비스, 파트너 경로를 추천한다."
+  snapshot_import: "공식 UI/문서에서 사용자가 확보한 HTML/CSV/XLS/PDF/HWP/HWPX를 import/정규화한다. 자동 수집은 공식 허가 뒤에만 켠다."
+  defer: "접근권, 문서, 라이선스, 고객 수요가 확인될 때까지 보류한다."
+
+services:
+  - id: posthog
+    category: analytics
+    priority: P0
+    decision: build_direct
+    official_docs:
+      - https://posthog.com/docs/api
+    auth:
+      type:
+        - project_token
+        - personal_api_key
+        - oauth2
+      notes: "Public capture endpoint와 private query/admin endpoint 인증 모델을 분리한다."
+    initial_surfaces:
+      cli:
+        - posthog query
+        - posthog events list
+        - posthog feature-flags list
+      mcp:
+        - posthog_query
+        - posthog_event_definitions
+        - posthog_feature_flags
+      skill:
+        - product-analytics-report
+    write_policy: read_first
+    risk:
+      pii: medium
+      money_movement: false
+      production_write: false
+    notes: "첫 end-to-end proof 1순위."
+
+  - id: google-analytics
+    category: analytics
+    priority: P0
+    decision: use_official_mcp
+    official_docs:
+      - https://developers.google.com/analytics/devguides/reporting/data/v1
+      - https://developers.google.com/analytics/devguides/reporting/data/v1/quotas
+    auth:
+      type:
+        - oauth2
+        - service_account
+      notes: "GA4 property 권한과 quota를 tool help에 노출한다."
+    initial_surfaces:
+      cli:
+        - ga report
+        - ga realtime
+        - ga metadata
+      mcp:
+        - ga_run_report
+        - ga_metadata
+      skill:
+        - growth-metrics-report
+    write_policy: read_only
+    risk:
+      pii: medium
+      money_movement: false
+      production_write: false
+    notes: "공식 MCP가 있으면 재구현하지 않고 orchestration wrapper로 시작한다."
+
+  - id: google-ads
+    category: ads
+    priority: P1
+    decision: use_official_mcp
+    official_docs:
+      - https://developers.google.com/google-ads/api/docs/get-started/introduction
+      - https://developers.google.com/google-ads/api/docs/oauth/overview
+      - https://developers.google.com/google-ads/api/docs/best-practices/quotas
+    auth:
+      type:
+        - oauth2
+        - developer_token
+      notes: "Manager account, customer id, access level, developer token이 필요하다."
+    initial_surfaces:
+      cli:
+        - google-ads report
+        - google-ads gaql validate
+      mcp:
+        - google_ads_search
+        - google_ads_query_template
+      skill:
+        - ads-performance-report
+    write_policy: read_first
+    risk:
+      pii: medium
+      money_movement: false
+      production_write: true
+    notes: "Campaign mutate는 승인형 write phase 전까지 보류한다."
+
+  - id: google-tag-manager
+    category: analytics
+    priority: P2
+    decision: build_direct
+    official_docs:
+      - https://developers.google.com/tag-platform/tag-manager/api/v2
+      - https://developers.google.com/tag-platform/tag-manager/api/v2/limits-quotas
+    auth:
+      type:
+        - oauth2
+      notes: "OAuth 2.0만 지원한다."
+    initial_surfaces:
+      cli:
+        - gtm export
+        - gtm diff
+        - gtm audit
+      mcp:
+        - gtm_container_export
+        - gtm_workspace_diff
+      skill:
+        - tag-manager-audit
+    write_policy: approve_required
+    risk:
+      pii: low
+      money_movement: false
+      production_write: true
+    notes: "Publish는 plan/preview/explicit approval 이후에만 허용한다."
+
+  - id: portone
+    category: payments
+    priority: P1
+    decision: build_direct
+    official_docs:
+      - https://developers.portone.io/opi/ko/readme
+      - https://developers.portone.io/opi/ko/integration/ready/readme?v=v2
+    auth:
+      type:
+        - api_secret
+      notes: "API Secret은 서버에서만 사용한다. storeId와 PG channel 설정이 필요하다."
+    initial_surfaces:
+      cli:
+        - portone payments list
+        - portone payments get
+        - portone webhooks verify
+      mcp:
+        - portone_payment_lookup
+        - portone_settlement_report
+      skill:
+        - pg-provider-selection
+    write_policy: read_first
+    risk:
+      pii: medium
+      money_movement: true
+      production_write: true
+    notes: "PG 기본 adapter 후보. Toss/Inicis 직접 wrapper보다 우선 검증한다."
+
+  - id: toss-payments
+    category: payments
+    priority: P1
+    decision: build_direct
+    official_docs:
+      - https://docs.tosspayments.com/llms.txt
+      - https://docs.tosspayments.com/reference
+      - https://docs.tosspayments.com/guides/v2/get-started/environment
+      - https://docs.tosspayments.com/reference/using-api/authorization
+    auth:
+      type:
+        - api_key
+      notes: "Secret key는 서버 전용이며 Basic base64(SECRET_KEY:) 방식으로 인증한다. 테스트/라이브 키를 분리한다."
+    initial_surfaces:
+      cli:
+        - toss sales summary
+        - toss settlements summary
+        - toss payments detail
+        - toss reconcile
+      mcp:
+        - toss_sales_summary
+        - toss_transaction_list
+        - toss_settlement_summary
+        - toss_payment_detail
+        - toss_reconcile
+      skill:
+        - toss-revenue-reconciliation
+    api_scope:
+      read:
+        - "GET /v1/transactions"
+        - "GET /v1/settlements"
+        - "GET /v1/payments/{paymentKey}"
+        - "GET /v1/payments/orders/{orderId}"
+      deferred_write:
+        - "POST /v1/payments/{paymentKey}/cancel"
+        - "POST /v1/settlements"
+    output_models:
+      - payment_detail
+      - transaction_record
+      - settlement_record
+      - sales_summary
+      - settlement_reconciliation
+    aggregation_focus:
+      - "매출 집계: 승인/취소/부분취소를 기간, 결제수단, MID, 주문 기준으로 요약"
+      - "정산 집계: 정산 조회 결과를 지급일/거래일/수수료/정산상태 기준으로 요약"
+      - "결제상세 보강: paymentKey 또는 orderId로 Payment 객체를 재조회해 영수증, 세금, 카드/가상계좌/계좌이체 세부 정보를 연결"
+    write_policy: read_first
+    risk:
+      pii: medium
+      money_movement: true
+      production_write: true
+    notes: "초반에는 매출, 정산, 결제상세 조회 집계에 특화한다. 환불, 수동정산, 현금영수증 발행은 MVP에서 비활성화한다."
+
+  - id: kg-inicis
+    category: payments
+    priority: P2
+    decision: defer
+    official_docs:
+      - https://manual.inicis.com/
+      - https://manual.inicis.com/sa/acctchk.html
+      - https://manual.inicis.com/sa/cv.php
+    auth:
+      type:
+        - mid
+        - api_key
+      notes: "서비스별 별도 계약, 방화벽 IP, TLS, 웹뷰/팝업 제약이 있다."
+    initial_surfaces:
+      cli:
+        - inicis status check
+      mcp: []
+      skill:
+        - pg-provider-selection
+    write_policy: disabled
+    risk:
+      pii: high
+      money_movement: true
+      production_write: true
+    notes: "기존 이니시스 가맹점 고객 수요가 확인될 때만 진행한다."
+
+  - id: kftc-open-banking
+    category: finance
+    priority: P1
+    decision: build_direct
+    official_docs:
+      - https://openapi.kftc.or.kr/
+      - https://developers.kftc.or.kr/dev
+    auth:
+      type:
+        - oauth2
+        - institution_contract
+      notes: "API 이용 신청, 심사, 고객 동의, 보안 통제가 핵심이다."
+    initial_surfaces:
+      cli:
+        - kftc account verify
+        - kftc transactions list
+      mcp:
+        - kftc_account_verify
+        - kftc_transaction_lookup
+      skill:
+        - open-banking-readiness
+    write_policy: read_first
+    risk:
+      pii: high
+      money_movement: true
+      production_write: true
+    notes: "권한 보유 고객 전용. 일반 계좌 통합수집 제품으로 열지 않는다."
+
+  - id: card-sales-aggregation
+    category: finance
+    priority: P3
+    decision: recommend_only
+    official_docs:
+      - https://www.cardsales.or.kr/
+    auth:
+      type:
+        - portal_login
+      notes: "가맹점 통합조회 UI는 있으나 범용 공개 API로 보지 않는다."
+    initial_surfaces:
+      cli: []
+      mcp: []
+      skill:
+        - card-sales-provider-recommendation
+    write_policy: disabled
+    risk:
+      pii: high
+      money_movement: false
+      production_write: false
+    notes: "PG/PortOne/Toss/Inicis 정산 API를 우선 사용한다."
+
+  - id: tax-invoice-provider
+    category: tax
+    priority: P1
+    decision: provider_wrapper
+    official_docs:
+      - https://developers.popbill.com/reference/taxinvoice/node/api
+      - https://www.trusbill.or.kr/
+    auth:
+      type:
+        - provider_api_key
+        - certificate_or_delegated_user
+      notes: "국세청 연계 기능을 이미 구현한 유료/ASP API 사업자 경로로 다룬다."
+    initial_surfaces:
+      cli:
+        - tax-invoice draft
+        - tax-invoice status
+      mcp:
+        - tax_invoice_lookup
+        - tax_invoice_draft
+      skill:
+        - tax-provider-selection
+    write_policy: approve_required
+    risk:
+      pii: high
+      money_movement: false
+      production_write: true
+    commercial_api_available: true
+    notes: "직접 NTS 포털 자동화가 아니라 유료 provider API를 감싼다. 발행/취소/수정세금계산서는 preview와 explicit approval이 필요하다."
+
+  - id: channel-talk
+    category: customer_support
+    priority: P0
+    decision: build_direct
+    official_docs:
+      - https://developers.channel.io/
+      - https://developers.channel.io/en/categories/Open-API-060776bd
+      - https://api-doc.channel.io/
+    auth:
+      type:
+        - api_key
+      notes: "Workspace API key와 rate limit을 관리한다."
+    initial_surfaces:
+      cli:
+        - channel-talk chats search
+        - channel-talk users get
+      mcp:
+        - channel_talk_chat_search
+        - channel_talk_user_lookup
+        - channel_talk_summary
+      skill:
+        - support-conversation-summary
+    write_policy: read_first
+    risk:
+      pii: high
+      money_movement: false
+      production_write: true
+    notes: "상담 원문/개인정보 출력은 최소화하고 메시지 발송은 승인형으로 둔다."
+
+  - id: hwp-reader
+    category: documents
+    priority: P3
+    decision: defer
+    official_docs:
+      - https://www.hancom.com/support/downloadCenter/download
+      - https://www.hancom.com/product/sdk/hwpSdk
+    auth:
+      type:
+        - license
+      notes: "HWP SDK는 구매/라이선스형으로 본다."
+    initial_surfaces:
+      cli:
+        - hwpx extract
+      mcp:
+        - hwpx_read
+      skill:
+        - hwp-format-selection
+    write_policy: read_only
+    risk:
+      pii: medium
+      money_movement: false
+      production_write: false
+    notes: "HWPX 우선. HWP binary 추측 구현은 금지한다."
+
+  - id: korea-vc-fund-disclosure
+    category: fundraising_data
+    priority: P1
+    decision: local_personal_data_mcp
+    official_docs:
+      - http://fundfinder.k-vic.co.kr/rsh/rsh/RshMacFnd
+      - http://diva.kvca.or.kr/div/cmn/DivDisclsMainInq
+    reference_implementations:
+      - https://github.com/chrisryugj/schoolinfo-mcp
+    auth:
+      type:
+        - manual_snapshot
+        - local_watch_folder
+        - user_browser_capture
+        - official_permission_for_scheduled_fetch
+      notes: "KVIC/KVCA 모두 live HTML 조회는 가능하지만 robots.txt가 전체 Disallow를 반환하므로 초기 제품은 사용자 제공 스냅샷, 로컬 watch folder, 사용자 제스처 기반 browser capture import로 제한한다."
+    initial_surfaces:
+      cli:
+        - vc-funds setup
+        - vc-funds init
+        - vc-funds doctor
+        - vc-funds import kvic
+        - vc-funds import kvca
+        - vc-funds import document
+        - vc-funds import guide
+        - vc-funds guide-source add
+        - vc-funds guide-source check
+        - vc-funds watch
+        - vc-funds diff
+        - vc-funds query investor
+        - vc-funds events
+        - vc-funds ask
+        - vc-funds uninstall
+      mcp:
+        - configure_collection_source
+        - list_collection_sources
+        - run_personal_collection
+        - import_browser_snapshot
+        - import_kvic_snapshot
+        - import_kvca_snapshot
+        - import_disclosure_document
+        - import_founder_guide_document
+        - register_founder_guide_source
+        - check_founder_guide_source
+        - query_investor_profile
+        - lookup_vc_fund_holdings
+        - search_funds_for_startup
+        - search_disclosure_evidence
+        - search_founder_knowledge
+        - explain_fundraising_concept
+        - generate_fundraising_checklist
+        - answer_founder_question
+        - list_new_fund_events
+        - list_unreviewed_fund_events
+        - get_collection_health
+      skill:
+        - deal-sourcing
+        - investor-research
+    distribution:
+      default:
+        - homebrew_tap
+        - github_releases_binary
+      fallback:
+        - source_checkout
+      not_default:
+        - npm_scoped_package
+      notes: "npm scoped package는 비용/권한/registry 의존 문제가 있으므로 기본 설치 경로로 쓰지 않는다. MCP는 설치된 `vc-funds mcp serve`를 호출한다."
+    write_policy: read_only
+    risk:
+      pii: medium
+      money_movement: false
+      production_write: false
+    output_models:
+      - fundfinder_parameter_catalog
+      - vc_operator
+      - investor_profile
+      - fund_association
+      - disclosure_document
+      - founder_guide_source
+      - founder_guide_document
+      - founder_guide_chunk
+      - fundraising_concept
+      - guidance_card
+      - fund_event
+      - fund_evidence_pack
+      - collection_run
+    document_parsing:
+      supported_inputs:
+        - html
+        - csv
+        - xls
+        - xlsx
+        - pdf
+        - hwpx
+        - hwp_with_local_adapter
+      rules:
+        - "원본 파일 sha256, 출처 URL, import 시각을 저장한다."
+        - "PDF/HWP/HWPX 첨부 공시는 원본, 추출 텍스트, 구조화 이벤트를 분리 저장한다."
+        - "창업자 가이드 PDF/HWPX는 공시 evidence와 분리해 guide document, chunk, concept, guidance card로 저장한다."
+        - "담당자 이메일, 전화번호, 휴대전화, 공시담당자 정보는 기본 응답에서 마스킹한다."
+        - "HWP binary는 직접 포맷 추측 구현을 하지 않고 로컬 변환기, kordoc류 파서, 한컴 SDK adapter 뒤로 격리한다."
+        - "watch folder와 browser capture는 외부 사이트 자동 접속 없이 사용자가 확보한 자료만 import한다."
+        - "scheduled fetcher는 공식 허가, 제휴, 유료 데이터 계약이 확인된 source_config에서만 활성화한다."
+        - "가이드 문서는 요약/체크리스트 중심으로 사용하고 원문 전체 재출력은 피한다."
+    notes: "Seed/Pre-A 딜소싱에서 신규 펀드 결성, 모태출자 여부, 결성총액, 만기일, 투자분야를 공식 근거로 연결하는 별도 로컬 데이터조회 MCP 후보."
+
+  - id: hubspot
+    category: crm
+    priority: P0
+    decision: build_direct
+    official_docs:
+      - https://developers.hubspot.com/docs/api-reference/latest/overview
+    auth:
+      type:
+        - oauth2
+        - private_app_token
+      notes: "Date-versioned API와 marketplace certification을 고려한다."
+    initial_surfaces:
+      cli:
+        - hubspot contacts list
+        - hubspot deals list
+      mcp:
+        - hubspot_contact_lookup
+        - hubspot_deal_pipeline
+      skill:
+        - crm-pipeline-health
+    write_policy: dry_run_default
+    risk:
+      pii: high
+      money_movement: false
+      production_write: true
+    notes: "Pipedrive/monday와 공통 CRM 모델을 공유한다."
+
+  - id: pipedrive
+    category: crm
+    priority: P0
+    decision: build_direct
+    official_docs:
+      - https://developers.pipedrive.com/docs/api/v1
+    auth:
+      type:
+        - api_token
+        - oauth2
+      notes: "OpenAPI spec와 sandbox 계정 경로가 있다."
+    initial_surfaces:
+      cli:
+        - pipedrive deals list
+        - pipedrive activities list
+      mcp:
+        - pipedrive_deal_lookup
+        - pipedrive_pipeline_health
+      skill:
+        - crm-pipeline-health
+    write_policy: dry_run_default
+    risk:
+      pii: high
+      money_movement: false
+      production_write: true
+    notes: "가장 빠르게 CRM MVP proof를 만들 수 있는 후보."
+
+  - id: monday-sales-crm
+    category: crm
+    priority: P0
+    decision: build_direct
+    official_docs:
+      - https://developer.monday.com/api-reference/docs/basics
+      - https://developer.monday.com/apps/docs/intro
+      - https://monday.com/marketplace
+    auth:
+      type:
+        - oauth2
+        - api_token
+      notes: "GraphQL schema와 board mapping을 먼저 inspect한다."
+    initial_surfaces:
+      cli:
+        - monday boards list
+        - monday crm schema inspect
+      mcp:
+        - monday_board_schema
+        - monday_crm_items
+      skill:
+        - crm-board-mapping
+    write_policy: dry_run_default
+    risk:
+      pii: high
+      money_movement: false
+      production_write: true
+    notes: "공식 MCP/mcli 경로가 있으면 재사용한다."
+
+  - id: odoo
+    category: erp
+    priority: P1
+    decision: build_direct
+    official_docs:
+      - https://www.odoo.com/documentation/19.0/developer/reference/external_api.html
+    auth:
+      type:
+        - api_key
+        - user_credentials
+      notes: "플랜별 외부 API 접근 가능 여부를 확인한다."
+    initial_surfaces:
+      cli:
+        - odoo schema inspect
+        - odoo partners list
+      mcp:
+        - odoo_model_schema
+        - odoo_record_search
+      skill:
+        - erp-sync-planning
+    write_policy: dry_run_default
+    risk:
+      pii: high
+      money_movement: false
+      production_write: true
+    notes: "초기에는 read와 schema introspection부터."
+
+  - id: business-central
+    category: erp
+    priority: P1
+    decision: build_direct
+    official_docs:
+      - https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/
+    auth:
+      type:
+        - oauth2
+        - entra_id_app
+      notes: "Tenant, environment, company 라우팅을 CLI에서 검증한다."
+    initial_surfaces:
+      cli:
+        - business-central auth check
+        - business-central companies list
+      mcp:
+        - bc_company_lookup
+        - bc_record_search
+      skill:
+        - erp-sync-planning
+    write_policy: dry_run_default
+    risk:
+      pii: high
+      money_movement: false
+      production_write: true
+    notes: "Microsoft 365 고객군이 있으면 P1로 진행한다."

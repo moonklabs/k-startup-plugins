@@ -1,6 +1,6 @@
 ---
 name: pitch-craft
-description: Sequoia-style 피치 덱 구조, 슬라이드별 가이드, 스토리텔링 원칙, VC 예상질문 30개를 제공합니다. "피치 덱 만들기", "덱 구조", "슬라이드 개선", "피치 스토리", "투자 발표" 등으로 실행합니다.
+description: Sequoia-style 피치 덱 구조, 슬라이드별 가이드, 스토리텔링 원칙, VC 예상질문 30개를 제공합니다. API wrapper, MCP, 운영 데이터 자동화 스타트업은 단순 wrapper가 아니라 AI-ready business data layer로 포지셔닝하도록 돕습니다. "피치 덱 만들기", "덱 구조", "슬라이드 개선", "피치 스토리", "투자 발표", "API wrapper 피치", "MCP 스타트업 피치", "Seed deck" 등으로 실행합니다.
 ---
 
 # 피치 크래프트 (Pitch Craft)
@@ -18,6 +18,7 @@ Sequoia-style 12슬라이드 피치 덱 구조, 슬라이드별 작성 가이드
 │  ✓ 슬라이드별 작성 가이드 (Do/Don't)                             │
 │  ✓ 스토리텔링 원칙 (Hero's Journey)                              │
 │  ✓ VC 예상질문 30개 + 답변 전략                                  │
+│  ✓ API/MCP 운영 데이터 스타트업 포지셔닝                          │
 │  ✓ 디자인 원칙 & 안티패턴                                        │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -446,6 +447,37 @@ Act 3: Resolution (슬라이드 9-12)
 
 ---
 
+## API/MCP 운영 데이터 스타트업 피치
+
+MoonkLabs처럼 PG, 광고, analytics, CRM, 세무, 문서 데이터를 다루는 스타트업은 "여러 API wrapper를 만든다"로 말하면 작아 보입니다. 피치에서는 아래처럼 계층을 올려 설명합니다.
+
+```
+나쁜 표현: 우리는 Toss, PortOne, 광고, CRM API wrapper를 만듭니다.
+좋은 표현: 우리는 한국 비즈니스 운영 데이터를 AI agent가 안전하게 사용할 수 있는 데이터 계층으로 정규화합니다.
+```
+
+### 슬라이드별 반영
+
+| 슬라이드 | 메시지 |
+|---|---|
+| 문제 | SMB/스타트업 운영 데이터가 PG, 광고, analytics, 세무, 문서, CRM에 흩어져 있어 AI agent가 신뢰할 수 있는 실행을 못 한다 |
+| 솔루션 | 공식 API와 유료 provider를 우선 연결하고, 없는 영역은 추천/가이드로 처리하는 안전한 operational data layer |
+| 제품 | 매출, 정산, 결제상세, 광고 성과, CRM 이벤트를 한 흐름으로 집계하는 데모 |
+| 트랙션 | 연결 서비스 수, 반복 사용률, 자동화된 리포트 수, 고객별 절감 시간, 데이터 정확도 |
+| 경쟁 | 단일 SaaS 대시보드, RPA, 범용 agent, SI와 비교하되 공식 API/증거 저장/evidence pack을 차별점으로 둠 |
+| Ask | 이번 라운드 milestone을 connector coverage, 유료 고객, 반복 리포트, 정산 대사 정확도로 제시 |
+
+### 예상 반박 답변
+
+| 반박 | 답변 방향 |
+|---|---|
+| "wrapper는 commoditized 아닌가요?" | wrapper 자체가 아니라 한국 운영 데이터의 normalization, evidence store, workflow distribution, connector coverage가 제품이라고 답합니다. |
+| "공식 API가 없으면 어떻게 하나요?" | 무리한 scraping을 기본값으로 두지 않고, 공식 API/유료 provider/사용자 제공 파일 import 순서로 처리한다고 답합니다. |
+| "SI처럼 보이는데요?" | 고객별 커스텀 개발이 아니라 반복 가능한 connector schema, MCP/skill surface, 집계 템플릿으로 확장한다고 답합니다. |
+| "AI가 직접 API를 붙이면 되지 않나요?" | 인증, 권한, 정산/세무 caveat, 증거 보존, 재현 가능한 대사 로직은 제품 계층이 필요하다고 답합니다. |
+
+---
+
 ## VC 예상질문 30개 + 답변 전략
 
 ### 시장 (Market)
@@ -483,6 +515,9 @@ Act 3: Resolution (슬라이드 9-12)
 
 **Q10: "AI가 이걸 대체할 수 있나요?"**
 답변 전략: AI를 활용하는 방법, AI만으로 불충분한 이유
+
+**Q10-1: "이건 API wrapper 모음 아닌가요?"**
+답변 전략: 고객이 구매하는 것은 API 호출이 아니라 매출·정산·광고·CRM 운영 의사결정에 바로 쓰이는 검증된 데이터 흐름이라고 설명
 
 ---
 
@@ -689,5 +724,7 @@ Hockey stick without explanation
 - **market-sizing** — 슬라이드 4 TAM/SAM/SOM 분석
 - **competitive-landscape** — 슬라이드 8 경쟁 분석
 - **startup-metrics** — 슬라이드 6 트랙션 지표 선택
+- **deal-sourcing** — VC별 공식 펀드 근거와 미팅 단계 반영
+- **investor-research** — VC별 thesis, 파트너, 공식 조합 근거 반영
 - `/pitch-review` — 완성된 피치 덱 리뷰 (100점 평가)
 - `/business-case` — 피치 덱 내용을 문서로 확장

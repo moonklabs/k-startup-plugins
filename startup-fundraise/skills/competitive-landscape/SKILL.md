@@ -515,9 +515,9 @@ Loss Reasons (Top 3):
 **타겟**: 직원 50-200명 제조업 (4,000개 TAM)
 
 ## 배틀카드
-- [A사 Battlecard](link)
-- [B사 Battlecard](link)
-- [C사 Battlecard](link)
+- A사 Battlecard: <link>
+- B사 Battlecard: <link>
+- C사 Battlecard: <link>
 
 ## Win/Loss 인사이트
 - Win: 가격(60%), UX(45%)

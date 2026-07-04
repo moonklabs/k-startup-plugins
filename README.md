@@ -32,10 +32,11 @@ claude plugins install startup-fundraise
 
 > `/business-case` 하나만 실행해도 시장 분석·경쟁 분석·재무 모델이 동시에 완성됩니다.
 
-### 13개 슬래시 커맨드
+### 14개 슬래시 커맨드
 ```
 /daily-fundraise      # 일일 브리핑 — 오늘의 우선순위, 팔로업, 미팅 준비
 /deal-sourcing        # 투자자 타겟 발굴 + Thesis 매칭
+/vc-funds-setup       # VC/AC 공시·창업자 가이드 로컬 MCP 설치 설계 및 점검
 /investor-outreach    # VC 리서치 → 웜인트로 / 콜드 이메일 자동 생성
 /dd-prep              # DD 미팅 준비 — 예상 질문 30개 + 데이터룸 체크리스트
 /pitch-review         # 피치 덱 100점 평가 + 슬라이드별 개선 가이드
@@ -55,6 +56,7 @@ claude plugins install startup-fundraise
 CRM          → HubSpot, Notion, Relate
 이메일·캘린더 → Microsoft 365, Gmail
 데이터 보강   → OpenDART, THE VC, 혁신의숲 (웹 검색)
+VC/AC 공시·가이드 → 로컬 vc-fund-disclosure-mcp (Draft)
 문서          → Notion, Google Docs, Microsoft 365
 ```
 

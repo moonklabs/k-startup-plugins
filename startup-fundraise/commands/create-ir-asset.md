@@ -792,7 +792,7 @@ const scenarioChart = {
 ```markdown
 ## IR 애셋 생성 완료: [회사명] for [투자자명]
 
-[애셋 보기](computer:///path/to/file.html)
+애셋 보기: /path/to/file.html
 
 ---
 

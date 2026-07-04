@@ -16,9 +16,91 @@
 | 채팅 | `~~chat` | Slack | Microsoft Teams |
 | 지식 베이스 | `~~knowledge base` | Notion | Google Drive, Confluence |
 | 데이터 보강 | `~~data enrichment` | — | THE VC, 혁신의숲, 넥스트유니콘 (MCP 미지원 — 웹 검색 기반), OpenDART (MCP 지원 — 상장사 한정) |
+| VC/AC 공시·가이드 데이터 | `~~fund disclosure` | — | Draft: `vc-fund-disclosure-mcp` 로컬 DB, KVIC/KVCA snapshot import, TIPS 운영사/펀드 근거, 창업자 PDF 가이드 |
 | 스프레드시트 | `~~spreadsheet` | Microsoft 365 | Google Sheets |
 | 문서 | `~~docs` | Microsoft 365, Notion | Google Docs, Google Slides |
 | 분석/BI | `~~analytics` | — | Mixpanel, Amplitude, ChartMogul |
+
+## VC/AC 공시·가이드 데이터 MCP (Draft)
+
+AC/VC 투자사 조회와 초기 창업자용 투자유치 자료 검색은 별도 데이터조회 MCP로 분리하는 것이 좋습니다. `deal-sourcing` 스킬은 투자 전략과 리포트 생성을 담당하고, `~~fund disclosure` MCP는 공식 근거 데이터와 창업자 가이드 자료를 저장/조회하는 역할을 맡습니다.
+
+초기 방향:
+
+| 구성 | 역할 |
+|---|---|
+| `vc-fund-disclosure-core` | KVIC/KVCA/TIPS 관련 HTML, CSV, XLS, PDF, HWPX import와 정규화, 창업자 guide chunking |
+| `vc-funds` CLI | 로컬 DB 초기화, setup, doctor, 파일 import, guide library, watch folder, diff, evidence export |
+| `vc-fund-disclosure-mcp` | 투자사 프로필, 보유 펀드, 신규 공시 이벤트, 창업자 가이드 검색, 근거 pack 조회 |
+
+기본 수집 모드는 사용자가 직접 확보한 자료를 로컬에서 자동 처리하는 방식입니다.
+
+- 허용: 저장 HTML/CSV/XLS/PDF/HWPX import, 로컬 watch folder, 사용자 제스처 기반 browser snapshot import, 창업자 가이드 PDF/HWPX import
+- 보류: 공식 허가 없는 scheduled crawler, 전체 VC/카테고리 순회, robots 정책 우회
+- 허용 후 확장: 공식 API, 유료 데이터 계약, 기관 허가 기반 rate-limited fetcher
+
+`.mcp.json`에는 아직 이 서버를 추가하지 않습니다. 실제 실행 가능한 MCP 패키지가 준비된 뒤에만 사전 구성에 넣어야 플러그인 설치가 깨지지 않습니다.
+
+### 권장 설치 UX
+
+도구가 배포되면 사용자는 npm registry 없이 로컬 MCP를 준비할 수 있어야 합니다. 기본은 Homebrew와 GitHub Releases입니다.
+
+```bash
+brew install moonklabs/tap/vc-funds
+vc-funds setup --client claude --db auto
+vc-funds doctor
+```
+
+`setup`은 로컬 SQLite DB, 기본 Inbox 폴더, Guides 폴더, watch folder, MCP 설정 백업/등록까지 처리합니다. 자세한 설치/점검 루틴은 `/vc-funds-setup` 커맨드를 사용합니다.
+
+생성될 MCP 설정 예시:
+
+```json
+{
+  "mcpServers": {
+    "vc-fund-disclosure": {
+      "type": "stdio",
+      "command": "vc-funds",
+      "args": [
+        "mcp",
+        "serve",
+        "--db",
+        "~/.local/share/moonklabs/vc-funds/vc-funds.sqlite"
+      ]
+    }
+  }
+}
+```
+
+### 창업자 가이드 라이브러리
+
+초기 투자유치 기업은 투자자 리스트보다 먼저 용어, 절차, 준비물, 데이터룸, 투자계약 기본기를 이해해야 합니다. 따라서 `Guides` 폴더에 공개/보유 PDF와 HWPX를 저장하고, MCP가 이를 요약/검색 자료로 쓰게 합니다.
+
+예상 사용:
+
+```bash
+vc-funds import guide --file "./guides/seed-fundraising-guide.pdf" --role founder_education
+vc-funds ask "처음 투자유치할 때 무엇부터 준비해야 해?"
+```
+
+사용자가 제공한 KVIC PDF 후보:
+
+```bash
+vc-funds guide-source add \
+  --publisher KVIC \
+  --url "https://www.kvic.or.kr/upload/investment/20210114/20210114155945_63291.pdf" \
+  --role founder_education \
+  --access-status remote_gone_410
+```
+
+2026-07-04 확인 기준 이 URL은 `HTTP 410 Gone`으로 응답하므로 자동 다운로드 기본값에는 넣지 않습니다. 사용자가 PDF 파일을 로컬에 보유한 경우 `vc-funds import guide --file ... --source-url ...`로 import합니다.
+
+출력 원칙:
+
+- 공시 evidence와 창업자 guide를 분리합니다.
+- 원문 전체를 재출력하지 않고 요약, 체크리스트, 다음 액션으로 제공합니다.
+- 출처 URL, 파일 해시, import 시각, license note를 함께 보관합니다.
+- 투자계약/세무/법률 내용은 일반 설명으로만 제공하고 전문가 검토 필요 문구를 붙입니다.
 
 ## 한국 데이터 보강 도구 안내
 
