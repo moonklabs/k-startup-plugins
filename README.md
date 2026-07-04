@@ -24,6 +24,7 @@ claude plugins install startup-fundraise
 | 에이전트 | 역할 |
 |---------|------|
 | `investor-researcher` | 투자자 7-10쿼리 리서치 + Thesis 매칭 (GREEN/YELLOW/RED) |
+| `vc-fund-disclosure-orchestrator` | VC/AC 공시 evidence + 창업자 가이드 로컬 MCP 설계 SOT |
 | `investor-email-writer` | 아웃리치 이메일 초안 + Day 5/10/21 팔로업 시퀀스 |
 | `market-researcher` | TAM/SAM/SOM 3방법론 교차검증 |
 | `competitor-analyst` | Porter's 5 Forces + 포지셔닝 매트릭스 + 배틀카드 |
@@ -46,10 +47,10 @@ claude plugins install startup-fundraise
 ...
 ```
 
-### 13개 도메인 스킬
+### 14개 도메인 스킬
 대화 맥락에서 자동 활성화되는 VC/창업 지식.
-`fundraising-process` `investor-research` `pitch-craft` `financial-modeling`
-`term-sheet-knowledge` `market-sizing` `competitive-landscape` 외 6개.
+`fundraising-process` `investor-research` `deal-sourcing` `vc-fund-disclosure-mcp`
+`pitch-craft` `financial-modeling` `term-sheet-knowledge` 외 7개.
 
 ### MCP 연동
 ```
