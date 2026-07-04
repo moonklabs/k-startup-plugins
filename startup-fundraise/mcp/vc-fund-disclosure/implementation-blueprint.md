@@ -1,6 +1,6 @@
 # VC Funds MCP/CLI Implementation Blueprint
 
-상태: Draft implementation design, not executable server.
+상태: Draft implementation design + P0 executable prototype.
 
 이 설계는 [chrisryugj/schoolinfo-mcp](https://github.com/chrisryugj/schoolinfo-mcp)의 구조를 VC/AC 공시 evidence 조회 제품에 맞게 변환한 것입니다. 목표는 스타트업 사용자가 KVIC/KVCA/TIPS 경로와 파라미터를 몰라도 자연어로 묻고, CLI와 MCP가 같은 core 검색/파싱/랭킹 로직으로 공식 근거와 data gap을 반환하는 것입니다.
 
@@ -13,13 +13,27 @@ README의 비즈니스 문제와 아키텍처 적합성 분석은 `schoolinfo-bu
 | 하나의 core | OpenAPI, NEIS, HWP/PDF 파싱을 공용 client/evaluation 모듈로 처리 | source registry, import parser, normalizer, SQLite repository, retrieval/ranker를 core에 둠 |
 | transport 분리 | `buildMcpServer()`가 stdio와 Streamable HTTP에서 재사용됨 | `buildMcpServer({ localFiles })`로 stdio/local, future HTTP/remote를 같은 tool 정의로 구성 |
 | local-only 파일 도구 | 로컬 MCP에는 `parse_evaluation_file`, 원격 MCP에는 제외 | 로컬 MCP에는 `import_*_file`, `watch_folder`, `parse_document`; 원격 MCP에는 document_id/snapshot_id 기반 조회만 노출 |
-| 사용자 중심 CLI | `schoolinfo search/get/eval/report/parse/check` | `vc-funds search/query/import/report/events/gaps/doctor/mcp serve` |
+| 사용자 중심 CLI | `schoolinfo search/get/eval/report/parse/check` | P0는 `setup/doctor/resolve/sources/search/import kvic/import kvca/health/mcp serve`, 후속은 deep query, event feed, report, standalone gap analysis |
 | 실제 결과 예시 | README에 명령과 표 결과를 직접 제시 | `server-cli-usage.md`에 검색 결과, evidence status, caveat 예시를 유지 |
 | 보안 가드 | rate limit, 파일 크기 제한, 경로 정제, 원격 localFiles 비활성화 | 파일 크기/확장자 제한, storage root allowlist, PII redaction, no crawler, local-only imports |
 
 ## 패키지/프로세스 구조
 
 초기 레포를 별도 구현 레포로 분리할 때의 기준 구조입니다.
+
+현재 repo-local 초안은 `runtime/`에 있으며 아래 P0 subset만 구현합니다.
+
+```text
+runtime/
+  bin/vc-funds.mjs        # CLI + mcp serve entry
+  src/core.mjs            # shared resolve/search/source health logic
+  src/sqlite.mjs          # schema/seed loader and sqlite3 wrapper
+  src/mcp-stdio.mjs       # newline-delimited JSON-RPC stdio MCP
+  fixtures/sample-data.sql
+  test/runtime-smoke.test.mjs
+```
+
+이 초안은 새 npm dependency 없이 Node 표준 라이브러리와 로컬 `sqlite3` 실행 파일만 사용합니다. 별도 repo로 분리할 때는 아래 TypeScript 구조로 승격합니다.
 
 ```text
 vc-fund-disclosure/
@@ -56,7 +70,7 @@ vc-fund-disclosure/
     parsers/
       htmlTable.ts
       csvTable.ts
-      xlsTable.ts
+      unsupportedSpreadsheet.ts
       pdfText.ts
       hwpxXml.ts
       hwpAdapter.ts
@@ -201,6 +215,8 @@ await server.connect(new StreamableHTTPServerTransport({ sessionIdGenerator: und
 ```text
 user question / CLI args
   -> intent extraction
+  -> entity and condition resolution
+  -> source authority plan
   -> source/data gap planning
   -> recall from SQLite views + exact alias tables
   -> ranking model
@@ -227,28 +243,41 @@ local file / browser snapshot
 
 CLI는 MCP보다 사람이 직접 쓰는 진단성과 결과 예시가 중요합니다.
 
-| 명령 | 역할 | 내부 core |
+| P0 명령 | 역할 | 내부 core |
 |---|---|---|
 | `vc-funds setup` | DB, folders, source seed, MCP config backup/create | db/migrations, seed, templates |
+| `vc-funds init` | `setup` alias | db/migrations, seed, templates |
 | `vc-funds doctor` | 실행 가능성, DB, folder, policy, MCP handshake 확인 | quality, mcp ping |
+| `vc-funds resolve "<query>"` | 사용자 입력을 intent/entity/condition 후보로 해석 | retrieval/intent, alias resolver |
+| `vc-funds sources` | source trust tier와 authoritative scope 진단 | sources, policy |
 | `vc-funds search "<query>"` | 자연어 통합 검색 | retrieval/intent, recall, ranker |
-| `vc-funds query investor "<name>" --why` | 투자사 프로필, 펀드 근거, TIPS/event | repositories + reports |
-| `vc-funds query funds --stage seed --sector AI,SaaS` | 단계/섹터 기준 펀드 검색 | fundFocus + ranker |
-| `vc-funds events --since 90d` | 신규/변경/만기 이벤트 | events repository |
-| `vc-funds gaps "<goal>"` | 부족한 snapshot/document 안내 | dataGaps |
-| `vc-funds import kvic/kvca/document/guide` | 로컬 파일 import | importers |
-| `vc-funds watch start` | watch folder import | watchFolder |
-| `vc-funds report investor "<name>"` | 미팅 전 리포트 | reports/investorReport |
-| `vc-funds export evidence-pack "<name>"` | 근거 pack export | reports/evidencePack |
+| `vc-funds import kvic` / `vc-funds import kvca` | 로컬 HTML/CSV snapshot import | importers |
+| `vc-funds load-sql <file>` | fixture/seed SQL load | db utility |
+| `vc-funds health` | source별 수집/품질 상태 확인 | health |
 | `vc-funds mcp serve` | stdio MCP 실행 | mcp/stdio |
+
+Planned CLI surfaces:
+
+- 투자사/fund deep dive query
+- 신규/변경/만기 event feed
+- 별도 data gap 분석 명령
+- document/guide import
+- watch folder import
+- 미팅 전 report와 evidence-pack export
 
 ## MCP 도구 설계
 
-초기 MCP는 도구 수를 너무 늘리지 않고, 자연어 검색과 설명 도구를 중심으로 둡니다.
+초기 stdio MCP는 도구 수를 늘리지 않고, 자연어 검색과 source 상태 확인을 중심으로 둡니다. 아래 P0 도구만 `runtime/src/mcp-stdio.mjs`와 `tool-contract.yaml`의 canonical surface입니다.
 
 ### Query tools
 
 - `search_vc_database`: 자연어 통합 검색. 가장 많이 쓰는 기본 도구.
+- `resolve_user_input`: 검색 전에 사용자 입력을 투자사/펀드/조건 후보로 해석.
+- `get_source_authority`: 질문 유형별 authoritative/supporting/context-only source 확인.
+- `get_collection_health`: source별 수집/품질 상태 확인.
+
+Planned typed query tools:
+
 - `query_investor_profile`: 특정 투자사 deep dive.
 - `search_funds_for_startup`: 회사 단계/섹터/지역 기반 shortlist.
 - `list_new_fund_events`: 신규 결성/변경/만기 이벤트 feed.
@@ -283,7 +312,7 @@ CLI는 MCP보다 사람이 직접 쓰는 진단성과 결과 예시가 중요합
 
 1. 기본 storage root는 `~/Documents/MoonkLabs/VC Disclosures`.
 2. import 입력 파일은 allowlist root, 사용자가 명시한 path, 또는 drag/drop 임시 path만 허용.
-3. 확장자는 `html`, `csv`, `xls`, `xlsx`, `pdf`, `hwpx`, `hwp`, `md`, `txt`만 허용.
+3. P1 snapshot import는 `html`, `csv`만 정규화한다. `xls`, `xlsx`는 감지 후 `unsupported_format`으로 반환하고, 문서/가이드 단계의 `pdf`, `hwpx`, `hwp`, `md`, `txt`는 별도 adapter에서만 허용한다.
 4. 파일 크기 상한을 둔다.
    - snapshot/table: 50MB
    - document: 200MB
@@ -294,6 +323,14 @@ CLI는 MCP보다 사람이 직접 쓰는 진단성과 결과 예시가 중요합
 
 검색은 recall과 rank를 분리합니다.
 
+Resolve:
+
+1. raw query 보존
+2. intent 분류
+3. investor/fund/stage/round/sector/region 추출
+4. exact alias 우선, fuzzy는 candidate로 표시
+5. ambiguity가 있으면 검색 결과보다 후보 선택/data gap을 우선 표시
+
 Recall:
 
 1. exact normalized investor/fund alias
@@ -303,22 +340,20 @@ Recall:
 5. event/document/chunk lexical match
 6. guide concept/guidance card match
 
-Rank:
+P0 Rank:
 
-- exact entity match: 20
-- official source strength: 25
-- startup fit: 20
-- recency/dry powder signal: 15
-- parser quality: 10
-- data completeness: 10
+- resolved entity candidate match: 35
+- lexical term hit: 12 per hit
+- stage/sector/TIPS condition hit: 10 per hit
+- source trust score: official snapshot/official 35, high 25, medium 15, guide 12, derived 10, default 8
+- tie-breaker: evidence_at desc
 
-Penalty:
+Planned rank signals:
 
-- no official evidence: -25
-- missing hash: -20
-- unresolved quality flag: -15
-- parser warning: -10
-- stale snapshot over 12 months: -10
+- recency and fund activity signal
+- parser warning penalty
+- source completeness penalty
+- unresolved critical quality flag penalty
 
 ## Result contract
 

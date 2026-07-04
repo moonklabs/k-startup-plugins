@@ -72,7 +72,7 @@ VC/AC 공시·가이드 → 로컬 vc-fund-disclosure-mcp (Draft)
 분석          → Mixpanel, Amplitude, ChartMogul
 ```
 
-로컬 공시 MCP 구현 스펙은 `mcp/vc-fund-disclosure/`에 있습니다. source registry, SQLite schema, seed, 검색/랭킹 contract, tool contract, display query, quality check pack을 함께 관리합니다.
+로컬 공시 MCP 구현 스펙은 `mcp/vc-fund-disclosure/`에 있습니다. source registry, SQLite schema, seed, source trust/input resolution contract, 검색/랭킹 contract, tool contract, display query, quality check pack을 함께 관리합니다.
 
 자세한 내용은 [CONNECTORS.md](CONNECTORS.md)를 참조하세요.
 

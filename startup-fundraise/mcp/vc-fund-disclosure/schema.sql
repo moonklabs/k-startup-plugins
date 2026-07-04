@@ -18,6 +18,9 @@ CREATE TABLE IF NOT EXISTS sources (
   base_url TEXT,
   base_path TEXT,
   policy_status TEXT NOT NULL,
+  trust_tier TEXT NOT NULL DEFAULT 'T9_unverified_web',
+  authoritative_scope TEXT,
+  freshness_days INTEGER,
   default_collection_modes TEXT,
   disabled_collection_modes TEXT,
   privacy_level TEXT NOT NULL DEFAULT 'public',
@@ -57,7 +60,7 @@ CREATE TABLE IF NOT EXISTS raw_artifacts (
   parser_version TEXT,
   parser_status TEXT NOT NULL DEFAULT 'pending',
   parser_warnings TEXT,
-  UNIQUE(content_sha256)
+  UNIQUE(source_id, content_sha256)
 );
 
 CREATE TABLE IF NOT EXISTS source_snapshots (
@@ -265,8 +268,48 @@ CREATE TABLE IF NOT EXISTS search_queries (
   search_query_id TEXT PRIMARY KEY,
   user_query TEXT NOT NULL,
   normalized_query TEXT,
-  interpreted_intent TEXT,
+  interpreted_intent TEXT NOT NULL CHECK (interpreted_intent IN ('investor_fund_holding', 'startup_fund_search', 'tips_signal', 'new_fund_event', 'founder_education')),
+  resolution_status TEXT NOT NULL CHECK (resolution_status IN ('resolved_exact', 'resolved_alias', 'ambiguous', 'no_match')),
+  resolved_entities_json TEXT,
   company_context_json TEXT,
+  data_gaps_json TEXT,
+  recommended_imports_json TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS entity_resolution_candidates (
+  resolution_candidate_id TEXT PRIMARY KEY,
+  search_query_id TEXT NOT NULL REFERENCES search_queries(search_query_id),
+  raw_text TEXT NOT NULL,
+  entity_type TEXT NOT NULL,
+  candidate_entity_id TEXT,
+  candidate_label TEXT NOT NULL,
+  normalized_candidate_label TEXT,
+  match_type TEXT NOT NULL,
+  match_score INTEGER NOT NULL,
+  source_id TEXT REFERENCES sources(source_id),
+  source_artifact_id TEXT REFERENCES raw_artifacts(artifact_id),
+  resolution_status TEXT NOT NULL CHECK (resolution_status IN ('resolved_exact', 'resolved_alias', 'ambiguous', 'no_match')),
+  why_candidate TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS evidence_claims (
+  evidence_claim_id TEXT PRIMARY KEY,
+  claim_type TEXT NOT NULL,
+  subject_type TEXT NOT NULL,
+  subject_id TEXT,
+  predicate TEXT NOT NULL,
+  object_value TEXT,
+  source_id TEXT NOT NULL REFERENCES sources(source_id),
+  source_snapshot_id TEXT REFERENCES source_snapshots(snapshot_id),
+  source_artifact_id TEXT REFERENCES raw_artifacts(artifact_id),
+  document_id TEXT REFERENCES documents(document_id),
+  source_trust_tier TEXT NOT NULL,
+  authority_scope TEXT,
+  confidence TEXT NOT NULL DEFAULT 'medium',
+  parser_status TEXT,
+  parser_warnings TEXT,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -283,7 +326,10 @@ CREATE TABLE IF NOT EXISTS search_results (
   source_artifact_id TEXT REFERENCES raw_artifacts(artifact_id),
   document_id TEXT REFERENCES documents(document_id),
   score INTEGER NOT NULL,
-  evidence_status TEXT NOT NULL,
+  evidence_status TEXT NOT NULL CHECK (evidence_status IN ('verified_official', 'official_needs_review', 'guide_only', 'user_note_only', 'no_evidence')),
+  resolution_status TEXT NOT NULL CHECK (resolution_status IN ('resolved_exact', 'resolved_alias', 'ambiguous', 'no_match')),
+  source_trust_tier TEXT,
+  authority_scope TEXT,
   why_ranked TEXT NOT NULL,
   match_reasons_json TEXT,
   missing_evidence_json TEXT,
@@ -389,8 +435,42 @@ CREATE INDEX IF NOT EXISTS idx_chunks_document ON document_chunks(document_id, c
 CREATE INDEX IF NOT EXISTS idx_quality_flags_open ON data_quality_flags(entity_type, entity_id, resolved_at);
 CREATE INDEX IF NOT EXISTS idx_raw_artifacts_source ON raw_artifacts(source_id, captured_at);
 CREATE INDEX IF NOT EXISTS idx_search_queries_intent ON search_queries(interpreted_intent, created_at);
+CREATE INDEX IF NOT EXISTS idx_resolution_candidates_query ON entity_resolution_candidates(search_query_id, match_score);
+CREATE INDEX IF NOT EXISTS idx_resolution_candidates_entity ON entity_resolution_candidates(entity_type, candidate_entity_id);
+CREATE INDEX IF NOT EXISTS idx_evidence_claims_subject ON evidence_claims(subject_type, subject_id, claim_type);
+CREATE INDEX IF NOT EXISTS idx_evidence_claims_source ON evidence_claims(source_id, source_trust_tier);
 CREATE INDEX IF NOT EXISTS idx_search_results_query_rank ON search_results(search_query_id, result_rank);
 CREATE INDEX IF NOT EXISTS idx_search_results_entity ON search_results(entity_type, entity_id);
+
+CREATE VIEW IF NOT EXISTS v_source_authority AS
+SELECT
+  source_id,
+  source_name,
+  source_type,
+  policy_status,
+  trust_tier,
+  authoritative_scope,
+  freshness_days,
+  last_policy_checked_at,
+  privacy_level
+FROM sources;
+
+CREATE VIEW IF NOT EXISTS v_entity_resolution_summary AS
+SELECT
+  sq.search_query_id,
+  sq.user_query,
+  sq.interpreted_intent,
+  sq.resolution_status AS query_resolution_status,
+  erc.raw_text,
+  erc.entity_type,
+  erc.candidate_entity_id,
+  erc.candidate_label,
+  erc.match_type,
+  erc.match_score,
+  erc.resolution_status AS candidate_resolution_status,
+  erc.why_candidate
+FROM search_queries sq
+LEFT JOIN entity_resolution_candidates erc ON erc.search_query_id = sq.search_query_id;
 
 CREATE VIEW IF NOT EXISTS v_searchable_entities AS
 SELECT
@@ -446,19 +526,20 @@ SELECT
 FROM document_chunks dc
 JOIN documents d ON d.document_id = dc.document_id;
 
-CREATE VIEW IF NOT EXISTS v_source_health AS
+DROP VIEW IF EXISTS v_source_health;
+CREATE VIEW v_source_health AS
 SELECT
   s.source_id,
   s.source_name,
   s.policy_status,
-  MAX(cr.started_at) AS last_run_at,
-  SUM(CASE WHEN cr.status = 'success' THEN 1 ELSE 0 END) AS successful_runs,
-  SUM(CASE WHEN cr.status != 'success' THEN 1 ELSE 0 END) AS non_success_runs,
-  COUNT(dq.flag_id) AS open_quality_flags
-FROM sources s
-LEFT JOIN collection_runs cr ON cr.source_id = s.source_id
-LEFT JOIN data_quality_flags dq ON dq.source_id = s.source_id AND dq.resolved_at IS NULL
-GROUP BY s.source_id, s.source_name, s.policy_status;
+  s.trust_tier,
+  s.authoritative_scope,
+  (SELECT MAX(cr.started_at) FROM collection_runs cr WHERE cr.source_id = s.source_id) AS last_run_at,
+  (SELECT COUNT(*) FROM collection_runs cr WHERE cr.source_id = s.source_id AND cr.status = 'success') AS successful_runs,
+  (SELECT COUNT(*) FROM collection_runs cr WHERE cr.source_id = s.source_id AND cr.status != 'success') AS non_success_runs,
+  (SELECT COALESCE(SUM(cr.warning_count), 0) FROM collection_runs cr WHERE cr.source_id = s.source_id) AS warning_count,
+  (SELECT COUNT(*) FROM data_quality_flags dq WHERE dq.source_id = s.source_id AND dq.resolved_at IS NULL) AS open_quality_flags
+FROM sources s;
 
 CREATE VIEW IF NOT EXISTS v_investor_profile_summary AS
 SELECT

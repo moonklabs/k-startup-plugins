@@ -144,12 +144,13 @@ VC Funds 실제 구현 레포의 README는 아래 순서가 좋습니다.
 
 1. 사용자가 사이트 경로와 코드를 몰라도 물을 수 있어야 합니다.
 2. 검색 결과는 "추천"이 아니라 "근거가 있는 후보"여야 합니다.
-3. 모든 결과에는 `evidence_status`와 `why_ranked`가 있어야 합니다.
-4. 공식 근거, 창업자 guide, 사용자 note는 섞지 않습니다.
-5. 첨부 문서 파싱은 원본 hash와 parser warning을 반드시 남깁니다.
-6. 결과가 없을 때도 실패가 아니라 "어떤 snapshot/document를 import해야 하는지"를 알려줘야 합니다.
-7. CLI와 MCP가 서로 다른 판단을 하면 안 됩니다. 같은 retrieval/ranker core를 사용해야 합니다.
-8. local-only 파일 도구와 future remote query-only 도구를 설계 단계부터 분리해야 합니다.
+3. 검색 전에 사용자 입력을 exact/alias/ambiguous/no_match로 resolve해야 합니다.
+4. 모든 결과에는 `resolution_status`, `evidence_status`, `source_trust_tier`, `why_ranked`가 있어야 합니다.
+5. 공식 근거, 창업자 guide, 사용자 note는 섞지 않습니다.
+6. 첨부 문서 파싱은 원본 hash와 parser warning을 반드시 남깁니다.
+7. 결과가 없을 때도 실패가 아니라 "어떤 snapshot/document를 import해야 하는지"를 알려줘야 합니다.
+8. CLI와 MCP가 서로 다른 판단을 하면 안 됩니다. 같은 retrieval/ranker core를 사용해야 합니다.
+9. local-only 파일 도구와 future remote query-only 도구를 설계 단계부터 분리해야 합니다.
 
 ## 7. 아키텍처 적합성 체크리스트
 
@@ -158,6 +159,8 @@ VC Funds 실제 구현 레포의 README는 아래 순서가 좋습니다.
 | 질문 | YES 기준 |
 |---|---|
 | 창업자가 FundFinder/KVCA 파라미터를 몰라도 검색 가능한가? | 자연어 search가 intent와 code 후보를 내부 생성 |
+| 사용자 입력이 정확히 해석됐는가? | `resolve_user_input` 결과와 후보/점수/ambiguity가 저장됨 |
+| source가 질문 유형에 대해 authoritative한가? | `source_trust_tier`와 `authority_scope`가 표시됨 |
 | 추천 결과마다 공식 근거가 붙는가? | source URL, hash, import time, parser warning 포함 |
 | 공식 근거가 없을 때 솔직히 말하는가? | `no_evidence` 또는 `official_needs_review` |
 | 첨부 문서 속 신규 펀드 정보를 다룰 수 있는가? | document parser와 event extraction 존재 |

@@ -8,7 +8,7 @@ decision_legend:
   use_official_mcp: "공식 MCP 또는 벤더 제공 AI/tooling 표면을 우선 사용한다."
   provider_wrapper: "직접 기관 API가 아니라 인증된 provider/ASP/API 사업자를 감싼다."
   recommend_only: "직접 래퍼보다 공식 UI, 유료 서비스, 파트너 경로를 추천한다."
-  snapshot_import: "공식 UI/문서에서 사용자가 확보한 HTML/CSV/XLS/PDF/HWP/HWPX를 import/정규화한다. 자동 수집은 공식 허가 뒤에만 켠다."
+  snapshot_import: "공식 UI/문서에서 사용자가 확보한 HTML/CSV snapshot과 PDF/HWP/HWPX 문서를 import/정규화한다. 자동 수집은 공식 허가 뒤에만 켠다."
   defer: "접근권, 문서, 라이선스, 고객 수요가 확인될 때까지 보류한다."
 
 services:
@@ -391,30 +391,38 @@ services:
         - vc-funds doctor
         - vc-funds import kvic
         - vc-funds import kvca
-        - vc-funds import document
-        - vc-funds import guide
-        - vc-funds guide-source add
-        - vc-funds guide-source check
-        - vc-funds watch
-        - vc-funds diff
+        - vc-funds resolve
+        - vc-funds sources
         - vc-funds search
-        - vc-funds query investor
-        - vc-funds query funds
-        - vc-funds events
-        - vc-funds gaps
-        - vc-funds report investor
-        - vc-funds export evidence-pack
-        - vc-funds ask
-        - vc-funds uninstall
+        - vc-funds health
+        - vc-funds load-sql
+        - vc-funds mcp serve
+      planned_cli:
+        - import disclosure document
+        - import founder guide
+        - guide source registration
+        - watch folder import
+        - snapshot diff
+        - investor/fund deep query
+        - new fund event feed
+        - standalone data gap analysis
+        - investor meeting report
+        - evidence pack export
+        - founder Q&A
+        - uninstall helper
       mcp:
+        - resolve_user_input
+        - get_source_authority
         - search_vc_database
+        - import_kvic_snapshot
+        - import_kvca_snapshot
+        - get_collection_health
+      planned_mcp:
         - explain_search_result
         - configure_collection_source
         - list_collection_sources
         - run_personal_collection
         - import_browser_snapshot
-        - import_kvic_snapshot
-        - import_kvca_snapshot
         - import_disclosure_document
         - import_founder_guide_document
         - register_founder_guide_source
@@ -429,7 +437,6 @@ services:
         - answer_founder_question
         - list_new_fund_events
         - list_unreviewed_fund_events
-        - get_collection_health
       skill:
         - deal-sourcing
         - investor-research
@@ -467,11 +474,12 @@ services:
       supported_inputs:
         - html
         - csv
-        - xls
-        - xlsx
         - pdf
         - hwpx
         - hwp_with_local_adapter
+      unsupported_snapshot_inputs:
+        - xls
+        - xlsx
       rules:
         - "원본 파일 sha256, 출처 URL, import 시각을 저장한다."
         - "PDF/HWP/HWPX 첨부 공시는 원본, 추출 텍스트, 구조화 이벤트를 분리 저장한다."

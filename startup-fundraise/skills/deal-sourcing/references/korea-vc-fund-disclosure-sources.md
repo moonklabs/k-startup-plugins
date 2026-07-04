@@ -80,7 +80,7 @@ Seed/Pre-A 기본 조회는 `AA02`(초기기업), `DA01`(4차산업혁명), `EA0
 
 ## MCP/DB화 권장 경계
 
-- 추천: 공식 허가 또는 사용자가 직접 확보한 HTML/CSV/XLS 스냅샷을 MCP가 import하여 정규화한다.
+- 추천: 공식 허가 또는 사용자가 직접 확보한 HTML/CSV 스냅샷을 MCP가 import하여 정규화한다. XLS/XLSX는 공식 화면에서 CSV/HTML로 다시 저장한 뒤 import한다.
 - 추천: MCP는 `fund_evidence` 조회, VC별 조합 검색, KVIC 카테고리별 후보 추출, DIVA 상세 대사 같은 내부 검색/분석을 제공한다.
 - 추천: 개인용 로컬 DB에 `watch_folder_import`와 `browser_capture_import`를 제공해 사용자가 저장한 자료를 자동 import/diff한다.
 - 보류: 사이트를 주기적으로 자동 순회하는 crawler, 무제한 pagination 수집, robots 정책을 무시하는 scrape job.
@@ -92,7 +92,7 @@ Seed/Pre-A 기본 조회는 `AA02`(초기기업), `DA01`(4차산업혁명), `EA0
 
 | 모드 | 사용 방식 | 허용 여부 |
 |---|---|---|
-| `manual_snapshot_import` | 사용자가 저장한 HTML/CSV/XLS를 import | 기본 허용 |
+| `manual_snapshot_import` | 사용자가 저장한 HTML/CSV snapshot을 import | 기본 허용 |
 | `watch_folder_import` | 지정 폴더에 저장된 PDF/HWPX/HTML을 자동 감지해 import | 기본 허용 |
 | `browser_capture_import` | 사용자가 보고 있는 페이지를 snapshot으로 저장 후 import | 사용자 제스처 기반 허용 |
 | `official_feed_fetch` | 공식 API/허가/유료 계약 기반 fetch | 근거 확인 후 허용 |

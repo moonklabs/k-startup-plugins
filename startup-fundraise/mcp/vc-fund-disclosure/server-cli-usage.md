@@ -1,6 +1,6 @@
 # VC Funds MCP/CLI User Surface
 
-상태: Draft introduction, not executable server.
+상태: Draft introduction + executable P0 prototype.
 
 이 도구의 사용자 가치는 "어디서 봐야 하는지 모르는 VC/AC 공시정보를 자연어로 물으면, 로컬 DB에서 공식 근거 중심으로 찾아 표와 caveat까지 보여주는 것"입니다.
 
@@ -35,6 +35,17 @@ vc-funds doctor
 
 Homebrew가 어려우면 GitHub Releases 단일 실행 파일 또는 install script를 사용합니다. npm scoped package는 기본 경로로 쓰지 않습니다.
 
+현재 repo 안에서 바로 실행 가능한 초안은 `runtime/`에 있습니다.
+
+```bash
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs setup --db /tmp/vc-funds.sqlite
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs load-sql startup-fundraise/mcp/vc-fund-disclosure/runtime/fixtures/sample-data.sql --db /tmp/vc-funds.sqlite
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs search "AI SaaS Seed Pre-A TIPS 가능 투자사" --db /tmp/vc-funds.sqlite --json
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs mcp serve --db /tmp/vc-funds.sqlite
+```
+
+P0 구현 범위는 `setup`, `doctor`, `sources`, `health`, `resolve`, `search`, `import kvic`, `import kvca`, `mcp serve`, fixture SQL load입니다. Deep query, event feed, standalone gap analysis, report, document/guide import, watch, export는 다음 단계의 계약입니다.
+
 ## MCP 설정
 
 ```json
@@ -54,31 +65,31 @@ Homebrew가 어려우면 GitHub Releases 단일 실행 파일 또는 install scr
 }
 ```
 
-중요: 실행 가능한 `vc-funds`가 준비되기 전에는 `.mcp.json`에 등록하지 않습니다.
+중요: repo-local 초안은 실행 가능하지만 아직 배포된 `vc-funds` 바이너리가 아니므로 `.mcp.json`에는 등록하지 않습니다. 로컬 테스트는 위의 `node .../bin/vc-funds.mjs mcp serve` 경로를 사용합니다.
 
 ## CLI 명령 설계
 
-### 1. 검색과 조회
+### 1. P0 검색과 조회
 
 ```bash
+vc-funds resolve "프라이머가 Seed 투자 가능한 펀드가 있어?"
+vc-funds sources
 vc-funds search "AI SaaS Seed Pre-A TIPS 가능 투자사"
-vc-funds query investor "프라이머" --evidence --why
-vc-funds query fund "스마트대한민국" --evidence
-vc-funds query funds --stage seed --round pre-a --sector "AI,SaaS" --region "Seoul"
-vc-funds events --since 90d --type new_fund --review-status confirmed
-vc-funds gaps "뭉클랩 Seed/Pre-A 투자사 찾기"
 ```
 
-### 2. import와 수집 상태
+P0 `search` 응답은 별도 gap 명령 없이 `data_gaps`와 `recommended_imports`를 함께 반환합니다. 투자사 deep dive, fund query, event feed, 별도 data gap 분석은 planned 표면입니다.
+
+### 2. P0 import와 수집 상태
 
 ```bash
 vc-funds import kvic --file ./snapshots/fundfinder-AA02.html --group AA --code AA02
 vc-funds import kvca --file ./snapshots/kvca-primer.html --vc-name "프라이머"
-vc-funds import document --file ./disclosures/new-fund.hwpx --source kvca
-vc-funds import guide --file ./guides/seed-fundraising-guide.pdf --role founder_education
 vc-funds health
 vc-funds doctor
+vc-funds mcp serve
 ```
+
+P1 CLI import는 KVIC/KVCA HTML 또는 CSV snapshot만 정규화한다. XLS/XLSX 파일은 감지 후 `unsupported_format`으로 반환하므로 공식 화면에서 HTML로 저장하거나 CSV로 내보낸 뒤 import한다.
 
 ### 3. 미팅 준비 리포트
 
@@ -106,16 +117,18 @@ vc-funds export evidence-pack "프라이머" --redact-personal-contacts
 
 ## MCP 도구 소개
 
-| 도구 | 사용자가 느끼는 기능 |
-|---|---|
-| `search_vc_database` | 자연어 질문을 받아 투자사/펀드/이벤트/가이드 통합 검색 |
-| `query_investor_profile` | 특정 투자사의 펀드 근거와 TIPS 신호 조회 |
-| `search_funds_for_startup` | 회사 단계/섹터/지역 기준 적합 펀드 검색 |
-| `list_new_fund_events` | 신규 결성/변경/만기 이벤트 조회 |
-| `search_disclosure_evidence` | 원본 snapshot/document chunk 검색 |
-| `answer_founder_question` | 창업자 가이드 기반 답변과 체크리스트 |
-| `list_data_gaps` | 답변에 부족한 source와 필요한 import 액션 표시 |
-| `get_collection_health` | source별 수집 상태와 품질 플래그 확인 |
+| 도구 | 상태 | 사용자가 느끼는 기능 |
+|---|---|---|
+| `search_vc_database` | P0 구현 | 자연어 질문을 받아 투자사/펀드/이벤트/가이드 통합 검색 |
+| `resolve_user_input` | P0 구현 | 사용자 입력을 투자사/펀드/조건 후보로 정확히 해석 |
+| `get_source_authority` | P0 구현 | 질문 유형별 authoritative/supporting/context source 확인 |
+| `get_collection_health` | P0 구현 | source별 수집 상태와 품질 플래그 확인 |
+| `query_investor_profile` | 계약 예정 | 특정 투자사의 펀드 근거와 TIPS 신호 조회 |
+| `search_funds_for_startup` | 계약 예정 | 회사 단계/섹터/지역 기준 적합 펀드 검색 |
+| `list_new_fund_events` | 계약 예정 | 신규 결성/변경/만기 이벤트 조회 |
+| `search_disclosure_evidence` | 계약 예정 | 원본 snapshot/document chunk 검색 |
+| `answer_founder_question` | 계약 예정 | 창업자 가이드 기반 답변과 체크리스트 |
+| `list_data_gaps` | 계약 예정 | 답변에 부족한 source와 필요한 import 액션 표시 |
 
 ## MCP 프롬프트 예시
 
@@ -134,6 +147,8 @@ vc-funds export evidence-pack "프라이머" --redact-personal-contacts
 ## 정확도 원칙
 
 - 결과마다 `evidence_status`를 표시합니다.
+- 검색 전에 `resolution_status`와 후보를 기록합니다.
+- `source_trust_tier`와 `authority_scope`가 질문 유형에 맞아야 공식 근거로 인정합니다.
 - `verified_official`이 아니면 확정 표현을 쓰지 않습니다.
 - 이름 유사도만으로 투자 가능성을 추정하지 않습니다.
 - FundFinder 단독 결과와 KVCA 조합현황 결과를 구분합니다.

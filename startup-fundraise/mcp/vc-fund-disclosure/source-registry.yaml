@@ -14,6 +14,12 @@ sources:
     source_name: "KVIC FundFinder"
     owner: "한국벤처투자"
     source_type: official_web_table
+    trust_tier: T1_user_captured_official_snapshot
+    authoritative_scope:
+      - investor_fund_holding
+      - startup_fund_search
+      - new_fund_event
+    freshness_days: 180
     base_url: "http://fundfinder.k-vic.co.kr/rsh/rsh/RshMacFnd"
     known_endpoints:
       - "GET /rsh/rsh/RshMacFndInq"
@@ -66,6 +72,12 @@ sources:
     source_name: "KVCA DIVA 조합현황"
     owner: "한국벤처캐피탈협회"
     source_type: official_web_table
+    trust_tier: T1_user_captured_official_snapshot
+    authoritative_scope:
+      - investor_fund_holding
+      - startup_fund_search
+      - new_fund_event
+    freshness_days: 180
     base_url: "http://diva.kvca.or.kr/div/cmn/DivDisclsMainInq"
     known_endpoints:
       - "GET/POST /div/dii/DivItmAssoInq"
@@ -113,6 +125,10 @@ sources:
     source_name: "TIPS public site"
     owner: "TIPS"
     source_type: official_public_site
+    trust_tier: T1_user_captured_official_snapshot
+    authoritative_scope:
+      - tips_signal
+    freshness_days: 90
     base_url: "https://www.jointips.or.kr/"
     verified_at: "2026-07-04"
     policy_status: requires_check
@@ -144,10 +160,53 @@ sources:
       - current_notice_date_present
     notes: "TIPS는 투자자/운영사 평가 축으로 사용한다. 창업자가 운영사를 임의 지정해 진행한다고 단정하지 않는다."
 
+  - source_id: official_disclosure_documents
+    source_name: "Official disclosure document library"
+    owner: "official_sources"
+    source_type: official_document_library
+    base_path: "~/Documents/MoonkLabs/VC Disclosures/Archive"
+    trust_tier: T2_official_disclosure_document
+    authoritative_scope:
+      - startup_fund_search
+      - new_fund_event
+    freshness_days: 180
+    policy_status: allowed_local_import
+    default_collection_modes:
+      - manual_snapshot_import
+      - watch_folder_import
+    data_targets:
+      - raw_artifacts
+      - documents
+      - document_chunks
+      - events
+      - evidence_claims
+      - review_queue
+    supported_file_types:
+      - pdf
+      - hwpx
+      - hwp_with_adapter
+      - html
+    required_fields:
+      - file_name
+      - file_sha256
+      - source_url
+      - imported_at
+      - parser_status
+    quality_checks:
+      - file_hash_present
+      - source_url_present
+      - parser_status_present
+      - event_extraction_reviewed
+      - pii_redaction_if_exported
+
   - source_id: founder_guide_library
     source_name: "Founder guide local library"
     owner: "user"
     source_type: local_file_library
+    trust_tier: T3_official_public_guide
+    authoritative_scope:
+      - founder_education
+    freshness_days: 365
     base_path: "~/Documents/MoonkLabs/VC Disclosures/Guides"
     policy_status: allowed_local_import
     default_collection_modes:
@@ -189,6 +248,9 @@ sources:
     source_name: "User fundraising notes"
     owner: "user"
     source_type: local_private_notes
+    trust_tier: T4_user_private_note
+    authoritative_scope: []
+    freshness_days: 365
     base_path: "~/Documents/MoonkLabs/VC Disclosures/Notes"
     policy_status: allowed_local_import
     default_collection_modes:
@@ -211,6 +273,10 @@ sources:
     source_name: "THE VC / 혁신의숲 / 넥스트유니콘"
     owner: "third_party"
     source_type: commercial_or_login_service
+    trust_tier: T5_commercial_manual_fact
+    authoritative_scope:
+      - supporting_context
+    freshness_days: 90
     policy_status: blocked_by_default
     default_collection_modes: []
     allowed_usage:

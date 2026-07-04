@@ -1,0 +1,16 @@
+{
+  "name": "@moonklabs/vc-fund-disclosure-runtime",
+  "version": "0.0.0-draft",
+  "private": true,
+  "type": "module",
+  "description": "Draft local CLI and stdio MCP runtime for the VC fund disclosure evidence database.",
+  "bin": {
+    "vc-funds": "./bin/vc-funds.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,1 @@
+This is a synthetic .xlsx sentinel. The draft runtime must detect it and return unsupported_format.

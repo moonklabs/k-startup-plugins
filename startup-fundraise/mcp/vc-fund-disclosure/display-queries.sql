@@ -149,6 +149,8 @@ SELECT
   source_id,
   source_name,
   policy_status,
+  trust_tier,
+  authoritative_scope,
   last_run_at,
   successful_runs,
   non_success_runs,
@@ -192,3 +194,45 @@ ORDER BY
   END,
   evidence_at DESC
 LIMIT COALESCE(:limit, 20);
+
+-- 8. Entity resolution candidates for a user query.
+-- Parameters: :search_query_id
+SELECT
+  search_query_id,
+  raw_text,
+  entity_type,
+  candidate_label,
+  match_type,
+  match_score,
+  resolution_status,
+  source_id,
+  why_candidate
+FROM entity_resolution_candidates
+WHERE search_query_id = :search_query_id
+ORDER BY match_score DESC, candidate_label ASC;
+
+-- 9. Source authority matrix for UI/CLI diagnostics.
+-- Parameters: :scope_like
+SELECT
+  source_id,
+  source_name,
+  source_type,
+  policy_status,
+  trust_tier,
+  authoritative_scope,
+  freshness_days,
+  last_policy_checked_at
+FROM v_source_authority
+WHERE :scope_like IS NULL
+   OR authoritative_scope LIKE :scope_like
+ORDER BY
+  CASE trust_tier
+    WHEN 'T0_permissioned_official_feed' THEN 1
+    WHEN 'T1_user_captured_official_snapshot' THEN 2
+    WHEN 'T2_official_disclosure_document' THEN 3
+    WHEN 'T3_official_public_guide' THEN 4
+    WHEN 'T4_user_private_note' THEN 5
+    WHEN 'T5_commercial_manual_fact' THEN 6
+    ELSE 9
+  END,
+  source_name ASC;

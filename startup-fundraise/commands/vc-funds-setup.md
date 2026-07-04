@@ -9,7 +9,7 @@ argument-hint: "<client: claude|codex, 또는 local-dev>"
 
 VC/AC 투자사 공시정보와 초기 창업자용 투자유치 PDF/HWPX 가이드를 개인 로컬 DB에 축적하고, `~~fund disclosure` MCP로 조회하기 위한 설치/점검 루틴입니다.
 
-이 커맨드는 `vc-funds` 로컬 도구가 준비되어 있을 때 설치를 안내하고, 아직 도구가 없으면 구현해야 할 setup contract를 출력합니다.
+이 커맨드는 `vc-funds` 로컬 도구가 준비되어 있을 때 설치를 안내하고, repo-local 초안에서는 `startup-fundraise/mcp/vc-fund-disclosure/runtime/`의 Node 실행 파일을 기준으로 점검합니다.
 
 ## 권장 구조
 
@@ -17,7 +17,7 @@ VC/AC 투자사 공시정보와 초기 창업자용 투자유치 PDF/HWPX 가이
 
 | 구성 | 역할 |
 |---|---|
-| `vc-fund-disclosure-core` | KVIC/KVCA/TIPS HTML, CSV, XLS, PDF, HWPX import와 정규화, 창업자 guide chunking |
+| `vc-fund-disclosure-core` | P1은 KVIC/KVCA HTML, CSV snapshot import와 정규화에 집중한다. XLS/XLSX는 `unsupported_format`으로 안내하고 PDF/HWPX guide/document import는 후속 단계로 둔다. |
 | `vc-funds` CLI | setup, DB 초기화, 검색, evidence 리포트, import, watch folder, diff, doctor |
 | `vc-fund-disclosure-mcp` | Codex/Claude가 호출하는 stdio MCP server. 자연어 검색, 펀드 근거, 창업자 가이드, data gap 제공 |
 
@@ -52,6 +52,16 @@ vc-funds doctor
 ```
 
 npm scoped package는 기본 설치 경로로 쓰지 않습니다. `@moonklabs/*` npm 배포는 비용/권한/registry 의존 문제가 생길 수 있으므로, 기본 배포는 Homebrew tap과 GitHub Releases 단일 실행 파일로 둡니다.
+
+현재 repo-local 초안 실행:
+
+```bash
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs setup --db /tmp/vc-funds.sqlite
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs load-sql startup-fundraise/mcp/vc-fund-disclosure/runtime/fixtures/sample-data.sql --db /tmp/vc-funds.sqlite
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs doctor --db /tmp/vc-funds.sqlite --json
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs search "AI SaaS Seed Pre-A TIPS 가능 투자사" --db /tmp/vc-funds.sqlite --json
+node --test startup-fundraise/mcp/vc-fund-disclosure/runtime/test/*.test.mjs
+```
 
 Homebrew를 쓰지 않는 경우:
 
@@ -103,7 +113,7 @@ vc-funds doctor
 
 기본 ON:
 
-- `manual_snapshot_import`: 사용자가 저장한 HTML/CSV/XLS import
+- `manual_snapshot_import`: 사용자가 저장한 HTML/CSV import. XLS/XLSX는 감지 후 `unsupported_format`으로 반환하고 CSV/HTML 재저장을 안내한다.
 - `watch_folder_import`: Inbox에 저장된 PDF/HWPX/HTML 자동 import
 - `browser_capture_import`: 사용자가 보고 있는 페이지 snapshot import
 - `guide_library_import`: Guides에 저장한 투자유치/TIPS/IR/데이터룸/투자계약 안내 PDF/HWPX import
@@ -132,24 +142,27 @@ vc-funds doctor
 ## 초기 사용 예
 
 ```bash
+vc-funds setup
+vc-funds doctor
+vc-funds resolve "프라이머가 Seed 투자 가능한 펀드가 있어?"
+vc-funds sources
 vc-funds search "AI SaaS Seed Pre-A TIPS 가능 투자사"
-vc-funds query investor "프라이머" --evidence --why
-vc-funds query funds --stage seed --round pre-a --sector "AI,SaaS" --region "Seoul"
-vc-funds events --since 90d --type new_fund
-vc-funds gaps "뭉클랩 Seed/Pre-A 투자사 찾기"
 vc-funds import kvic --file "./snapshots/fundfinder-AA02.html" --group AA --code AA02
 vc-funds import kvca --file "./snapshots/kvca-primer.html"
-vc-funds import document --file "./disclosures/new-fund.hwpx" --source kvca
-vc-funds import guide --file "./guides/seed-fundraising-guide.pdf" --role founder_education
-vc-funds ask "처음 투자유치할 때 무엇부터 준비해야 해?"
+vc-funds health
+vc-funds mcp serve
 ```
+
+향후 예정 표면은 투자사 deep dive, 신규 펀드 event feed, document/guide import, evidence-pack export, founder Q&A, 별도 data gap 분석 명령으로 분리합니다. 현재 P0에서는 `vc-funds search` 응답의 `data_gaps`와 `recommended_imports` 필드를 사용합니다.
 
 검색 결과는 단순 후보 목록이 아니라 다음 필드를 포함해야 합니다.
 
 | 필드 | 의미 |
 |---|---|
 | `evidence_status` | `verified_official`, `official_needs_review`, `guide_only`, `user_note_only`, `no_evidence` |
-| `why_ranked` | 왜 상위 결과인지: source, stage/sector fit, recency, quality |
+| `resolution_status` | `resolved_exact`, `resolved_alias`, `ambiguous`, `no_match` |
+| `source_trust_tier` / `authority_scope` | 이 질문에 대해 source가 공식 근거인지, 보조 근거인지 |
+| `why_ranked` | 왜 상위 결과인지: entity 후보, lexical hit, condition hit, source trust |
 | `source_url/hash` | 원본 snapshot/document 근거 |
 | `data_gaps` | 지금 답변에 부족한 source와 필요한 import 액션 |
 

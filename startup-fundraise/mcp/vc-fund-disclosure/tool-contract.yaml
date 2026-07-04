@@ -7,21 +7,81 @@ defaults:
   local_storage_root: "~/Documents/MoonkLabs/VC Disclosures"
   no_fake_mcp_registration: true
   no_background_crawler_without_permission: true
+  mcp_imports_enforce_allowed_roots: true
+  cli_explicit_import_root_exception: "vc-funds import is a local user command and may import an explicit path outside allowed roots, but still rejects symlinks, hidden path segments, non-files, and files over the size limit."
   redact_personal_contacts_by_default: true
   separate_evidence_guide_notes: true
 
 tools:
+  - name: resolve_user_input
+    category: query
+    description: "사용자 자연어 입력을 intent, 투자사/펀드 후보, 라운드/섹터/지역 조건, 필요한 source로 해석한다."
+    input_schema:
+      query: { type: string }
+      company_context: { type: object, optional: true }
+      include_ambiguous_candidates: { type: boolean, default: true }
+    output_schema:
+      search_query_id: string
+      interpreted_intent: string
+      resolution_status: { type: string, enum: [resolved_exact, resolved_alias, ambiguous, no_match] }
+      resolved_entities: array
+      resolution_candidates: array
+      structured_query_plan: object
+      required_sources: array
+      caveats: array
+    display:
+      type: resolution_report
+      primary_columns:
+        - raw_text
+        - entity_type
+        - candidate_label
+        - match_type
+        - match_score
+        - resolution_status
+
+  - name: get_source_authority
+    category: quality
+    description: "질문 유형별로 어떤 source가 authoritative/supporting/context-only인지 보여준다."
+    input_schema:
+      intent_or_claim_type: { type: string, optional: true }
+    output_schema:
+      source_authority: array
+      caveats: array
+    display:
+      type: source_authority_matrix
+
   - name: search_vc_database
     category: query
     description: "자연어 질문을 받아 투자사, 펀드, 공시 이벤트, 창업자 guide를 통합 검색하고 evidence status와 why_ranked를 반환한다."
     input_schema:
       query: { type: string }
       company_context: { type: object, optional: true }
-      intent_hint: { type: string, optional: true }
+      intent_hint: { type: string, optional: true, enum: [investor_fund_holding, startup_fund_search, tips_signal, new_fund_event, founder_education] }
       limit: { type: number, default: 10 }
     output_schema:
       interpreted_intent: string
+      resolution_status: { type: string, enum: [resolved_exact, resolved_alias, ambiguous, no_match] }
+      resolved_entities: array
       results: array
+      results_item:
+        rank: number
+        title: string
+        entity_type: string
+        entity_id: string
+        evidence_status: { type: string, enum: [verified_official, official_needs_review, guide_only, user_note_only, no_evidence] }
+        resolution_status: { type: string, enum: [resolved_exact, resolved_alias, ambiguous, no_match] }
+        score: number
+        source_name: string
+        source_trust_tier: string
+        authority_scope: string
+        authority_role: { type: string, enum: [authoritative, supporting, context_only, inspect] }
+        source_url: string
+        content_sha256_or_file_sha256: string
+        captured_or_imported_at: string
+        parser_warnings: string
+        caveats: array
+        why_ranked: array
+        next_action: string
       data_gaps: array
       recommended_imports: array
       caveats: array
@@ -32,7 +92,12 @@ tools:
         - title
         - entity_type
         - evidence_status
+        - resolution_status
         - score
+        - source_name
+        - source_trust_tier
+        - authority_scope
+        - authority_role
         - why_ranked
         - next_action
 
@@ -53,40 +118,41 @@ tools:
         - open_quality_flags
       empty_state: "아직 import된 source가 없습니다. vc-funds setup 후 snapshot 또는 guide를 import하세요."
 
-  - name: plan_collection
-    category: ingestion
-    description: "요청한 대상에 대해 어떤 source와 collection mode를 써야 하는지 계획한다."
-    input_schema:
-      target_kind: { type: string, enum: [investor, fundfinder_category, tips_operator, founder_guide, all] }
-      target_value: { type: string }
-      company_context: { type: object, optional: true }
-    output_schema:
-      plan: array
-      blocked_steps: array
-      required_user_files: array
-      caveats: array
-    display:
-      type: checklist
-      required_sections:
-        - allowed_local_imports
-        - blocked_or_permission_required
-        - missing_files
-
   - name: import_kvic_snapshot
     category: ingestion
-    description: "사용자가 저장한 KVIC FundFinder HTML/CSV/XLS snapshot을 정규화한다."
+    description: "허용된 로컬 import root 안의 KVIC FundFinder HTML/CSV snapshot을 정규화한다. XLS/XLSX는 감지만 하고 unsupported_format으로 반환한다."
     input_schema:
       file_path: { type: string }
-      source_url: { type: string }
-      captured_at: { type: string }
-      group_code: { type: string }
-      subcategory_code: { type: string }
+      source_url: { type: string, optional: true }
+      captured_at: { type: string, optional: true }
+      group_code: { type: string, optional: true }
+      subcategory_code: { type: string, optional: true }
     output_schema:
-      snapshot_id: string
-      imported_funds: number
-      imported_investors: number
-      quality_flags: array
+      ok: boolean
+      status: { type: string, enum: [success, partial, unsupported_format] }
+      source_id: string
+      source_name: string
+      source_url: string
+      file: string
+      format: string
+      content_sha256: string
+      run_id: { type: string, nullable: true }
+      artifact_id: { type: string, nullable: true }
+      snapshot_id: { type: string, nullable: true }
+      raw_row_count: number
+      normalized_row_count: number
+      skipped_row_count: number
+      warning_count: number
+      imported:
+        funds: number
+        investors: number
+        operator_links: number
+        kvic_focus_rows: number
+        kvca_associations: number
+        data_quality_flags: number
       warnings: array
+      reason: { type: string, optional: true, only_when: unsupported_format }
+      supported_formats: { type: array, optional: true, only_when: unsupported_format }
     writes:
       - raw_artifacts
       - source_snapshots
@@ -98,18 +164,38 @@ tools:
 
   - name: import_kvca_snapshot
     category: ingestion
-    description: "사용자가 저장한 KVCA DIVA 조합현황 HTML/CSV/XLS snapshot을 정규화한다."
+    description: "허용된 로컬 import root 안의 KVCA DIVA 조합현황 HTML/CSV snapshot을 정규화한다. XLS/XLSX는 감지만 하고 unsupported_format으로 반환한다."
     input_schema:
       file_path: { type: string }
-      source_url: { type: string }
-      captured_at: { type: string }
+      source_url: { type: string, optional: true }
+      captured_at: { type: string, optional: true }
       vc_name: { type: string, optional: true }
     output_schema:
-      snapshot_id: string
-      imported_associations: number
-      imported_investors: number
-      quality_flags: array
+      ok: boolean
+      status: { type: string, enum: [success, partial, unsupported_format] }
+      source_id: string
+      source_name: string
+      source_url: string
+      file: string
+      format: string
+      content_sha256: string
+      run_id: { type: string, nullable: true }
+      artifact_id: { type: string, nullable: true }
+      snapshot_id: { type: string, nullable: true }
+      raw_row_count: number
+      normalized_row_count: number
+      skipped_row_count: number
+      warning_count: number
+      imported:
+        funds: number
+        investors: number
+        operator_links: number
+        kvic_focus_rows: number
+        kvca_associations: number
+        data_quality_flags: number
       warnings: array
+      reason: { type: string, optional: true, only_when: unsupported_format }
+      supported_formats: { type: array, optional: true, only_when: unsupported_format }
     writes:
       - raw_artifacts
       - source_snapshots
@@ -117,202 +203,6 @@ tools:
       - funds
       - investors
       - fund_operator_links
-
-  - name: import_disclosure_document
-    category: ingestion
-    description: "신규 펀드 결성/조합 변경/운용사 공시 PDF/HWPX를 evidence 문서로 import한다."
-    input_schema:
-      file_path: { type: string }
-      source: { type: string }
-      source_url: { type: string, optional: true }
-      title: { type: string }
-      published_date: { type: string, optional: true }
-    output_schema:
-      document_id: string
-      file_sha256: string
-      extracted_event_candidates: number
-      parser_status: string
-      warnings: array
-    writes:
-      - raw_artifacts
-      - documents
-      - document_chunks
-      - events
-      - review_queue
-
-  - name: register_founder_guide_source
-    category: ingestion
-    description: "원격 guide 후보 URL을 등록한다. 죽은 링크도 로컬 파일 import를 위해 source_url로 보존한다."
-    input_schema:
-      publisher: { type: string }
-      source_url: { type: string }
-      suggested_role: { type: string }
-      access_status: { type: string, enum: [ok, remote_gone_410, blocked, unknown] }
-      notes: { type: string, optional: true }
-    output_schema:
-      guide_source_id: string
-      access_status: string
-      warnings: array
-    writes:
-      - founder_guide_sources
-
-  - name: import_founder_guide_document
-    category: ingestion
-    description: "투자유치/TIPS/IR/데이터룸/투자계약 guide PDF/HWPX를 guide corpus로 import한다."
-    input_schema:
-      file_path: { type: string }
-      source_url: { type: string, optional: true }
-      publisher: { type: string, optional: true }
-      document_role: { type: string, enum: [founder_education, program_guide, legal_guide, template, meeting_prep, user_note] }
-      trust_level: { type: string, enum: [official, investor_public, user_owned, third_party, unknown] }
-      license_note: { type: string, optional: true }
-    output_schema:
-      guide_document_id: string
-      file_sha256: string
-      imported_chunks: number
-      concept_candidates: number
-      warnings: array
-    writes:
-      - raw_artifacts
-      - documents
-      - document_chunks
-      - fundraising_concepts
-      - guidance_cards
-
-  - name: query_investor_profile
-    category: query
-    description: "투자사명 기준으로 공식 펀드 근거, TIPS 신호, 신규 이벤트, guide caveat를 묶는다."
-    input_schema:
-      investor_name: { type: string }
-      include_events: { type: boolean, default: true }
-      include_quality_flags: { type: boolean, default: true }
-    output_schema:
-      investor_profile: object
-      official_evidence: array
-      events: array
-      quality_flags: array
-      caveats: array
-    display:
-      type: investor_profile_report
-      sections:
-        - summary
-        - official_fund_evidence
-        - tips_signal
-        - recent_events
-        - data_gaps
-        - caveats
-
-  - name: search_funds_for_startup
-    category: query
-    description: "회사 단계/섹터/지역/FundFinder 코드 기준으로 적합 펀드와 투자사를 찾는다."
-    input_schema:
-      company_stage: { type: string }
-      sector_keywords: { type: array }
-      region: { type: string, optional: true }
-      fundfinder_codes: { type: array, optional: true }
-      round_type: { type: string, optional: true }
-    output_schema:
-      ranked_funds: array
-      matched_investors: array
-      data_gaps: array
-      caveats: array
-    display:
-      type: ranked_table_plus_evidence
-      primary_columns:
-        - rank
-        - investor_name
-        - fund_name
-        - stage_fit
-        - sector_fit
-        - evidence_strength
-        - next_action
-
-  - name: list_new_fund_events
-    category: query
-    description: "최근 신규 결성/변경/만기/투자분야 변경 이벤트를 보여준다."
-    input_schema:
-      since: { type: string }
-      event_type: { type: string, optional: true }
-      review_status: { type: string, optional: true }
-    output_schema:
-      events: array
-      evidence_documents: array
-      caveats: array
-    display:
-      type: event_feed
-      primary_columns:
-        - event_date
-        - event_type
-        - investor_name
-        - fund_name
-        - amount_krw
-        - confidence
-
-  - name: search_disclosure_evidence
-    category: query
-    description: "공시 evidence 원문/청크/정규화 row를 검색한다."
-    input_schema:
-      query: { type: string }
-      source_id: { type: string, optional: true }
-      limit: { type: number, default: 20 }
-    output_schema:
-      matches: array
-      redactions: array
-      caveats: array
-    display:
-      type: search_results
-      show_source_hash: true
-      show_parser_warning: true
-
-  - name: explain_search_result
-    category: query
-    description: "검색 결과 하나가 왜 상위에 올랐는지 점수 구성, 근거, 누락 source, caveat를 설명한다."
-    input_schema:
-      search_result_id: { type: string }
-      include_raw_evidence: { type: boolean, default: false }
-    output_schema:
-      result: object
-      scoring_breakdown: object
-      official_evidence: array
-      missing_evidence: array
-      caveats: array
-    display:
-      type: result_explanation
-
-  - name: answer_founder_question
-    category: query
-    description: "초기 창업자 질문에 대해 guide corpus 기반 답변과 체크리스트를 만든다."
-    input_schema:
-      question: { type: string }
-      company_context: { type: object, optional: true }
-      startup_stage: { type: string, optional: true }
-    output_schema:
-      answer_markdown: string
-      recommended_actions: array
-      source_documents: array
-      caveats: array
-    display:
-      type: founder_guidance_report
-      required_sections:
-        - short_answer
-        - checklist
-        - next_actions
-        - sources
-        - caveats
-
-  - name: list_data_gaps
-    category: quality
-    description: "사용자 질문을 답하기 위해 부족한 source/snapshot/document를 보여준다."
-    input_schema:
-      question_or_goal: { type: string }
-      company_context: { type: object, optional: true }
-    output_schema:
-      missing_sources: array
-      missing_fields: array
-      recommended_imports: array
-      blocked_by_policy: array
-    display:
-      type: gap_report
 
 response_rules:
   always_separate:
@@ -326,6 +216,9 @@ response_rules:
     - captured_or_imported_at
     - parser_warnings
     - evidence_status
+    - resolution_status
+    - source_trust_tier
+    - authority_scope
     - why_ranked
     - data_gaps
   never_include_by_default:

@@ -113,3 +113,51 @@ WHERE why_ranked IS NULL
    OR why_ranked = ''
    OR evidence_status IS NULL
    OR evidence_status = '';
+
+-- 10. Verified result without authoritative source metadata.
+SELECT
+  'verified_result_without_authority' AS check_name,
+  sr.search_result_id,
+  sr.search_query_id,
+  sr.title,
+  'verified_official result must include source_trust_tier and authority_scope.' AS message
+FROM search_results sr
+WHERE sr.evidence_status = 'verified_official'
+  AND (
+    sr.source_trust_tier IS NULL
+    OR sr.authority_scope IS NULL
+    OR sr.source_id IS NULL
+  );
+
+-- 11. Search query without resolution record.
+SELECT
+  'search_query_without_resolution' AS check_name,
+  sq.search_query_id,
+  sq.user_query,
+  sq.interpreted_intent,
+  'Every user query must record resolution_status before search results are trusted.' AS message
+FROM search_queries sq
+WHERE sq.resolution_status IS NULL
+   OR sq.resolution_status = '';
+
+-- 12. Accepted non-exact candidate without explanation.
+SELECT
+  'non_exact_resolution_without_explanation' AS check_name,
+  erc.resolution_candidate_id,
+  erc.search_query_id,
+  erc.candidate_label,
+  'Alias or non-exact resolution must explain why this candidate was accepted.' AS message
+FROM entity_resolution_candidates erc
+WHERE (
+    erc.resolution_status = 'resolved_alias'
+    OR erc.match_type LIKE 'alias_%'
+    OR erc.match_type IN (
+      'query_contains_candidate',
+      'candidate_contains_query',
+      'token_overlap',
+      'fuzzy',
+      'alias'
+    )
+  )
+  AND erc.resolution_status IN ('resolved_alias', 'resolved_exact')
+  AND (erc.why_candidate IS NULL OR erc.why_candidate = '');
