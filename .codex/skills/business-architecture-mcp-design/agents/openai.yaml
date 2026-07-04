@@ -1,0 +1,7 @@
+interface:
+  display_name: "Business Architecture MCP Design"
+  short_description: "Map product pain to MCP/CLI architecture."
+  default_prompt: "Use $business-architecture-mcp-design to analyze a README or product idea and turn the business problem into MCP/CLI architecture specs."
+
+policy:
+  allow_implicit_invocation: true

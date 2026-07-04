@@ -61,6 +61,8 @@ VC/AC 공시·가이드 → 로컬 vc-fund-disclosure-mcp (Draft)
 문서          → Notion, Google Docs, Microsoft 365
 ```
 
+로컬 공시 MCP 구현 스펙은 `startup-fundraise/mcp/vc-fund-disclosure/`에 있습니다. source registry, SQLite schema, seed, 검색/랭킹 contract, tool contract, display query, quality check pack을 함께 관리합니다.
+
 ---
 
 ## 라이선스

@@ -397,11 +397,18 @@ services:
         - vc-funds guide-source check
         - vc-funds watch
         - vc-funds diff
+        - vc-funds search
         - vc-funds query investor
+        - vc-funds query funds
         - vc-funds events
+        - vc-funds gaps
+        - vc-funds report investor
+        - vc-funds export evidence-pack
         - vc-funds ask
         - vc-funds uninstall
       mcp:
+        - search_vc_database
+        - explain_search_result
         - configure_collection_source
         - list_collection_sources
         - run_personal_collection
@@ -454,6 +461,8 @@ services:
       - fund_event
       - fund_evidence_pack
       - collection_run
+      - search_query
+      - search_result
     document_parsing:
       supported_inputs:
         - html

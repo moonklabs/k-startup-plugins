@@ -18,8 +18,19 @@ VC/AC 투자사 공시정보와 초기 창업자용 투자유치 PDF/HWPX 가이
 | 구성 | 역할 |
 |---|---|
 | `vc-fund-disclosure-core` | KVIC/KVCA/TIPS HTML, CSV, XLS, PDF, HWPX import와 정규화, 창업자 guide chunking |
-| `vc-funds` CLI | setup, DB 초기화, watch folder, guide library, import, diff, doctor |
-| `vc-fund-disclosure-mcp` | Codex/Claude가 호출하는 stdio MCP server. 펀드 근거와 창업자 가이드 검색 제공 |
+| `vc-funds` CLI | setup, DB 초기화, 검색, evidence 리포트, import, watch folder, diff, doctor |
+| `vc-fund-disclosure-mcp` | Codex/Claude가 호출하는 stdio MCP server. 자연어 검색, 펀드 근거, 창업자 가이드, data gap 제공 |
+
+구현은 `schoolinfo-mcp`처럼 core와 transport를 분리합니다.
+
+```text
+core/search/import/report/db
+  ├─ vc-funds CLI
+  ├─ local stdio MCP: 파일 import 도구 ON
+  └─ future HTTP MCP: 파일 경로 도구 OFF, 조회 중심
+```
+
+상세 모듈 설계는 `startup-fundraise/mcp/vc-fund-disclosure/implementation-blueprint.md`를 따릅니다.
 
 ## 사용법
 
@@ -121,14 +132,26 @@ vc-funds doctor
 ## 초기 사용 예
 
 ```bash
+vc-funds search "AI SaaS Seed Pre-A TIPS 가능 투자사"
+vc-funds query investor "프라이머" --evidence --why
+vc-funds query funds --stage seed --round pre-a --sector "AI,SaaS" --region "Seoul"
+vc-funds events --since 90d --type new_fund
+vc-funds gaps "뭉클랩 Seed/Pre-A 투자사 찾기"
 vc-funds import kvic --file "./snapshots/fundfinder-AA02.html" --group AA --code AA02
 vc-funds import kvca --file "./snapshots/kvca-primer.html"
 vc-funds import document --file "./disclosures/new-fund.hwpx" --source kvca
 vc-funds import guide --file "./guides/seed-fundraising-guide.pdf" --role founder_education
-vc-funds query investor "프라이머"
 vc-funds ask "처음 투자유치할 때 무엇부터 준비해야 해?"
-vc-funds events --since 2026-01-01
 ```
+
+검색 결과는 단순 후보 목록이 아니라 다음 필드를 포함해야 합니다.
+
+| 필드 | 의미 |
+|---|---|
+| `evidence_status` | `verified_official`, `official_needs_review`, `guide_only`, `user_note_only`, `no_evidence` |
+| `why_ranked` | 왜 상위 결과인지: source, stage/sector fit, recency, quality |
+| `source_url/hash` | 원본 snapshot/document 근거 |
+| `data_gaps` | 지금 답변에 부족한 source와 필요한 import 액션 |
 
 ## Seed Guide 후보 등록
 

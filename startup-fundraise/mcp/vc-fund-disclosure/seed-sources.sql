@@ -1,0 +1,113 @@
+-- Seed canonical source rows for a fresh vc-fund-disclosure SQLite database.
+-- Keep this file aligned with source-registry.yaml.
+
+INSERT INTO sources (
+  source_id,
+  source_name,
+  owner,
+  source_type,
+  base_url,
+  base_path,
+  policy_status,
+  default_collection_modes,
+  disabled_collection_modes,
+  privacy_level,
+  last_policy_checked_at,
+  notes
+) VALUES
+(
+  'kvic_fundfinder',
+  'KVIC FundFinder',
+  '한국벤처투자',
+  'official_web_table',
+  'http://fundfinder.k-vic.co.kr/rsh/rsh/RshMacFnd',
+  NULL,
+  'permission_required',
+  '["manual_snapshot_import","browser_capture_import"]',
+  '["site_background_crawler","scheduled_fetch_without_permission"]',
+  'public',
+  '2026-07-04',
+  'FundFinder categories and fund rows. Background crawling stays disabled until official permission is recorded.'
+),
+(
+  'kvca_diva_associations',
+  'KVCA DIVA 조합현황',
+  '한국벤처캐피탈협회',
+  'official_web_table',
+  'http://diva.kvca.or.kr/div/cmn/DivDisclsMainInq',
+  NULL,
+  'permission_required',
+  '["manual_snapshot_import","browser_capture_import"]',
+  '["site_background_crawler","scheduled_fetch_without_permission"]',
+  'public',
+  '2026-07-04',
+  'Venture association disclosure rows and details. Scope is primarily venture investment associations.'
+),
+(
+  'tips_public_site',
+  'TIPS public site',
+  'TIPS',
+  'official_public_site',
+  'https://www.jointips.or.kr/',
+  NULL,
+  'requires_check',
+  '["manual_snapshot_import","browser_capture_import"]',
+  '["site_background_crawler"]',
+  'public',
+  '2026-07-04',
+  'Use as TIPS operator and program-signal evidence after policy checks. Do not imply founders can freely choose an operator.'
+),
+(
+  'founder_guide_library',
+  'Founder guide local library',
+  'user',
+  'local_file_library',
+  NULL,
+  '~/Documents/MoonkLabs/VC Disclosures/Guides',
+  'allowed_local_import',
+  '["guide_library_import","watch_folder_import"]',
+  '["hwp_binary_without_adapter"]',
+  'public',
+  '2026-07-04',
+  'Local PDF/HWPX/markdown guide corpus for founder education, checklist generation, and concept explanations.'
+),
+(
+  'user_notes',
+  'User fundraising notes',
+  'user',
+  'local_private_notes',
+  NULL,
+  '~/Documents/MoonkLabs/VC Disclosures/Notes',
+  'allowed_local_import',
+  '["manual_snapshot_import","watch_folder_import"]',
+  '[]',
+  'restricted',
+  '2026-07-04',
+  'Private meeting notes and follow-up context. Never mix into official disclosure evidence.'
+),
+(
+  'commercial_startup_databases',
+  'THE VC / 혁신의숲 / 넥스트유니콘',
+  'third_party',
+  'commercial_or_login_service',
+  NULL,
+  NULL,
+  'blocked_by_default',
+  '[]',
+  '["login_scraping","hidden_api_scraping","automated_profile_crawling"]',
+  'restricted',
+  '2026-07-04',
+  'Accept manual facts or user-provided exports only unless an official API or paid data agreement exists.'
+)
+ON CONFLICT(source_id) DO UPDATE SET
+  source_name = excluded.source_name,
+  owner = excluded.owner,
+  source_type = excluded.source_type,
+  base_url = excluded.base_url,
+  base_path = excluded.base_path,
+  policy_status = excluded.policy_status,
+  default_collection_modes = excluded.default_collection_modes,
+  disabled_collection_modes = excluded.disabled_collection_modes,
+  privacy_level = excluded.privacy_level,
+  last_policy_checked_at = excluded.last_policy_checked_at,
+  notes = excluded.notes;

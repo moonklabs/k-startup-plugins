@@ -1,0 +1,193 @@
+version: 1
+status: draft
+purpose: "스타트업 사용자가 묻는 자연어 질문을 정확한 VC/AC 공시 evidence 검색 결과로 변환하기 위한 검색/랭킹 계약"
+
+search_principles:
+  - "검색 결과는 공식 공시 evidence, 창업자 guide, 사용자 note를 섞지 않고 각각의 신뢰 레이어를 표시한다."
+  - "상위 결과는 이름 유사도만으로 고르지 않고 source coverage, 최신성, parser 품질, FundFinder/KVCA/TIPS 근거 유무를 함께 본다."
+  - "정확한 근거가 부족하면 빈 결과를 숨기지 말고 data gap과 필요한 import 액션을 먼저 보여준다."
+  - "사용자가 회사 단계/섹터/지역을 말하면 FundFinder parameter catalog로 먼저 조건 코드를 만들고, 자연어를 원격 사이트 파라미터로 바로 보내지 않는다."
+  - "검색 결과마다 why_ranked, evidence_status, caveats, source hash를 남긴다."
+
+query_intents:
+  - intent: investor_profile_lookup
+    examples:
+      - "프라이머가 지금 Seed 투자 가능한 펀드가 있어?"
+      - "스파크랩 펀드 보유 근거 보여줘"
+    primary_tool: query_investor_profile
+    fallback_tools:
+      - search_disclosure_evidence
+      - list_data_gaps
+    required_evidence:
+      - investor_alias_match
+      - kvca_or_kvic_fund_link
+    result_sections:
+      - official_fund_evidence
+      - tips_signal
+      - recent_events
+      - data_gaps
+      - caveats
+
+  - intent: startup_fund_search
+    examples:
+      - "AI SaaS Seed/Pre-A에 맞는 펀드 찾아줘"
+      - "뭉클랩 같은 초기 B2B SaaS가 만날 VC 추천해줘"
+    primary_tool: search_funds_for_startup
+    fallback_tools:
+      - plan_collection
+      - list_data_gaps
+    required_evidence:
+      - fundfinder_category_or_focus_match
+      - investor_operator_link
+    result_sections:
+      - ranked_funds
+      - matched_investors
+      - missing_sources
+      - next_imports
+      - caveats
+
+  - intent: new_fund_event_monitoring
+    examples:
+      - "최근 90일 신규 펀드 결성 공시 보여줘"
+      - "새로 생긴 AI/초기 펀드만 알려줘"
+    primary_tool: list_new_fund_events
+    fallback_tools:
+      - search_disclosure_evidence
+      - get_collection_health
+    required_evidence:
+      - event_date_or_imported_at
+      - source_document_or_snapshot
+    result_sections:
+      - event_feed
+      - evidence_documents
+      - review_required
+      - caveats
+
+  - intent: founder_question_answering
+    examples:
+      - "시드 투자 미팅 전에 뭘 준비해야 해?"
+      - "TIPS 추천은 창업자가 투자사를 골라서 진행하는 거야?"
+    primary_tool: answer_founder_question
+    fallback_tools:
+      - search_disclosure_evidence
+      - list_data_gaps
+    required_evidence:
+      - guide_chunk_or_guidance_card
+    result_sections:
+      - short_answer
+      - checklist
+      - next_actions
+      - sources
+      - caveats
+
+  - intent: raw_evidence_search
+    examples:
+      - "모태출자 여부가 언급된 문서 찾아줘"
+      - "AA02 FundFinder snapshot에서 결성총액 큰 순서로 보여줘"
+    primary_tool: search_disclosure_evidence
+    fallback_tools:
+      - list_data_gaps
+    required_evidence:
+      - source_snapshot_or_document_chunk
+    result_sections:
+      - matches
+      - source_hashes
+      - parser_warnings
+      - caveats
+
+ranking_model:
+  max_score: 100
+  components:
+    exact_entity_match:
+      points: 20
+      description: "투자사명/펀드명/별칭 normalized exact match"
+    official_source_strength:
+      points: 25
+      description: "KVIC/KVCA/TIPS/공식 문서 source row와 hash가 연결된 정도"
+    startup_fit:
+      points: 20
+      description: "회사 단계, 섹터, 지역, FundFinder 코드, 투자목적 일치"
+    recency_and_dry_powder_signal:
+      points: 15
+      description: "결성일, 등록일, 만기일, 신규 이벤트, 투자금액/집행액 신호"
+    parser_quality:
+      points: 10
+      description: "parser warning 없음, normalized row 수 양호, review status 확인"
+    data_completeness:
+      points: 10
+      description: "운용사 링크, fund focus, source URL/hash, import 시각, caveat가 충분함"
+  penalties:
+    parser_warning: -10
+    no_official_evidence: -25
+    only_user_note: -30
+    stale_snapshot_over_12_months: -10
+    missing_source_hash: -20
+    unresolved_quality_flag: -15
+
+evidence_statuses:
+  verified_official:
+    meaning: "공식 source snapshot/document와 정규화 row가 연결되고 critical quality flag가 없음"
+    user_label: "공식 근거 확인"
+  official_needs_review:
+    meaning: "공식 source는 있으나 parser warning, zero-row 의심, manual review 필요"
+    user_label: "공식 근거 있음, 검토 필요"
+  guide_only:
+    meaning: "창업자 guide 근거만 있고 특정 투자사/펀드 공식 근거는 없음"
+    user_label: "일반 가이드"
+  user_note_only:
+    meaning: "사용자 private note만 있고 공식 근거는 없음"
+    user_label: "사용자 메모"
+  no_evidence:
+    meaning: "현재 로컬 DB에 근거 없음. 필요한 import 액션을 표시해야 함"
+    user_label: "근거 없음"
+
+result_shape:
+  required_fields:
+    - rank
+    - title
+    - entity_type
+    - evidence_status
+    - score
+    - why_ranked
+    - source_label
+    - source_url
+    - content_sha256_or_file_sha256
+    - captured_or_imported_at
+    - parser_warnings
+    - caveats
+  optional_fields:
+    - investor_name
+    - fund_name
+    - amount_krw
+    - formed_or_registered_date
+    - expiry_date
+    - fundfinder_code
+    - tips_signal
+    - next_action
+
+empty_state_rules:
+  no_matching_entity:
+    message: "현재 DB에서 해당 투자사/펀드명을 찾지 못했습니다."
+    actions:
+      - "다른 표기명/영문명으로 다시 검색"
+      - "KVCA snapshot import"
+      - "KVIC FundFinder snapshot import"
+      - "TIPS public page snapshot import"
+  missing_official_evidence:
+    message: "후보는 있으나 공식 펀드 근거가 부족합니다."
+    actions:
+      - "해당 VC명으로 KVCA 조합현황 snapshot import"
+      - "관련 FundFinder category snapshot import"
+      - "신규 공시 PDF/HWPX import"
+  stale_data:
+    message: "근거 snapshot이 오래되었습니다."
+    actions:
+      - "사용자 제스처 기반 browser capture 갱신"
+      - "수동 CSV/XLS/HTML snapshot 재import"
+
+schoolinfo_mcp_lessons:
+  - "사용자는 코드와 파일 위치를 몰라도 자연어로 질문해야 한다."
+  - "MCP와 CLI는 같은 core 검색/파싱 로직을 공유해야 한다."
+  - "정형 데이터와 첨부 문서 파싱 결과를 한 리포트로 묶되 원본 파일/해시/출처를 남겨야 한다."
+  - "로컬 MCP는 파일 경로 기반 parse/import를 제공할 수 있지만 원격 MCP는 서버 파일시스템 접근 도구를 빼야 한다."
+  - "CLI에는 실제 동작 예시와 표 형태 결과를 제공해야 한다."
