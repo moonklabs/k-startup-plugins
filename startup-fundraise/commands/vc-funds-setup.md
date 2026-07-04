@@ -7,9 +7,11 @@ argument-hint: "<client: claude|codex, 또는 local-dev>"
 
 > 익숙하지 않은 플레이스홀더가 보이거나 연결된 도구를 확인하려면 [CONNECTORS.md](../CONNECTORS.md)를 참조하세요.
 
-VC/AC 투자사 공시정보와 초기 창업자용 투자유치 PDF/HWPX 가이드를 개인 로컬 DB에 축적하고, `~~fund disclosure` MCP로 조회하기 위한 설치/점검 루틴입니다.
+VC/AC 투자사 공시정보와 초기 창업자용 투자유치 PDF/HWP/HWPX/HWPML/Office 가이드를 개인 로컬 DB에 축적하고, `~~fund disclosure` MCP로 조회하기 위한 설치/점검 루틴입니다. 문서 파싱은 `kordoc` CLI/MCP adapter를 우선 사용합니다.
 
 이 커맨드는 `vc-funds` 로컬 도구가 준비되어 있을 때 설치를 안내하고, repo-local 초안에서는 `startup-fundraise/mcp/vc-fund-disclosure/runtime/`의 Node 실행 파일을 기준으로 점검합니다.
+
+스타트업이 투자유치 운영 루틴 안에서 이 CLI/MCP를 언제 쓰는지는 [Founder Fundraising Operating Use Cases](../skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 참고합니다.
 
 ## 권장 구조
 
@@ -17,7 +19,7 @@ VC/AC 투자사 공시정보와 초기 창업자용 투자유치 PDF/HWPX 가이
 
 | 구성 | 역할 |
 |---|---|
-| `vc-fund-disclosure-core` | P1은 KVIC/KVCA HTML, CSV snapshot import와 정규화에 집중한다. XLS/XLSX는 `unsupported_format`으로 안내하고 PDF/HWPX guide/document import는 후속 단계로 둔다. |
+| `vc-fund-disclosure-core` | P1은 KVIC/KVCA HTML, CSV snapshot import와 정규화에 집중한다. PDF/HWP/HWPX/HWPML/DOCX/XLS/XLSX guide/document import는 후속 `kordoc` adapter 단계로 둔다. |
 | `vc-funds` CLI | setup, DB 초기화, 검색, evidence 리포트, import, watch folder, diff, doctor |
 | `vc-fund-disclosure-mcp` | Codex/Claude가 호출하는 stdio MCP server. 자연어 검색, 펀드 근거, 창업자 가이드, data gap 제공 |
 
@@ -47,7 +49,7 @@ core/search/import/report/db
 
 ```bash
 brew install moonklabs/tap/vc-funds
-vc-funds setup --client claude --db auto
+vc-funds setup --db auto
 vc-funds doctor
 ```
 
@@ -67,7 +69,7 @@ Homebrew를 쓰지 않는 경우:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/moonklabs/vc-fund-disclosure/main/install.sh | sh
-vc-funds setup --client claude --db auto
+vc-funds setup --db auto
 vc-funds doctor
 ```
 
@@ -114,9 +116,9 @@ vc-funds doctor
 기본 ON:
 
 - `manual_snapshot_import`: 사용자가 저장한 HTML/CSV import. XLS/XLSX는 감지 후 `unsupported_format`으로 반환하고 CSV/HTML 재저장을 안내한다.
-- `watch_folder_import`: Inbox에 저장된 PDF/HWPX/HTML 자동 import
+- `watch_folder_import`: Inbox에 저장된 PDF/HWP/HWPX/HWPML/DOCX/XLSX/HTML 자동 import. 문서 파싱은 `kordoc` adapter가 담당한다.
 - `browser_capture_import`: 사용자가 보고 있는 페이지 snapshot import
-- `guide_library_import`: Guides에 저장한 투자유치/TIPS/IR/데이터룸/투자계약 안내 PDF/HWPX import
+- `guide_library_import`: Guides에 저장한 투자유치/TIPS/IR/데이터룸/투자계약 안내 PDF/HWP/HWPX/HWPML/DOCX/XLSX import. 문서 파싱은 `kordoc` adapter가 담당한다.
 
 기본 OFF:
 
@@ -132,8 +134,8 @@ vc-funds doctor
 |---|---|---|
 | CLI 실행 | OK/WARN/BLOCKED | `vc-funds --version` |
 | DB 접근 | OK/WARN/BLOCKED | SQLite 생성/쓰기 가능 여부 |
-| Inbox | OK/WARN/BLOCKED | watch folder 존재 여부 |
-| Guide Library | OK/WARN/BLOCKED | Guides 폴더 존재 및 guide document import 가능 여부 |
+| Schema health | OK/WARN/BLOCKED | 전체 table/column/view query 검증 여부 |
+| Import roots | OK/WARN/BLOCKED | MCP import root 제한과 CLI explicit path 예외 분리 여부 |
 | MCP 설정 | OK/WARN/BLOCKED | Claude/Codex 설정 등록 여부 |
 | MCP 실행 | OK/WARN/BLOCKED | stdio server handshake 가능 여부 |
 | 정책 | OK/WARN/BLOCKED | 무허가 crawler 비활성화 여부 |
@@ -147,7 +149,7 @@ vc-funds doctor
 vc-funds resolve "프라이머가 Seed 투자 가능한 펀드가 있어?"
 vc-funds sources
 vc-funds search "AI SaaS Seed Pre-A TIPS 가능 투자사"
-vc-funds import kvic --file "./snapshots/fundfinder-AA02.html" --group AA --code AA02
+vc-funds import kvic --file "./snapshots/fundfinder-AA02.html" --source-url "http://fundfinder.k-vic.co.kr/rsh/rsh/RshMacFnd" --captured-at "2026-07-04T00:00:00.000Z"
 vc-funds import kvca --file "./snapshots/kvca-primer.html"
 vc-funds health
 vc-funds mcp serve
@@ -170,19 +172,16 @@ vc-funds mcp serve
 
 사용자가 제공한 KVIC PDF 링크처럼 원격 링크가 사라졌거나 접근이 막힌 자료는 URL 후보와 실제 파일 import를 분리합니다.
 
-```bash
-vc-funds guide-source add \
-  --publisher KVIC \
-  --url "https://www.kvic.or.kr/upload/investment/20210114/20210114155945_63291.pdf" \
-  --role founder_education \
-  --access-status remote_gone_410
+현재 P0 런타임에는 `guide-source add`와 `import guide` 명령이 없습니다. 해당 흐름은 planned guide/document adapter로 유지하고, 현재는 로컬 파일을 보유했는지와 원본 `source_url`만 설계 메모에 기록합니다.
 
-vc-funds import guide \
-  --file "./guides/kvic-founder-guide.pdf" \
-  --source-url "https://www.kvic.or.kr/upload/investment/20210114/20210114155945_63291.pdf" \
-  --role founder_education \
-  --publisher KVIC
+planned adapter는 `kordoc` CLI/MCP를 기본 문서 파서로 사용합니다.
+
+```bash
+npx -y kordoc setup
+npx -y kordoc "./guides/kvic-founder-guide.pdf"
 ```
+
+MCP 연결 환경에서는 `kordoc`의 `parse_document`와 `parse_table`류 도구로 Markdown/표를 추출하고, `vc-funds` DB에는 원본 파일 해시, source URL, parser status, warning, chunk만 저장합니다. `vc-funds` 자체에 PDF/HWP/HWPX 직접 파서를 새로 만들지 않습니다.
 
 이 링크는 2026-07-04 확인 기준 `HTTP 410 Gone`으로 응답했으므로, 기본 설치 중 자동 다운로드 대상으로 넣지 않습니다. 사용자가 로컬 PDF를 보유한 경우에만 import합니다.
 
@@ -191,6 +190,6 @@ vc-funds import guide \
 - 설치 명령은 하나로 제시합니다.
 - 실제 MCP 패키지가 없으면 `.mcp.json`에 등록하지 말고 `NOT_READY`로 표시합니다.
 - 로컬 DB와 보관함은 개인 장비 안에 둡니다.
-- PDF/HWPX 가이드는 요약과 체크리스트로 활용하고, 원문 전체를 길게 재출력하지 않습니다.
+- `kordoc`으로 변환한 PDF/HWP/HWPX/HWPML/Office 가이드는 요약과 체크리스트로 활용하고, 원문 전체를 길게 재출력하지 않습니다.
 - 공시 evidence, 공식 guide, 사용자 note를 답변에서 분리합니다.
 - 외부 사이트 자동 순회는 기본값으로 제안하지 않습니다.

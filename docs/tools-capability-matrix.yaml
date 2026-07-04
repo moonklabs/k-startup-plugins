@@ -8,7 +8,7 @@ decision_legend:
   use_official_mcp: "공식 MCP 또는 벤더 제공 AI/tooling 표면을 우선 사용한다."
   provider_wrapper: "직접 기관 API가 아니라 인증된 provider/ASP/API 사업자를 감싼다."
   recommend_only: "직접 래퍼보다 공식 UI, 유료 서비스, 파트너 경로를 추천한다."
-  snapshot_import: "공식 UI/문서에서 사용자가 확보한 HTML/CSV snapshot과 PDF/HWP/HWPX 문서를 import/정규화한다. 자동 수집은 공식 허가 뒤에만 켠다."
+  snapshot_import: "공식 UI/문서에서 사용자가 확보한 HTML/CSV snapshot과 kordoc으로 변환 가능한 PDF/HWP/HWPX/HWPML/Office 문서를 import/정규화한다. 자동 수집은 공식 허가 뒤에만 켠다."
   defer: "접근권, 문서, 라이선스, 고객 수요가 확인될 때까지 보류한다."
 
 services:
@@ -345,20 +345,24 @@ services:
 
   - id: hwp-reader
     category: documents
-    priority: P3
-    decision: defer
+    priority: P1
+    decision: provider_wrapper
     official_docs:
+      - https://github.com/chrisryugj/kordoc
       - https://www.hancom.com/support/downloadCenter/download
       - https://www.hancom.com/product/sdk/hwpSdk
     auth:
       type:
-        - license
-      notes: "HWP SDK는 구매/라이선스형으로 본다."
+        - local_cli
+        - local_mcp
+        - license_fallback
+      notes: "기본은 kordoc CLI/MCP. HWP SDK는 구매/라이선스형 fallback으로만 본다."
     initial_surfaces:
       cli:
-        - hwpx extract
+        - kordoc parse
       mcp:
-        - hwpx_read
+        - parse_document
+        - parse_table
       skill:
         - hwp-format-selection
     write_policy: read_only
@@ -366,7 +370,7 @@ services:
       pii: medium
       money_movement: false
       production_write: false
-    notes: "HWPX 우선. HWP binary 추측 구현은 금지한다."
+    notes: "PDF/HWP/HWPX/HWPML/DOCX/XLS/XLSX 문서 파싱은 kordoc CLI/MCP를 우선 사용한다. HWP binary 추측 구현은 금지한다."
 
   - id: korea-vc-fund-disclosure
     category: fundraising_data
@@ -377,6 +381,7 @@ services:
       - http://diva.kvca.or.kr/div/cmn/DivDisclsMainInq
     reference_implementations:
       - https://github.com/chrisryugj/schoolinfo-mcp
+      - https://github.com/chrisryugj/kordoc
     auth:
       type:
         - manual_snapshot
@@ -471,21 +476,31 @@ services:
       - search_query
       - search_result
     document_parsing:
+      parser_adapter: kordoc_cli_or_mcp
+      parser_install:
+        - npx -y kordoc setup
+        - npx -y kordoc "<file>"
       supported_inputs:
         - html
         - csv
         - pdf
+        - hwp
         - hwpx
-        - hwp_with_local_adapter
+        - hwpml
+        - docx
+        - xls
+        - xlsx
       unsupported_snapshot_inputs:
         - xls
         - xlsx
       rules:
         - "원본 파일 sha256, 출처 URL, import 시각을 저장한다."
-        - "PDF/HWP/HWPX 첨부 공시는 원본, 추출 텍스트, 구조화 이벤트를 분리 저장한다."
-        - "창업자 가이드 PDF/HWPX는 공시 evidence와 분리해 guide document, chunk, concept, guidance card로 저장한다."
+        - "PDF/HWP/HWPX/HWPML/DOCX/XLS/XLSX 첨부 공시는 kordoc CLI/MCP로 Markdown/표를 추출하고 원본, 파싱 산출물, 구조화 이벤트를 분리 저장한다."
+        - "창업자 가이드 PDF/HWP/HWPX/HWPML/Office 문서는 공시 evidence와 분리해 guide document, chunk, concept, guidance card로 저장한다."
         - "담당자 이메일, 전화번호, 휴대전화, 공시담당자 정보는 기본 응답에서 마스킹한다."
-        - "HWP binary는 직접 포맷 추측 구현을 하지 않고 로컬 변환기, kordoc류 파서, 한컴 SDK adapter 뒤로 격리한다."
+        - "vc-funds 내부에 PDF text parser, HWPX ZIP/XML parser, HWP binary 추측 파서를 직접 구현하지 않는다."
+        - "kordoc 실패 시 parser_status=failed 또는 needs_review와 warning을 저장하고 원본 확인을 요구한다."
+        - "한컴 SDK는 kordoc으로 처리할 수 없는 요구가 확인된 경우의 명시적 fallback adapter로만 둔다."
         - "watch folder와 browser capture는 외부 사이트 자동 접속 없이 사용자가 확보한 자료만 import한다."
         - "scheduled fetcher는 공식 허가, 제휴, 유료 데이터 계약이 확인된 source_config에서만 활성화한다."
         - "가이드 문서는 요약/체크리스트 중심으로 사용하고 원문 전체 재출력은 피한다."

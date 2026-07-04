@@ -93,30 +93,40 @@ Seed/Pre-A 기본 조회는 `AA02`(초기기업), `DA01`(4차산업혁명), `EA0
 | 모드 | 사용 방식 | 허용 여부 |
 |---|---|---|
 | `manual_snapshot_import` | 사용자가 저장한 HTML/CSV snapshot을 import | 기본 허용 |
-| `watch_folder_import` | 지정 폴더에 저장된 PDF/HWPX/HTML을 자동 감지해 import | 기본 허용 |
+| `watch_folder_import` | 지정 폴더에 저장된 PDF/HWP/HWPX/HWPML/Office/HTML을 자동 감지해 import. 문서 파싱은 `kordoc` adapter 사용 | 기본 허용 |
 | `browser_capture_import` | 사용자가 보고 있는 페이지를 snapshot으로 저장 후 import | 사용자 제스처 기반 허용 |
 | `official_feed_fetch` | 공식 API/허가/유료 계약 기반 fetch | 근거 확인 후 허용 |
 | `site_background_crawler` | 사이트 전체를 주기적으로 순회 | 초기 금지 |
 
-MCP가 제공해야 하는 핵심 조회:
+현재 P0 MCP가 제공하는 핵심 조회:
 
-- `query_investor_profile`: 투자사명 기준 보유 펀드, TIPS 운영사 여부, 최근 공시 이벤트 조회
-- `lookup_vc_fund_holdings`: KVCA/KVIC 근거를 분리해 조합/펀드 보유 현황 조회
-- `search_funds_for_startup`: 회사 단계, 섹터, 지역, FundFinder 조건 코드로 적합 펀드 검색
-- `list_new_fund_events`: 신규 결성, 결성총액 변경, 만기일 변경, 투자분야 변경 이벤트 조회
-- `export_fund_evidence_pack`: 미팅 전 공식 근거, 해시, caveat를 묶은 리포트 생성
+- `resolve_user_input`: 투자사명, 펀드명, 단계, 섹터, 지역 조건을 canonical intent와 후보 entity로 해석
+- `get_source_authority`: 질문 유형별 authoritative/supporting/context-only source 확인
+- `search_vc_database`: 투자사/펀드/공시/가이드 evidence 통합 검색, `evidence_status`, `resolution_status`, `data_gaps`, `recommended_imports` 반환
+- `get_collection_health`: source별 import 상태, parser warning, open quality flag 확인
+- `import_kvic_snapshot`: 사용자가 저장한 KVIC FundFinder HTML/CSV snapshot import
+- `import_kvca_snapshot`: 사용자가 저장한 KVCA DIVA HTML/CSV snapshot import
+
+다음 도구명은 planned surface입니다. 현재 런타임에서는 별도 도구로 호출하지 말고 `search_vc_database`의 canonical `intent_hint`와 `get_source_authority`/`get_collection_health` 조합으로 처리합니다.
+
+- 투자사 deep dive: `search_vc_database` + `intent_hint=investor_fund_holding`
+- 회사 조건별 펀드 탐색: `search_vc_database` + `intent_hint=startup_fund_search`
+- 신규 펀드 이벤트: `search_vc_database` + `intent_hint=new_fund_event`
+- evidence pack export: 현재는 검색 결과의 source URL/hash/caveat를 응답에서 구성
 
 ## 신규 공시/첨부파일 처리 규칙
 
-신규 펀드 결성, 조합 변경, 운용사 공시처럼 표 데이터 밖에 있는 정보는 PDF/HWP/HWPX 첨부파일로 제공될 수 있다. 이 경우 schoolinfo-mcp와 같은 "원본 파일 보관 + 문서 파싱 + 구조화 추출" 패턴을 적용한다.
+신규 펀드 결성, 조합 변경, 운용사 공시처럼 표 데이터 밖에 있는 정보는 PDF/HWP/HWPX/HWPML/Office 첨부파일로 제공될 수 있다. 이 경우 schoolinfo-mcp와 같은 "원본 파일 보관 + 문서 파싱 + 구조화 추출" 패턴을 적용하되, 문서 파싱 구현은 `kordoc` CLI/MCP adapter를 우선 사용한다.
 
 1. 원본 파일을 먼저 보관한다.
    - `source_url`, `published_date`, `file_name`, `file_type`, `sha256`, `imported_at`을 저장한다.
    - 원본과 파싱 결과를 같은 필드에 섞지 않는다.
 2. 문서를 텍스트/마크다운/표로 변환한다.
-   - PDF는 text layer 추출을 먼저 시도한다.
-   - HWPX는 ZIP/XML 구조에서 직접 추출한다.
-   - HWP binary는 추측 구현하지 않고 로컬 변환기, kordoc류 파서, 한컴 SDK 같은 별도 adapter로 격리한다.
+   - `kordoc` CLI: `npx -y kordoc <파일>`을 기본 경로로 둔다.
+   - `kordoc` MCP: 연결되어 있으면 `parse_document`, `parse_table`류 도구를 사용한다.
+   - 지원 대상은 PDF, HWP, HWPX, HWPML, DOCX, XLS, XLSX를 포함한다.
+   - `vc-funds` 안에 PDF text parser, HWPX ZIP/XML parser, HWP binary 추측 파서를 직접 만들지 않는다.
+   - `kordoc` 실패 시 `parser_status=failed` 또는 `needs_review`와 warning을 저장하고 원본 확인을 요구한다.
 3. 투자 판단 이벤트를 추출한다.
    - `신규 결성`, `조합명`, `운용사`, `결성총액`, `등록일`, `만기일`, `투자분야`, `모태출자 여부`를 후보 필드로 본다.
    - 추출 confidence가 낮으면 `review_required`로 표시한다.
@@ -129,7 +139,7 @@ MCP가 제공해야 하는 핵심 조회:
 
 ### MCP tool 설계 메모
 
-- 로컬 MCP: 사용자의 로컬 파일 경로를 받는 `import_disclosure_document`, `parse_disclosure_file` 도구를 제공할 수 있다.
-- 로컬 MCP: `configure_collection_source`, `run_personal_collection`, `get_collection_health`로 개인 수집 상태를 관리한다.
+- 로컬 MCP P0: 사용자의 로컬 파일 경로를 받는 `import_kvic_snapshot`, `import_kvca_snapshot`만 실행 도구로 제공한다.
+- 로컬 MCP planned: `import_disclosure_document`, `parse_disclosure_file`, `configure_collection_source`, `run_personal_collection`은 후속 adapter 단계에서 제공할 수 있다. 이때 `parse_disclosure_file`은 직접 포맷 파서가 아니라 `kordoc` CLI/MCP wrapper로 구현한다.
 - 원격 MCP: 서버 파일시스템 접근 도구를 노출하지 않고, 이미 import된 `document_id` 기반 조회만 제공한다.
-- 공통 조회: `lookup_vc_fund_holdings`, `search_funds_for_startup`, `list_new_fund_events`, `export_fund_evidence_pack`를 제공한다.
+- 공통 조회 P0: `search_vc_database`를 canonical intent와 함께 사용하고, `data_gaps`/`recommended_imports`를 답변에 포함한다.

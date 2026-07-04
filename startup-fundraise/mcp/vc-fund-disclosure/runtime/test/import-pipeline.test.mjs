@@ -95,9 +95,9 @@ test("KVIC and KVCA HTML/CSV imports are searchable and idempotent", () => {
       runs: 2
     });
 
-    const search = runJson(["search", "문클랩 AI SaaS 시드 프라이머", "--db", dbPath, "--json"]);
-    assert.ok(search.results.some((result) => result.title === "문클랩 AI 초기투자조합" && result.evidence_status === "verified_official"));
-    assert.ok(search.results.some((result) => result.title === "문클랩 시드 SaaS 펀드" && result.evidence_status === "verified_official"));
+    const search = runJson(["search", "뭉클랩 AI SaaS 시드 프라이머", "--db", dbPath, "--json"]);
+    assert.ok(search.results.some((result) => result.title === "뭉클랩 AI 초기투자조합" && result.evidence_status === "verified_official"));
+    assert.ok(search.results.some((result) => result.title === "뭉클랩 시드 SaaS 펀드" && result.evidence_status === "verified_official"));
     assert.ok(search.results.every((result) => result.source_name !== undefined));
     assert.ok(search.results.every((result) => !(["source", "label"].join("_") in result)));
     assert.ok(search.results.every((result) => ["authoritative", "supporting", "context_only", "inspect"].includes(result.authority_role)));
@@ -111,7 +111,7 @@ test("KVIC and KVCA HTML/CSV imports are searchable and idempotent", () => {
         (SELECT COUNT(*) FROM search_results sr WHERE sr.search_query_id = sq.search_query_id) AS result_count,
         (SELECT COUNT(*) FROM evidence_claims) AS evidence_claim_count
       FROM search_queries sq
-      WHERE sq.user_query = '문클랩 AI SaaS 시드 프라이머'
+      WHERE sq.user_query = '뭉클랩 AI SaaS 시드 프라이머'
       LIMIT 1;
       `
     )[0];
@@ -294,7 +294,7 @@ test("stale official snapshots downgrade verified evidence and create a fresh-im
       "--json"
     ]);
 
-    const search = runJson(["search", "문클랩 AI SaaS 시드 프라이머", "--db", dbPath, "--json"]);
+    const search = runJson(["search", "뭉클랩 AI SaaS 시드 프라이머", "--db", dbPath, "--json"]);
     const officialRows = search.results.filter((result) => result.source_trust_tier?.startsWith("T1"));
     assert.ok(officialRows.length >= 1);
     assert.ok(officialRows.every((result) => result.evidence_status === "official_needs_review"));
@@ -328,8 +328,8 @@ test("malformed rows create quality flags and downgrade official evidence", () =
     assert.equal(imported.skipped_row_count, 1);
     assert.ok(imported.warning_count >= 1);
 
-    const search = runJson(["search", "문클랩 리스크 검증조합 프라이머", "--db", dbPath, "--json"]);
-    const fundResult = search.results.find((result) => result.title === "문클랩 리스크 검증조합");
+    const search = runJson(["search", "뭉클랩 리스크 검증조합 프라이머", "--db", dbPath, "--json"]);
+    const fundResult = search.results.find((result) => result.title === "뭉클랩 리스크 검증조합");
     assert.ok(fundResult);
     assert.equal(fundResult.evidence_status, "official_needs_review");
     assert.match(fundResult.parser_warnings, /missing fund\/association name/u);
@@ -743,8 +743,8 @@ test("document chunks follow source trust tier for evidence status", () => {
         latest_evidence_at
       ) VALUES (
         'fund_official_doc_only',
-        '문클랩 공식문서 검증 펀드',
-        '문클랩공식문서검증펀드',
+        '뭉클랩 공식문서 검증 펀드',
+        '뭉클랩공식문서검증펀드',
         '벤처투자조합',
         '2026-07-04',
         10000000000,
@@ -769,7 +769,7 @@ test("document chunks follow source trust tier for evidence status", () => {
       ) VALUES (
         'doc_official_primer_event',
         'official_disclosure_documents',
-        '문클랩 공식문서 검증 펀드 결성 공시',
+        '뭉클랩 공식문서 검증 펀드 결성 공시',
         'fund_event',
         'official_sources',
         'https://example.invalid/disclosures/moonklabs-official-doc-fund.pdf',
@@ -794,8 +794,8 @@ test("document chunks follow source trust tier for evidence status", () => {
         'chunk_official_primer_event',
         'doc_official_primer_event',
         1,
-        '문클랩 공식문서 검증 펀드 결성',
-        '문클랩 공식문서 검증 펀드 결성 공시 문서이며 Seed Pre-A AI SaaS 투자 목적을 포함한다.',
+        '뭉클랩 공식문서 검증 펀드 결성',
+        '뭉클랩 공식문서 검증 펀드 결성 공시 문서이며 Seed Pre-A AI SaaS 투자 목적을 포함한다.',
         'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
         'seed pre_a',
         'official_disclosure,startup_fund_search,new_fund_event'
@@ -803,7 +803,7 @@ test("document chunks follow source trust tier for evidence status", () => {
       `
     );
 
-    const officialSearch = runJson(["search", "문클랩 공식문서 검증 펀드", "--intent", "startup_fund_search", "--db", dbPath, "--json"]);
+    const officialSearch = runJson(["search", "뭉클랩 공식문서 검증 펀드", "--intent", "startup_fund_search", "--db", dbPath, "--json"]);
     assert.equal(officialSearch.resolution_status, "resolved_exact");
     const officialChunk = officialSearch.results.find((result) => result.entity_id === "chunk_official_primer_event");
     assert.ok(officialChunk);

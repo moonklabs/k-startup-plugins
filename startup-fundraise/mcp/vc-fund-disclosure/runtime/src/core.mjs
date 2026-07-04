@@ -1397,7 +1397,7 @@ function recommendedImportsFor(results, requiredSources) {
   if (results.some((result) => result.entity_type === "document_chunk")) {
     imports.push({
       source_id: "official_disclosure_documents",
-      action: "Import source PDF/HWPX disclosures when making fund evidence claims."
+      action: "Import source PDF/HWP/HWPX disclosures through the kordoc document adapter when making fund evidence claims."
     });
   }
   return uniqueBy(imports, (item) => item.source_id);
@@ -1407,8 +1407,8 @@ function recommendedAction(sourceId) {
   if (sourceId === "kvic_fundfinder") return "Capture or import a KVIC FundFinder snapshot for the target fund category.";
   if (sourceId === "kvca_diva_associations") return "Capture or import a KVCA DIVA association snapshot for the VC/AC name.";
   if (sourceId === "tips_public_site") return "Capture or import a TIPS operator/program snapshot after policy check.";
-  if (sourceId === "official_disclosure_documents") return "Import official disclosure PDF/HWPX/HTML files into the local archive.";
-  if (sourceId === "founder_guide_library") return "Import founder guide PDFs/HWPX/markdown into the local guide library.";
+  if (sourceId === "official_disclosure_documents") return "Import official disclosure PDF/HWP/HWPX/HWPML/Office/HTML files into the local archive through the kordoc document adapter.";
+  if (sourceId === "founder_guide_library") return "Import founder guide PDF/HWP/HWPX/HWPML/Office/markdown files into the local guide library through the kordoc document adapter.";
   return "Import a current source snapshot.";
 }
 

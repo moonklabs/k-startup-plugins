@@ -9,6 +9,8 @@ argument-hint: "<섹터, 단계, 또는 지역>"
 
 신규 VC, AC, 엔젤, CVC 투자자를 체계적으로 발굴하고, thesis 적합도를 평가하며, 접근 경로를 매핑합니다.
 
+신규 스타트업 또는 투자유치 준비 팀이 이 커맨드를 실제 운영 루틴에 넣는 방법은 [Founder Fundraising Operating Use Cases](../skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 따릅니다.
+
 ## 사용법
 
 ```
@@ -231,7 +233,7 @@ argument-hint: "<섹터, 단계, 또는 지역>"
 
 한국 VC/AC 후보는 웹 검색 후 아래 두 출처로 펀드 보유 현황을 보강합니다.
 
-`~~fund disclosure` MCP가 연결되어 있으면 먼저 로컬 공시 DB에서 `query_investor_profile`, `lookup_vc_fund_holdings`, `list_new_fund_events`류 조회를 수행합니다. 이 로컬 DB는 사용자가 직접 확보한 snapshot, watch folder import, browser capture import, 공식 허가된 feed만 근거로 사용하고, 허가 없는 주기 crawler 결과를 기본 근거로 쓰지 않습니다.
+`~~fund disclosure` MCP가 연결되어 있으면 먼저 로컬 공시 DB에서 `search_vc_database`를 canonical `intent_hint`와 함께 호출하고, 필요하면 `get_source_authority`, `get_collection_health`로 근거 범위와 import 상태를 확인합니다. 이 로컬 DB는 사용자가 직접 확보한 snapshot, watch folder import, browser capture import, 공식 허가된 feed만 근거로 사용하고, 허가 없는 주기 crawler 결과를 기본 근거로 쓰지 않습니다.
 
 | 출처 | 링크 | 확인 내용 | 한계 |
 |---|---|---|---|
@@ -240,7 +242,7 @@ argument-hint: "<섹터, 단계, 또는 지역>"
 
 **FundFinder 조건 코드:**
 - FundFinder 조회 조건은 [KVIC FundFinder 파라미터 카탈로그](../skills/deal-sourcing/references/kvic-fundfinder-parameter-catalog.md)를 따른다.
-- Seed-Pre-A 샘플 실행은 [MoonkLabs Seed/Pre-A Fundraising Playbook](../skills/deal-sourcing/references/moonklabs-seed-prea-fundraising-playbook.md)을 회귀 예시로 삼는다.
+- Seed-Pre-A 샘플 실행은 [MoonkLabs Seed/Pre-A Fundraising Playbook](../skills/deal-sourcing/references/moonklabs-seed-prea-fundraising-playbook.md)과 [Founder Fundraising Operating Use Cases](../skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)을 회귀 예시로 삼는다.
 - `ASCT_CLSS_GRP_CD_FND`: 대분류 코드. 예: `AA` 창업초기 펀드
 - `ASCT_CLSS_CD_FND`: 소분류 코드. 예: `AA02` 초기기업
 - Seed/Pre-A 기본 후보: `AA02` 초기기업, `DA01` 4차산업혁명, `EA01` 일반

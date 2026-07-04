@@ -4,7 +4,7 @@
 
 이 도구의 사용자 가치는 "어디서 봐야 하는지 모르는 VC/AC 공시정보를 자연어로 물으면, 로컬 DB에서 공식 근거 중심으로 찾아 표와 caveat까지 보여주는 것"입니다.
 
-참고한 구현 패턴은 [chrisryugj/schoolinfo-mcp](https://github.com/chrisryugj/schoolinfo-mcp)입니다. 이 프로젝트는 학교명만으로 OpenAPI 공시, NEIS 데이터, HWP/PDF 첨부 파싱을 묶어 MCP/CLI/웹앱에서 같은 질문-응답 경험을 제공합니다. VC Funds도 같은 방향으로, 사용자가 KVIC/KVCA/TIPS 경로와 내부 파라미터를 몰라도 질문할 수 있게 해야 합니다.
+참고한 구현 패턴은 [chrisryugj/schoolinfo-mcp](https://github.com/chrisryugj/schoolinfo-mcp)입니다. 이 프로젝트는 학교명만으로 OpenAPI 공시, NEIS 데이터, HWP/PDF 첨부 파싱을 묶어 MCP/CLI/웹앱에서 같은 질문-응답 경험을 제공합니다. VC Funds도 같은 방향으로, 사용자가 KVIC/KVCA/TIPS 경로와 내부 파라미터를 몰라도 질문할 수 있게 해야 합니다. 다만 VC Funds의 문서 파싱 adapter는 [chrisryugj/kordoc](https://github.com/chrisryugj/kordoc) CLI/MCP를 우선 사용합니다.
 
 비즈니스 문제와 아키텍처 적합성 분석은 `schoolinfo-business-architecture-analysis.md`를 기준으로 합니다.
 
@@ -44,7 +44,7 @@ node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs search "A
 node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs mcp serve --db /tmp/vc-funds.sqlite
 ```
 
-P0 구현 범위는 `setup`, `doctor`, `sources`, `health`, `resolve`, `search`, `import kvic`, `import kvca`, `mcp serve`, fixture SQL load입니다. Deep query, event feed, standalone gap analysis, report, document/guide import, watch, export는 다음 단계의 계약입니다.
+P0 구현 범위는 `setup`, `doctor`, `sources`, `health`, `resolve`, `search`, `import kvic`, `import kvca`, `mcp serve`, fixture SQL load입니다. Deep query, event feed, standalone gap analysis, report, `kordoc` 기반 document/guide import, watch, export는 다음 단계의 계약입니다.
 
 ## MCP 설정
 
@@ -90,6 +90,15 @@ vc-funds mcp serve
 ```
 
 P1 CLI import는 KVIC/KVCA HTML 또는 CSV snapshot만 정규화한다. XLS/XLSX 파일은 감지 후 `unsupported_format`으로 반환하므로 공식 화면에서 HTML로 저장하거나 CSV로 내보낸 뒤 import한다.
+
+문서/가이드 import가 구현되면 `vc-funds`는 자체 PDF/HWP/HWPX parser를 만들지 않고 `kordoc`을 호출합니다.
+
+```bash
+npx -y kordoc setup
+npx -y kordoc "./disclosures/new-fund.hwpx"
+```
+
+MCP 환경에서는 `kordoc`의 `parse_document`, `parse_table`류 도구 산출물을 저장합니다.
 
 ### 3. 미팅 준비 리포트
 

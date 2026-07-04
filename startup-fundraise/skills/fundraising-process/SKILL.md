@@ -7,6 +7,8 @@ description: Pre-seed부터 Series B까지 투자 유치 라이프사이클, 단
 
 Pre-seed부터 Series B까지 투자 유치 라이프사이클, 단계별 벤치마크, 8주 실행 타임라인, 준비 체크리스트를 제공합니다.
 
+실제 창업자 운영 루틴과 커맨드별 사용 순서는 [Founder Fundraising Operating Use Cases](references/founder-fundraising-operating-use-cases.md)를 우선 참고합니다.
+
 ## 작동 방식
 
 ```
@@ -18,7 +20,7 @@ Pre-seed부터 Series B까지 투자 유치 라이프사이클, 단계별 벤치
 │  ✓ 단계별 벤치마크: 트랙션, 밸류에이션, 체크사이즈, 희석율       │
 │  ✓ 8주 타임라인: 주차별 실행 계획                                │
 │  ✓ 준비 체크리스트: IR 자료, 데이터룸, 피치 덱                   │
-│  ✓ 초보 창업자 가이드: PDF/HWPX 자료 기반 용어·절차·준비물 설명  │
+│  ✓ 초보 창업자 가이드: kordoc 변환 문서 기반 용어·절차·준비물 설명 │
 │  ✓ 한국 Seed/Pre-A: 공식 펀드 근거 기반 VC 미팅 단계화           │
 │  ✓ 일반적 실수 & 안티패턴                                        │
 └─────────────────────────────────────────────────────────────────┘
@@ -28,11 +30,11 @@ Pre-seed부터 Series B까지 투자 유치 라이프사이클, 단계별 벤치
 
 ## 초보 창업자 가이드 자료 활용
 
-초기 투자유치 기업은 투자자 리스트보다 먼저 투자유치 절차, 용어, 준비물, 데이터룸, 투자계약 기본기를 이해해야 합니다. `~~fund disclosure` 로컬 MCP가 연결되어 있고 창업자 가이드 PDF/HWPX가 import되어 있으면, 답변 전에 `search_founder_knowledge`, `explain_fundraising_concept`, `generate_fundraising_checklist`류 조회를 우선 사용합니다.
+초기 투자유치 기업은 투자자 리스트보다 먼저 투자유치 절차, 용어, 준비물, 데이터룸, 투자계약 기본기를 이해해야 합니다. `~~fund disclosure` 로컬 MCP가 연결되어 있고 창업자 가이드 PDF/HWP/HWPX/HWPML/Office 문서가 `kordoc` CLI/MCP adapter로 import되어 있으면, 답변 전에 `search_founder_knowledge`, `explain_fundraising_concept`, `generate_fundraising_checklist`류 조회를 우선 사용합니다.
 
 사용할 자료:
 
-- 투자유치 절차, TIPS, IR 작성, 데이터룸, 투자계약 기본 안내 PDF/HWPX
+- 투자유치 절차, TIPS, IR 작성, 데이터룸, 투자계약 기본 안내 PDF/HWP/HWPX/HWPML/Office 문서
 - 사용자가 직접 정리한 미팅 FAQ, 반박 목록, 후속 액션 노트
 - 공개/보유 자료 중 출처, import 시각, 파일 해시, license note가 남아 있는 문서
 
@@ -226,7 +228,7 @@ Week 8: 클로징
 
 한국 VC 대상 Seed/Pre-A 라운드는 `deal-sourcing`과 `investor-research`의 공식 펀드 근거를 먼저 반영합니다. KVIC FundFinder 조건 코드와 KVCA DIVA 대사 결과는 후보 VC의 우선순위, Why Now, 미팅 단계 배치에 사용합니다.
 
-상세 샘플은 [MoonkLabs Seed/Pre-A Fundraising Playbook](../deal-sourcing/references/moonklabs-seed-prea-fundraising-playbook.md)을 참고합니다.
+상세 샘플은 [MoonkLabs Seed/Pre-A Fundraising Playbook](../deal-sourcing/references/moonklabs-seed-prea-fundraising-playbook.md)과 [Founder Fundraising Operating Use Cases](references/founder-fundraising-operating-use-cases.md)를 참고합니다.
 
 ### 3단계 미팅 순서
 

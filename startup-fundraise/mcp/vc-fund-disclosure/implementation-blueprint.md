@@ -401,9 +401,9 @@ type VcSearchResult = {
 
 ### P2: Documents and event extraction
 
-1. PDF text parser.
-2. HWPX ZIP/XML parser.
-3. HWP binary adapter boundary.
+1. `kordoc` CLI/MCP document adapter.
+2. PDF/HWP/HWPX/HWPML/DOCX/XLS/XLSX to Markdown/table import.
+3. Parser status, warning, and original hash preservation.
 4. event candidate extraction.
 5. review queue와 quality flags 연결.
 
@@ -426,7 +426,7 @@ type VcSearchResult = {
 
 | 테스트 | 목적 |
 |---|---|
-| parser golden tests | HTML/PDF/HWPX 구조 변경 감지 |
+| parser golden tests | HTML과 `kordoc` 변환 PDF/HWP/HWPX 구조 변경 감지 |
 | migration tests | fresh DB와 upgrade DB 모두 동작 |
 | retrieval tests | 같은 질문이 같은 후보/점수/caveat를 반환 |
 | privacy tests | 개인 이메일/휴대전화가 기본 응답에 노출되지 않음 |

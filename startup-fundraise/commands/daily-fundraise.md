@@ -9,6 +9,8 @@ argument-hint: ""
 
 오늘 가장 중요한 펀드레이징 활동을 명확하게 파악합니다. 이 커맨드는 사용자가 제공하는 정보로 작동하며, 도구를 연결하면 더 풍부해집니다.
 
+신규 스타트업의 단계별 운영 루틴, 실사용 검증 시나리오, 우선 질문은 [Founder Fundraising Operating Use Cases](../skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 따릅니다.
+
 ## 사용법
 
 ```
@@ -213,3 +215,4 @@ argument-hint: ""
 2. **~~calendar 먼저 연결** — 가장 큰 시간 절약
 3. **딜소싱은 매일** — 커버리지 3x를 유지하려면 지속적인 신규 타겟 발굴 필요
 4. **런웨이 추적** — 매일 브리핑에서 남은 개월 수를 확인하며 긴박감 유지
+5. **말보다 행동을 추적** — 투자자의 긍정 표현보다 다음 미팅, DD 요청, 조건 논의, 송금 일정 같은 검증 가능한 행동을 우선합니다

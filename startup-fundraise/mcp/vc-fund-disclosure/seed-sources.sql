@@ -84,7 +84,7 @@ INSERT INTO sources (
   '["site_background_crawler"]',
   'public',
   '2026-07-04',
-  'Local archive for official disclosure PDF/HWPX/HWP/HTML documents. Used for event extraction and source-backed evidence claims.'
+  'Local archive for official disclosure PDF/HWP/HWPX/HWPML/Office/HTML documents parsed through the kordoc CLI/MCP adapter. Used for event extraction and source-backed evidence claims.'
 ),
 (
   'founder_guide_library',
@@ -98,10 +98,10 @@ INSERT INTO sources (
   '["founder_education"]',
   365,
   '["guide_library_import","watch_folder_import"]',
-  '["hwp_binary_without_adapter"]',
+  '["direct_hwp_binary_parser_without_kordoc"]',
   'public',
   '2026-07-04',
-  'Local PDF/HWPX/markdown guide corpus for founder education, checklist generation, and concept explanations.'
+  'Local PDF/HWP/HWPX/HWPML/Office/markdown guide corpus parsed through the kordoc CLI/MCP adapter for founder education, checklist generation, and concept explanations.'
 ),
 (
   'user_notes',

@@ -199,7 +199,7 @@ empty_state_rules:
     actions:
       - "해당 VC명으로 KVCA 조합현황 snapshot import"
       - "관련 FundFinder category snapshot import"
-      - "신규 공시 PDF/HWPX import"
+      - "신규 공시 PDF/HWP/HWPX/HWPML/Office import. 파싱은 kordoc CLI/MCP adapter 사용"
   stale_data:
     message: "근거 snapshot이 오래되었습니다."
     actions:

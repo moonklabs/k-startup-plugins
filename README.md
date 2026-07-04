@@ -14,6 +14,16 @@ claude plugins marketplace add moonklabs/k-startup-plugins
 claude plugins install startup-fundraise
 ```
 
+처음 투자유치를 준비하는 팀은 `startup-fundraise`의 단계별 운영 가이드부터 시작하세요.
+
+1. `/fundraising-process "Seed/Pre-A 준비"`로 라운드 readiness를 점검합니다.
+2. `/vc-funds-setup local-dev`로 로컬 공시 DB와 MCP 구조를 확인합니다.
+3. `vc-funds import kvic|kvca`로 사용자가 확보한 공식 snapshot을 저장합니다.
+4. `/deal-sourcing "뭉클랩 AI B2B SaaS Seed Pre-A Korea"`로 후보 VC를 3단계 미팅 순서로 나눕니다.
+5. `/daily-fundraise`와 `/fundraise-pipeline`으로 매일 후속 액션과 병목을 관리합니다.
+
+자세한 사용법은 [startup-fundraise README](startup-fundraise/README.md)와 [Founder Fundraising Operating Use Cases](startup-fundraise/skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 참고하세요.
+
 ---
 
 ## 특장점

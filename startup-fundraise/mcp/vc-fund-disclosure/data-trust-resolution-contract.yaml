@@ -24,7 +24,7 @@ source_trust_tiers:
   T2_official_disclosure_document:
     label: "공식 공시 첨부 문서"
     answer_weight: authoritative_document
-    description: "공식 사이트/협회/기관에서 받은 PDF/HWPX/HWP/HTML 문서"
+    description: "공식 사이트/협회/기관에서 받은 PDF/HWP/HWPX/HWPML/Office/HTML 문서. 문서 파싱은 kordoc CLI/MCP adapter 경유"
     scheduled_collection: local_import_only
   T3_official_public_guide:
     label: "공식 공개 guide"

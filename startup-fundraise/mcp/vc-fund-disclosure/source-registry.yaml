@@ -183,9 +183,14 @@ sources:
       - review_queue
     supported_file_types:
       - pdf
+      - hwp
       - hwpx
-      - hwp_with_adapter
+      - hwpml
+      - docx
+      - xls
+      - xlsx
       - html
+    parser_adapter: kordoc_cli_or_mcp
     required_fields:
       - file_name
       - file_sha256
@@ -196,6 +201,7 @@ sources:
       - file_hash_present
       - source_url_present
       - parser_status_present
+      - kordoc_warning_recorded
       - event_extraction_reviewed
       - pii_redaction_if_exported
 
@@ -220,11 +226,17 @@ sources:
       - guidance_cards
     supported_file_types:
       - pdf
+      - hwp
       - hwpx
+      - hwpml
+      - docx
+      - xls
+      - xlsx
       - markdown
       - txt
+    parser_adapter: kordoc_cli_or_mcp
     restricted_file_types:
-      - hwp_binary_without_adapter
+      - direct_hwp_binary_parser_without_kordoc
     required_fields:
       - file_name
       - file_sha256

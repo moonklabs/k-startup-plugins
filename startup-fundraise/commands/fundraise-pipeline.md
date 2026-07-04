@@ -11,6 +11,8 @@ argument-hint: "<필터: 단계 또는 '전체'>"
 
 투자자 파이프라인의 건강 상태를 4차원(진행속도, 응답률, Thesis 적합도, 관계깊이)으로 평가하고, 3x 커버리지 규칙을 검증하며, 집중해야 할 투자자와 리스크 영역을 식별합니다.
 
+투자유치 운영 단계별 사용법과 실사용 PASS/FAIL 기준은 [Founder Fundraising Operating Use Cases](../skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 기준으로 합니다.
+
 **핵심 가치:**
 - 건강점수 100점 체계로 파이프라인 상태 정량화
 - 3x 커버리지 규칙 검증 (목표 대비 파이프라인)

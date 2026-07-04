@@ -23,7 +23,7 @@
 
 ## 현재 실행 가능한 초안
 
-`runtime/`은 P0 초안입니다. 아직 KVIC/KVCA 자동 수집기나 PDF/HWPX parser가 아니라, 로컬 SQLite DB의 신뢰 source, entity resolution, 검색, collection health, stdio MCP handshake를 검증하는 최소 실행 레이어입니다.
+`runtime/`은 P0 초안입니다. 아직 KVIC/KVCA 자동 수집기나 `kordoc` 기반 PDF/HWP/HWPX parser adapter가 아니라, 로컬 SQLite DB의 신뢰 source, entity resolution, 검색, collection health, stdio MCP handshake를 검증하는 최소 실행 레이어입니다.
 
 ```bash
 node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs setup --db /tmp/vc-funds.sqlite
@@ -42,11 +42,63 @@ node --test startup-fundraise/mcp/vc-fund-disclosure/runtime/test/*.test.mjs
 - `import_kvic_snapshot`
 - `import_kvca_snapshot`
 
+## CLI 사용 흐름
+
+1. DB와 source registry를 초기화합니다.
+
+```bash
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs setup --db /tmp/vc-funds.sqlite --json
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs doctor --db /tmp/vc-funds.sqlite --json
+```
+
+2. 사용자가 직접 확보한 KVIC/KVCA HTML 또는 CSV snapshot을 import합니다.
+
+```bash
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs import kvic \
+  --file ./snapshots/fundfinder-AA02.html \
+  --source-url http://fundfinder.k-vic.co.kr/rsh/rsh/RshMacFnd \
+  --captured-at 2026-07-04T00:00:00.000Z \
+  --db /tmp/vc-funds.sqlite \
+  --json
+
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs import kvca \
+  --file ./snapshots/kvca-primer.csv \
+  --source-url http://diva.kvca.or.kr/div/cmn/DivDisclsMainInq \
+  --captured-at 2026-07-04T00:00:00.000Z \
+  --db /tmp/vc-funds.sqlite \
+  --json
+```
+
+3. 자연어로 검색합니다.
+
+```bash
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs search "뭉클랩 AI SaaS Seed Pre-A 투자사" --db /tmp/vc-funds.sqlite --json
+```
+
+검색 결과에서 특히 봐야 할 필드:
+
+| 필드 | 의미 |
+|---|---|
+| `evidence_status` | `verified_official`이면 공식 snapshot/document 근거가 연결됨 |
+| `resolution_status` | 사용자 입력이 투자사/펀드 후보로 얼마나 정확히 해석됐는지 |
+| `why_ranked` | lexical match, stage/sector match, source trust 등 랭킹 이유 |
+| `source_url` / `content_sha256_or_file_sha256` | 원본 snapshot/document 재현 근거 |
+| `data_gaps` | 지금 답변에 부족한 source |
+| `recommended_imports` | 다음에 import해야 할 자료 |
+
+4. MCP stdio server로 연결합니다.
+
+```bash
+node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs mcp serve --db /tmp/vc-funds.sqlite
+```
+
+현재 P0는 HTML/CSV snapshot import가 중심입니다. PDF/HWP/HWPX/HWPML/Office 문서 import는 planned surface이며, 구현 시 [kordoc](https://github.com/chrisryugj/kordoc) CLI/MCP adapter를 사용합니다.
+
 ## 구현 순서
 
 1. `schema.sql`로 SQLite DB를 만든다.
 2. `seed-sources.sql`로 source registry를 DB에 주입한다.
-3. P1 import adapter는 원본 HTML/CSV를 `raw_artifacts`에 먼저 저장한다. XLS/XLSX는 감지만 하고 `unsupported_format`으로 반환하며, PDF/HWPX 문서 import는 별도 단계로 둔다.
+3. P1 import adapter는 원본 HTML/CSV를 `raw_artifacts`에 먼저 저장한다. 표 snapshot으로 들어온 XLS/XLSX는 감지만 하고 `unsupported_format`으로 반환하며, PDF/HWP/HWPX/HWPML/Office 문서 import는 별도 `kordoc` CLI/MCP adapter 단계로 둔다.
 4. 정규화 row는 `source_snapshots`, `documents`, `evidence_edges` 중 하나 이상의 근거에 연결한다.
 5. import 후 `quality-checks.sql`을 실행해 문제를 `data_quality_flags`와 응답 caveat로 올린다.
 6. MCP 조회는 `data-trust-resolution-contract.yaml`, `search-contract.yaml`, `tool-contract.yaml`, `display-queries.sql`의 검색/표시 계약을 따른다.

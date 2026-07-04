@@ -40,7 +40,7 @@
 | P2 | Meta Ads, TikTok Ads | 검증 후 read-only reports | API/권한/앱 심사 리스크가 커서 접근권 확보 전에는 추천/가이드 중심. |
 | P2 | Google Tag Manager | audit/diff wrapper | API가 좋지만 publish/write는 사고 위험이 커서 승인 게이트가 필요하다. |
 | P3 | 일반 은행 계좌 통합수집, 카드매출 직접 수집 | 직접 wrapper 보류 | 자동 로그인/스크래핑은 보안, 약관, 개인정보 리스크가 높다. |
-| P3 | NTS 포털 직접 자동화, HWP binary reader, Hotjar export | 제한적 지원 | 비공식 포털 자동화나 라이선스 미확인 구현은 범용 래퍼 금지. |
+| P3 | NTS 포털 직접 자동화, HWP binary 직접 파서, Hotjar export | 제한적 지원 | 비공식 포털 자동화나 라이선스 미확인 직접 구현은 범용 래퍼 금지. 문서 파싱은 `kordoc` adapter를 우선 사용. |
 
 ## 서비스별 판단
 
@@ -109,10 +109,10 @@
 
 #### HWP/HWPX reader
 
-- 공식성: 한컴은 공식 뷰어와 다운로드 센터, 구매형 HWP SDK를 제공한다. HWPX는 XML 기반 처리 가능성이 높지만, HWP binary는 포맷/라이선스/호환성 리스크가 크다.
-- 근거: [Hancom Download Center](https://www.hancom.com/support/downloadCenter/download), [Hancom HWP SDK](https://www.hancom.com/product/sdk/hwpSdk)
-- wrapper 가치: HWPX는 높음, HWP binary는 라이선스형으로 제한적.
-- 전략: 초기에는 `startup-apply`의 HWPX 생성/구조 처리 경험을 재사용한다. HWP reader는 "HWPX 변환 후 파싱"을 기본 경로로 두고, HWP SDK나 Windows/한컴 기반 변환은 별도 설치형/구매형 선택지로 둔다. HWP binary parser를 포맷 추측으로 직접 새로 만드는 일은 보류한다.
+- 공식성/현실성: 한컴은 공식 뷰어와 구매형 HWP SDK를 제공하지만, 초기 로컬 MCP/CLI 문서 파싱은 오픈소스 `kordoc` CLI/MCP adapter를 우선 사용한다.
+- 근거: [kordoc](https://github.com/chrisryugj/kordoc), [Hancom Download Center](https://www.hancom.com/support/downloadCenter/download), [Hancom HWP SDK](https://www.hancom.com/product/sdk/hwpSdk)
+- wrapper 가치: PDF/HWP/HWPX/HWPML/DOCX/XLS/XLSX를 Markdown/표로 통일해 LLM과 DB import에 바로 연결할 수 있으므로 높음.
+- 전략: `npx -y kordoc setup`, `npx -y kordoc <file>`과 MCP `parse_document`/`parse_table`류 도구를 문서 파싱 기본 경로로 둔다. HWP SDK나 Windows/한컴 기반 변환은 `kordoc`으로 처리할 수 없는 요구가 확인된 경우의 fallback adapter로만 둔다. PDF text parser, HWPX ZIP/XML parser, HWP binary parser를 프로젝트 안에서 새로 만들지 않는다.
 
 ### 채팅/CS
 
@@ -364,7 +364,7 @@ tools-draft/
 - 은행/카드/홈택스 계정 자동 로그인 스크래퍼를 범용 tool로 제공하지 않는다.
 - 카드번호, 계좌번호, 공동인증서, OTP, 고객 상담 원문을 로그나 final output에 노출하지 않는다.
 - PG 환불/정산/수동승인, 세금계산서 발행/취소, 광고 예산 변경을 one-shot agent action으로 열지 않는다.
-- HWP binary reader를 포맷 추측으로 새로 만들지 않는다.
+- HWP binary reader를 포맷 추측으로 새로 만들지 않는다. PDF/HWP/HWPX/HWPML/Office 문서 파싱은 `kordoc` CLI/MCP adapter를 우선 사용한다.
 - "국세청 직접 API"처럼 실제 연동 주체가 provider인 경우 이름을 과장하지 않는다. "국세청 연계 유료 API" 또는 provider명을 함께 쓴다.
 
 ## 다음 실행안
