@@ -7,6 +7,20 @@
 claude plugins install startup-fundraise
 ```
 
+Codex에서 사용할 때는 marketplace를 먼저 등록합니다.
+
+```bash
+codex plugin marketplace add moonklabs/k-startup-plugins --ref main
+codex plugin add startup-fundraise@startup-plugins
+```
+
+로컬 개발 checkout을 직접 테스트할 때는 로컬 marketplace 경로를 등록합니다.
+
+```bash
+codex plugin marketplace add /Users/moonklabs/workspace-moonklabs/k-startup-plugins
+codex plugin add startup-fundraise@startup-plugins
+```
+
 ---
 
 ## 빠른 시작: 투자유치 준비 루틴
@@ -72,6 +86,14 @@ node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs import kv
 ```
 
 현재 P0 런타임은 HTML/CSV snapshot import와 검색에 집중합니다. XLS/XLSX snapshot은 `unsupported_format`으로 거절하고, PDF/HWP/HWPX/HWPML/Office 문서 import는 planned surface입니다. 문서 파싱은 직접 파서를 만들지 않고 [kordoc](https://github.com/chrisryugj/kordoc) CLI/MCP adapter를 사용합니다.
+
+Codex에서 로컬 MCP 서버로 연결하려면 사용자별 DB 경로를 정한 뒤 등록합니다.
+
+```bash
+codex mcp add vc-funds -- node /Users/moonklabs/workspace-moonklabs/k-startup-plugins/startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs mcp serve --db ~/.local/share/vc-funds/vc-funds.sqlite
+```
+
+현재 플러그인 `.mcp.json`은 Slack, HubSpot, Notion, Microsoft 365 remote MCP를 포함합니다. `vc-funds`는 로컬 DB 경로가 필요하므로 P0에서는 별도 등록하고, 패키징이 안정화되면 플러그인 MCP 엔트리로 승격합니다.
 
 ---
 

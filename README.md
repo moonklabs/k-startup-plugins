@@ -1,6 +1,6 @@
 # k-startup-plugins
 
-**대한민국 스타트업 창업자를 위한 Claude Code 플러그인 마켓플레이스**
+**대한민국 스타트업 창업자를 위한 Claude Code/Codex 플러그인 마켓플레이스**
 
 ---
 
@@ -12,6 +12,36 @@ VC/AC 투자 유치 일상을 자동화하는 Startup OS 플러그인.
 ```bash
 claude plugins marketplace add moonklabs/k-startup-plugins
 claude plugins install startup-fundraise
+```
+
+Codex에서 사용할 때는 marketplace를 추가한 뒤 플러그인을 설치합니다.
+
+```bash
+codex plugin marketplace add moonklabs/k-startup-plugins --ref main
+codex plugin add startup-fundraise@startup-plugins
+```
+
+로컬 개발 중인 checkout을 바로 연결하려면 GitHub 대신 로컬 경로를 사용합니다.
+
+```bash
+codex plugin marketplace add /Users/moonklabs/workspace-moonklabs/k-startup-plugins
+codex plugin add startup-fundraise@startup-plugins
+```
+
+릴리스 버전을 고정해서 배포하려면 git tag를 만들고 `--ref`에 태그를 지정합니다.
+
+```bash
+git tag v0.3.0
+git push origin v0.3.0
+
+codex plugin marketplace add moonklabs/k-startup-plugins --ref v0.3.0
+codex plugin add startup-fundraise@startup-plugins
+```
+
+`vc-funds` 로컬 MCP는 현재 별도 등록합니다. 플러그인 설치로 Slack, HubSpot, Notion, Microsoft 365 remote MCP는 노출되지만, 로컬 공시 DB 서버는 사용자별 DB 경로가 필요하기 때문입니다.
+
+```bash
+codex mcp add vc-funds -- node /Users/moonklabs/workspace-moonklabs/k-startup-plugins/startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs mcp serve --db ~/.local/share/vc-funds/vc-funds.sqlite
 ```
 
 처음 투자유치를 준비하는 팀은 `startup-fundraise`의 단계별 운영 가이드부터 시작하세요.

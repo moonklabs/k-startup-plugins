@@ -1,5 +1,6 @@
 {
   "name": "startup-plugins",
+  "description": "Korean startup operating plugins for fundraising and government support workflows, including VC/AC pipeline routines, evidence-backed fund lookup, and application drafting.",
   "owner": {
     "name": "Moonklabs"
   },
