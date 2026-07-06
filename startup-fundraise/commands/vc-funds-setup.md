@@ -9,7 +9,17 @@ argument-hint: "<client: claude|codex, 또는 local-dev>"
 
 VC/AC 투자사 공시정보와 초기 창업자용 투자유치 PDF/HWP/HWPX/HWPML/Office 가이드를 개인 로컬 DB에 축적하고, `~~fund disclosure` MCP로 조회하기 위한 설치/점검 루틴입니다. 문서 파싱은 `kordoc` CLI/MCP adapter를 우선 사용합니다.
 
-이 커맨드는 `vc-funds` 로컬 도구가 준비되어 있을 때 설치를 안내하고, repo-local 초안에서는 `startup-fundraise/mcp/vc-fund-disclosure/runtime/`의 Node 실행 파일을 기준으로 점검합니다.
+**구현체 안내**: canonical 구현은 [moonklabs/vc-fund-disclosure](https://github.com/moonklabs/vc-fund-disclosure)입니다 (Bun 단일 바이너리, v0.2.0+). 계약 YAML의 canonical 사본도 해당 리포의 `docs/contracts/`로 이관되었습니다. 이 리포의 `mcp/vc-fund-disclosure/runtime/` Node 초안은 아카이브(참고용)입니다.
+
+설치:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/moonklabs/vc-fund-disclosure/main/install.sh | sh
+vc-funds setup --client claude --db auto
+vc-funds doctor
+```
+
+이 커맨드는 `vc-funds` 설치 상태를 점검하고(`vc-funds doctor`), 미설치 시 위 설치 명령을 안내합니다.
 
 스타트업이 투자유치 운영 루틴 안에서 이 CLI/MCP를 언제 쓰는지는 [Founder Fundraising Operating Use Cases](../skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 참고합니다.
 

@@ -1,6 +1,12 @@
 # VC Fund Disclosure MCP Spec Pack
 
-상태: Draft spec + executable local prototype.
+상태: **구현체 이관 완료** — canonical 구현은 [moonklabs/vc-fund-disclosure](https://github.com/moonklabs/vc-fund-disclosure) (Bun 단일 바이너리, GitHub Releases 배포).
+
+- 계약 YAML(tool/search/data-trust/source-registry)의 canonical 사본은 구현 리포의 `docs/contracts/`에 있습니다. 계약 변경은 구현 리포에서 먼저 이루어집니다.
+- 이 디렉토리의 `runtime/` Node 초안은 **deprecated(참고용 아카이브)** 입니다. 한국어 정규화 사전, 스키마 evidence 설계, 테스트 시나리오는 v0.2.0에서 구현 리포로 이식되었습니다.
+- retrieval 계층(resolve/rank/evidence gate)은 구현 리포 v0.3.0 로드맵입니다.
+
+이하는 이관 전 원본 스펙입니다.
 
 이 디렉터리는 한국 VC/AC 공시 evidence와 창업자 guide 자료를 로컬 SQLite DB에 축적하고, MCP가 안전하게 조회/표시하기 위한 구현 계약입니다.
 
