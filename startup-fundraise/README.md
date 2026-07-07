@@ -29,12 +29,14 @@ codex plugin add startup-fundraise@startup-plugins
 
 | 단계 | 목적 | 실행 |
 |---|---|---|
-| 0. 준비 상태 판정 | 지금 라운드를 시작할지, 한 달 더 증거를 쌓을지 결정 | `/fundraising-process "Seed/Pre-A 준비"` |
-| 1. 로컬 공시 DB 준비 | KVIC/KVCA snapshot과 가이드 문서를 나중에 검색할 수 있게 준비 | `/vc-funds-setup local-dev` |
-| 2. 공식 펀드 근거 수집 | VC/AC가 실제 펀드 근거를 갖는지 확인 | `vc-funds import kvic`, `vc-funds import kvca`, `vc-funds search` |
-| 3. 후보 VC 3단계화 | 연습 미팅, 투자 가능성 검증, 리드 클로징 순서로 나눔 | `/deal-sourcing "뭉클랩 AI B2B SaaS Seed Pre-A Korea"` |
-| 4. 아웃리치와 미팅 준비 | 웜인트로, 콜드 이메일, DD 질문, 다음 액션 준비 | `/investor-outreach`, `/dd-prep` |
-| 5. 매일 운영 | 오늘의 최우선 액션, 후속 연락, 정체 리스크 확인 | `/daily-fundraise`, `/fundraise-pipeline` |
+| 0. 로컬 도구 준비 | KVIC/KVCA snapshot과 가이드 문서를 나중에 검색할 수 있게 준비 | `/vc-funds-setup local-dev` |
+| 1. Office Hours 현황 초기화 | 지금 라운드를 시작할지, 준비할지, 멈출지 판단하고 운영 스냅샷 생성 | `/fundraise-office-hours "Seed/Pre-A 현황 점검"` |
+| 2. 자료 작업공간 정리 | IR, 아웃리치, 투자자 파이프라인, 미팅 노트, 데이터룸을 AI 분석 가능한 구조로 정리 | `/fundraise-data "./fundraise"` |
+| 3. 준비 상태 보강 | 라운드 readiness, 자료, 데이터룸, 절차 이해도를 보강 | `fundraising-process` 스킬 |
+| 4. 공식 펀드 근거 수집 | VC/AC가 실제 펀드 근거를 갖는지 확인 | `vc-funds import kvic`, `vc-funds import kvca`, `vc-funds search` |
+| 5. 후보 VC 3단계화 | 연습 미팅, 투자 가능성 검증, 리드 클로징 순서로 나눔 | `/deal-sourcing "뭉클랩 AI B2B SaaS Seed Pre-A Korea"` |
+| 6. 아웃리치와 미팅 준비 | 웜인트로, 콜드 이메일, DD 질문, 다음 액션 준비 | `/investor-outreach`, `/dd-prep` |
+| 7. 매일 운영 | 오늘의 최우선 액션, 후속 연락, 정체 리스크 확인 | `/daily-fundraise`, `/fundraise-pipeline` |
 
 상세한 운영 방법과 PASS/FAIL 검증 기준은 [Founder Fundraising Operating Use Cases](skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 참고하세요.
 
@@ -48,11 +50,12 @@ codex plugin add startup-fundraise@startup-plugins
 
 ### 가장 먼저 답해야 할 질문
 
-1. 이번 라운드의 목표 금액, 목표 runway, 희석률 상한은 무엇인가?
-2. 투자자에게 보여줄 traction 숫자 3개는 무엇인가?
-3. 투자유치 시작 희망일과 마감 희망일은 언제인가?
-4. 정말 잡고 싶은 리드 후보 VC/AC 5곳은 어디인가?
-5. TIPS는 필수 목표인가, 있으면 좋은 보조 신호인가?
+1. 현재 현금잔고, 월 burn, 확정 수금, runway, 다음 자금 공백 날짜는 무엇인가?
+2. 이번 라운드의 목표 금액, 목표 runway, 희석률 상한은 무엇인가?
+3. 투자자에게 보여줄 traction 숫자 3개는 무엇인가?
+4. 투자유치 시작 희망일과 마감 희망일은 언제인가?
+5. 정말 잡고 싶은 리드 후보 VC/AC 5곳은 어디인가?
+6. TIPS는 필수 목표인가, 있으면 좋은 보조 신호인가?
 
 ---
 
@@ -115,10 +118,12 @@ codex mcp add vc-funds -- node /Users/moonklabs/workspace-moonklabs/k-startup-pl
 
 ---
 
-## 14개 슬래시 커맨드
+## 16개 슬래시 커맨드
 
 ```
 /daily-fundraise      # 일일 브리핑 — 오늘의 우선순위, 팔로업, 미팅 준비
+/fundraise-office-hours # 투자유치 Office Hours — 현황 질문, 의사결정, 운영 스냅샷 업데이트
+/fundraise-data      # IR, 아웃리치, 파이프라인, 데이터룸 자료 구조화
 /deal-sourcing        # 투자자 타겟 발굴 + Thesis 매칭
 /vc-funds-setup       # VC/AC 공시·창업자 가이드 로컬 MCP 설치 설계 및 점검
 /lead-dashboard       # 파이프라인 건강점수 + 단계별 현황 + 리스크 플래그
@@ -136,11 +141,11 @@ codex mcp add vc-funds -- node /Users/moonklabs/workspace-moonklabs/k-startup-pl
 
 ---
 
-## 14개 도메인 스킬
+## 16개 도메인 스킬
 
 대화 맥락에서 Claude가 자동 활성화하는 VC/창업 지식.
 
-**펀드레이징** — `fundraising-process` `investor-research` `deal-sourcing`
+**펀드레이징** — `fundraise-office-hours` `fundraise-data` `fundraising-process` `investor-research` `deal-sourcing`
 `vc-fund-disclosure-mcp` `pitch-craft` `financial-modeling` `term-sheet-knowledge` `fundraise-comms`
 
 **사업 분석** — `startup-metrics` `market-sizing` `competitive-landscape`

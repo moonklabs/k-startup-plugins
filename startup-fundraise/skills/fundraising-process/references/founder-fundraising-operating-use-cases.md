@@ -27,30 +27,37 @@
 
 ## 단계별 운영 유즈케이스
 
-### 0단계: 투자유치 가능 상태 판정
+### 0단계: Office Hours로 현황 초기화
 
-목표: 지금 라운드를 시작할지, 한 달 더 고객/제품 증거를 쌓을지 결정한다.
+목표: 지금 라운드를 시작할지, 한 달 더 고객/제품 증거를 쌓을지, VC 라운드 대신 TIPS/AC/전략고객 루트를 우선할지 결정한다.
 
 해야 할 활동:
 
-1. 회사 한 줄 설명, 고객군, 현재 traction, runway, 목표 라운드 금액을 적는다.
-2. 0원 조달, 작은 라운드, 목표 라운드 세 가지 자금 계획을 만든다.
-3. 투자자가 물을 "왜 지금", "왜 이 팀", "왜 venture-scale"에 답할 증거를 모은다.
-4. 라운드를 시작하면 6-8주 동안 founder calendar를 fundraising mode로 전환한다.
+1. 현재 현금잔고, 월 burn, 확정 수금, runway, 다음 자금 공백 날짜를 먼저 적는다.
+2. 회사 한 줄 설명, 고객군, 현재 traction, 목표 라운드 금액을 적는다.
+3. `/fundraise-office-hours`로 runway check를 먼저 수행한 뒤 `ACCELERATE_ROUND`, `PREPARE_MORE`, `PAUSE_AND_VALIDATE`, `ALTERNATIVE_ROUTE` 중 하나를 고른다.
+4. Fundraise Operating Snapshot에 runway, 라운드 목표, 지표, 투자자 행동 증거, 공식 근거 gap, 다음 7일 액션을 남긴다.
+5. 0원 조달, 작은 라운드, 목표 라운드 세 가지 자금 계획을 만든다.
+6. 투자자가 물을 "왜 지금", "왜 이 팀", "왜 venture-scale"에 답할 증거를 모은다.
+7. 라운드를 시작하면 6-8주 동안 founder calendar를 fundraising mode로 전환한다.
 
 사용 커맨드:
 
 ```bash
+/fundraise-office-hours "Seed/Pre-A 현황 점검"
 /fundraise-forecast
-/fundraising-process "Seed/Pre-A 준비"
 /daily-fundraise
 ```
+
+관련 스킬: `fundraising-process`
 
 검증 기준:
 
 | 항목 | PASS | FAIL |
 |---|---|---|
+| runway | 현금잔고, 월 burn, 확정 수금, runway, 자금 공백 날짜가 있음 | runway를 모른 채 투자자 리스트부터 만듦 |
 | 라운드 목표 | 금액, runway, milestone, 희석률 가드레일이 있음 | "일단 많이" 또는 "투자자에게 물어봄" |
+| 운영 스냅샷 | decision mode, evidence, data gap, 다음 7일 액션이 있음 | 매번 새 상담처럼 같은 정보를 다시 물음 |
 | 투자자 증거 | 고객, 매출, 사용 빈도, 반복 업무 절감, 기술 방어 논리가 있음 | 덱 문장만 있고 데이터가 없음 |
 | 실행 모드 | 미팅 집중 기간과 제품 운영 담당이 정해짐 | 미팅이 제품 실행을 계속 갉아먹음 |
 
@@ -231,14 +238,16 @@ vc-funds health --json
 
 기대 행동:
 
-1. `/fundraising-process`가 0단계 readiness 질문부터 시작한다.
-2. guide corpus가 있으면 투자유치 용어와 체크리스트를 먼저 설명한다.
-3. `/vc-funds-setup`으로 로컬 DB 준비 상태를 확인한다.
-4. 공식 펀드 근거가 없으면 추천보다 snapshot import 액션을 먼저 제안한다.
+1. `/fundraise-office-hours`가 현재 상태를 묻고 decision mode와 Fundraise Operating Snapshot을 만든다.
+2. `fundraising-process` 스킬이 readiness, 절차, 자료, 데이터룸 준비를 보강한다.
+3. guide corpus가 있으면 투자유치 용어와 체크리스트를 먼저 설명한다.
+4. `/vc-funds-setup`으로 로컬 DB 준비 상태를 확인한다.
+5. 공식 펀드 근거가 없으면 추천보다 snapshot import 액션을 먼저 제안한다.
 
 PASS 기준:
 
 - 투자자 리스트보다 먼저 readiness, 자료, runway, 목표 금액을 확인한다.
+- Office Hours 결과가 다음 `/deal-sourcing`, `/fundraise-pipeline`, `/daily-fundraise` 입력으로 이어진다.
 - `NOT_READY`인 document/guide import를 실행 가능한 명령처럼 말하지 않는다.
 - TIPS를 "운영사 투자/추천 필요"로 설명한다.
 
@@ -304,28 +313,29 @@ PASS 기준:
 
 ## 사용자에게 먼저 물어야 할 질문
 
-아래 질문은 중요도 순서다. 답이 없으면 합리적으로 가정하되, 1-5번은 투자유치 전략 품질에 직접 영향을 준다.
+아래 질문은 중요도 순서다. 답이 없으면 합리적으로 가정하되, runway 질문은 가정하지 말고 먼저 확인한다. 1-6번은 투자유치 전략 품질에 직접 영향을 준다.
 
 ### P0: 지금 답해야 하는 질문
 
-1. 이번 라운드의 목표 금액, 목표 runway, 희석률 상한은 무엇인가?
-2. 현재 traction 중 투자자에게 보여줄 수 있는 숫자 3개는 무엇인가? 예: 유료 고객 수, MRR, 사용 빈도, 자동화 리포트 수, 절감 시간.
-3. 투자유치 시작 시점과 마감 희망일은 언제인가?
-4. 지금 가장 잡고 싶은 리드 후보 VC/AC 5곳은 어디인가?
-5. TIPS는 필수 목표인가, 있으면 좋은 보조 신호인가?
+1. 현재 현금잔고, 월 burn, 확정 수금, runway, 다음 자금 공백 날짜는 무엇인가?
+2. 이번 라운드의 목표 금액, 목표 runway, 희석률 상한은 무엇인가?
+3. 현재 traction 중 투자자에게 보여줄 수 있는 숫자 3개는 무엇인가? 예: 유료 고객 수, MRR, 사용 빈도, 자동화 리포트 수, 절감 시간.
+4. 투자유치 시작 시점과 마감 희망일은 언제인가?
+5. 지금 가장 잡고 싶은 리드 후보 VC/AC 5곳은 어디인가?
+6. TIPS는 필수 목표인가, 있으면 좋은 보조 신호인가?
 
 ### P1: 후보 선정 정확도를 높이는 질문
 
-6. 뭉클랩의 핵심 고객 세그먼트는 누구인가? 예: 초기 스타트업, SME, e-commerce, SaaS, agency.
-7. 초기 wedge는 PG 매출/정산/결제상세, ads/analytics 집계, CRM/CS, 세무/문서 중 어디가 1순위인가?
-8. 이미 연결된 데이터 소스 또는 실제 고객 데이터가 있는가?
-9. 웜 인트로 가능한 기존 투자자, advisor, 고객, 포트폴리오 founder가 있는가?
-10. 해외 진출 또는 글로벌 VC를 이번 라운드에 포함할 것인가?
+7. 뭉클랩의 핵심 고객 세그먼트는 누구인가? 예: 초기 스타트업, SME, e-commerce, SaaS, agency.
+8. 초기 wedge는 PG 매출/정산/결제상세, ads/analytics 집계, CRM/CS, 세무/문서 중 어디가 1순위인가?
+9. 이미 연결된 데이터 소스 또는 실제 고객 데이터가 있는가?
+10. 웜 인트로 가능한 기존 투자자, advisor, 고객, 포트폴리오 founder가 있는가?
+11. 해외 진출 또는 글로벌 VC를 이번 라운드에 포함할 것인가?
 
 ### P2: 실행 품질을 높이는 질문
 
-11. 현재 deck, financial model, data room은 각각 어떤 버전인가?
-12. 투자자가 가장 많이 반박할 지점은 무엇이라고 보는가? 예: wrapper commodity, 시장 크기, 데이터 정확도, 보안, distribution.
-13. 창업팀에서 누가 fundraising mode 동안 제품/고객 운영을 지키는가?
-14. 고객 레퍼런스 콜에 응해줄 고객이 있는가?
-15. 이번 라운드에서 절대 양보하기 어려운 조건은 무엇인가?
+12. 현재 deck, financial model, data room은 각각 어떤 버전인가?
+13. 투자자가 가장 많이 반박할 지점은 무엇이라고 보는가? 예: wrapper commodity, 시장 크기, 데이터 정확도, 보안, distribution.
+14. 창업팀에서 누가 fundraising mode 동안 제품/고객 운영을 지키는가?
+15. 고객 레퍼런스 콜에 응해줄 고객이 있는가?
+16. 이번 라운드에서 절대 양보하기 어려운 조건은 무엇인가?
