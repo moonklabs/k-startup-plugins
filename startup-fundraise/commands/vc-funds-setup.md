@@ -19,6 +19,16 @@ vc-funds setup --client claude --db auto
 vc-funds doctor
 ```
 
+설치 직후 데이터 부트스트랩(v0.3.0+, robots 고지 동의 필요):
+
+```bash
+vc-funds setup --with-data --consent   # 설치 + KVIC 전체 분류 수집
+# 또는 개별 수집
+vc-funds fetch kvic --list             # 분류코드 29종
+vc-funds fetch kvic --code AA --consent
+vc-funds fetch kvic --all
+```
+
 이 커맨드는 `vc-funds` 설치 상태를 점검하고(`vc-funds doctor`), 미설치 시 위 설치 명령을 안내합니다.
 
 스타트업이 투자유치 운영 루틴 안에서 이 CLI/MCP를 언제 쓰는지는 [Founder Fundraising Operating Use Cases](../skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 참고합니다.
@@ -132,8 +142,13 @@ vc-funds doctor
 
 기본 OFF:
 
+- `on_demand_fetch`: 사용자 명령 실행 시에만 KVIC FundFinder를 분류코드당 1회 조회. 대상 robots.txt가 `Disallow: /`이므로 고지 후 `--consent` 동의로만 활성화 (v0.3.0+)
 - `official_feed_fetch`: 공식 허가, 제휴, 유료 계약 후에만 활성화
 - `site_background_crawler`: 초기 금지
+
+게이트 없음:
+
+- `vc-funds fetch datago`: 공공데이터포털 공인 오픈API (serviceKey = 공식 허가)
 
 ## Doctor 체크
 
