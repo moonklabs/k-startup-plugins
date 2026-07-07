@@ -31,10 +31,10 @@ codex plugin add startup-fundraise@startup-plugins
 릴리스 버전을 고정해서 배포하려면 git tag를 만들고 `--ref`에 태그를 지정합니다.
 
 ```bash
-git tag v0.3.3
-git push origin v0.3.3
+git tag v0.3.4
+git push origin v0.3.4
 
-codex plugin marketplace add moonklabs/k-startup-plugins --ref v0.3.3
+codex plugin marketplace add moonklabs/k-startup-plugins --ref v0.3.4
 codex plugin add startup-fundraise@startup-plugins
 ```
 
