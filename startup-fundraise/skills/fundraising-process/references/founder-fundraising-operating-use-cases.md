@@ -12,12 +12,12 @@
 
 | 원칙 | 실무 해석 | 커맨드 반영 |
 |---|---|---|
-| Fundraising mode를 분리한다 | 투자유치는 매우 산만하므로 라운드 시작 전 준비를 끝내고, 시작하면 짧고 집중적으로 병렬 진행한다 | `/daily-fundraise`, `/fundraise-pipeline` |
-| 투자자는 "yes" 전까지는 no다 | 긍정적 말보다 다음 미팅, DD 요청, 투자 조건, 송금 일정 같은 행동을 본다 | `/fundraise-pipeline`, `/dd-prep` |
-| 직렬이 아니라 병렬로 만난다 | 한 VC에 순차적으로 매달리지 말고, 기대값이 높은 후보를 동시에 진행한다 | `/deal-sourcing`, `/fundraise-pipeline` |
-| 첫 커밋이 가장 어렵다 | 첫 실질 커밋 또는 강한 리드 신호가 생기면 다른 투자자 전환율이 오른다 | `/investor-outreach`, `/daily-fundraise` |
-| 다음 단계를 반드시 묻는다 | 모든 미팅 끝에는 결정까지 필요한 자료, 내부 절차, 예상 일정을 확인한다 | `/dd-prep` |
-| TIPS는 회사가 혼자 신청하는 트랙이 아니다 | 운영사의 투자심사, 투자 확약, 추천 가능성, T/O, R&D 과제 적합성을 함께 본다 | `/deal-sourcing`, `~~fund disclosure` |
+| Fundraising mode를 분리한다 | 투자유치는 매우 산만하므로 라운드 시작 전 준비를 끝내고, 시작하면 짧고 집중적으로 병렬 진행한다 | `/fundraise`, `/daily-fundraise`, `/fundraise-pipeline` |
+| 투자자는 "yes" 전까지는 no다 | 긍정적 말보다 다음 미팅, DD 요청, 투자 조건, 송금 일정 같은 행동을 본다 | `/vc-meeting`, `/fundraise-pipeline` |
+| 직렬이 아니라 병렬로 만난다 | 한 VC에 순차적으로 매달리지 말고, 기대값이 높은 후보를 동시에 진행한다 | `/find-vc`, `/fundraise-pipeline` |
+| 첫 커밋이 가장 어렵다 | 첫 실질 커밋 또는 강한 리드 신호가 생기면 다른 투자자 전환율이 오른다 | `/vc-meeting`, `/daily-fundraise` |
+| 다음 단계를 반드시 묻는다 | 모든 미팅 끝에는 결정까지 필요한 자료, 내부 절차, 예상 일정을 확인한다 | `/vc-meeting` |
+| TIPS는 회사가 혼자 신청하는 트랙이 아니다 | 운영사의 투자심사, 투자 확약, 추천 가능성, T/O, R&D 과제 적합성을 함께 본다 | `/find-vc`, `~~fund disclosure` |
 
 참고 출처:
 
@@ -27,7 +27,7 @@
 
 ## 단계별 운영 유즈케이스
 
-### 0단계: Office Hours로 현황 초기화
+### 0단계: `/fundraise`로 생존 목표와 라운드 목표 설정
 
 목표: 지금 라운드를 시작할지, 한 달 더 고객/제품 증거를 쌓을지, VC 라운드 대신 TIPS/AC/전략고객 루트를 우선할지 결정한다.
 
@@ -35,15 +35,18 @@
 
 1. 현재 현금잔고, 월 burn, 확정 수금, runway, 다음 자금 공백 날짜를 먼저 적는다.
 2. 회사 한 줄 설명, 고객군, 현재 traction, 목표 라운드 금액을 적는다.
-3. `/fundraise-office-hours`로 runway check를 먼저 수행한 뒤 `ACCELERATE_ROUND`, `PREPARE_MORE`, `PAUSE_AND_VALIDATE`, `ALTERNATIVE_ROUTE` 중 하나를 고른다.
-4. Fundraise Operating Snapshot에 runway, 라운드 목표, 지표, 투자자 행동 증거, 공식 근거 gap, 다음 7일 액션을 남긴다.
-5. 0원 조달, 작은 라운드, 목표 라운드 세 가지 자금 계획을 만든다.
-6. 투자자가 물을 "왜 지금", "왜 이 팀", "왜 venture-scale"에 답할 증거를 모은다.
-7. 라운드를 시작하면 6-8주 동안 founder calendar를 fundraising mode로 전환한다.
+3. `/fundraise`를 실행한다. 내부적으로 runway check가 필요하면 `/fundraise-office-hours` 흐름으로 들어간다.
+4. 문제를 `알고 있고 인지하는 문제`, `모르지만 인지하는 문제`, `알고 있지만 인지 못하는 문제`, `모르고 인지도 못하는 문제`로 나눠 Fundraise Operating Snapshot에 남긴다.
+5. `ACCELERATE_ROUND`, `PREPARE_MORE`, `PAUSE_AND_VALIDATE`, `ALTERNATIVE_ROUTE` 중 하나를 고른다.
+6. Fundraise Operating Snapshot에 runway, 라운드 목표, 지표, 투자자 행동 증거, 공식 근거 gap, 다음 7일 액션을 남긴다.
+7. 0원 조달, 작은 라운드, 목표 라운드 세 가지 자금 계획을 만든다.
+8. 투자자가 물을 "왜 지금", "왜 이 팀", "왜 venture-scale"에 답할 증거를 모은다.
+9. 라운드를 시작하면 6-8주 동안 founder calendar를 fundraising mode로 전환한다.
 
 사용 커맨드:
 
 ```bash
+/fundraise "Seed/Pre-A 준비"
 /fundraise-office-hours "Seed/Pre-A 현황 점검"
 /fundraise-forecast
 /daily-fundraise
@@ -57,6 +60,7 @@
 |---|---|---|
 | runway | 현금잔고, 월 burn, 확정 수금, runway, 자금 공백 날짜가 있음 | runway를 모른 채 투자자 리스트부터 만듦 |
 | 라운드 목표 | 금액, runway, milestone, 희석률 가드레일이 있음 | "일단 많이" 또는 "투자자에게 물어봄" |
+| 문제 인식 지도 | known/unknown/hidden risk가 분리되어 다음 질문이 하나로 좁혀짐 | 질문을 한꺼번에 던져 창업자가 답을 못함 |
 | 운영 스냅샷 | decision mode, evidence, data gap, 다음 7일 액션이 있음 | 매번 새 상담처럼 같은 정보를 다시 물음 |
 | 투자자 증거 | 고객, 매출, 사용 빈도, 반복 업무 절감, 기술 방어 논리가 있음 | 덱 문장만 있고 데이터가 없음 |
 | 실행 모드 | 미팅 집중 기간과 제품 운영 담당이 정해짐 | 미팅이 제품 실행을 계속 갉아먹음 |
@@ -132,8 +136,8 @@ vc-funds health --json
 사용 커맨드:
 
 ```bash
-/deal-sourcing "뭉클랩 AI B2B SaaS Seed Pre-A Korea"
-/investor-outreach "프라이머, 스파크랩, 블루포인트"
+/find-vc "뭉클랩 AI B2B SaaS Seed Pre-A Korea"
+/vc-meeting "프라이머, 스파크랩, 블루포인트"
 /fundraise-pipeline "Seed/Pre-A"
 ```
 
@@ -159,8 +163,7 @@ vc-funds health --json
 사용 커맨드:
 
 ```bash
-/investor-outreach "투자자명"
-/dd-prep "투자자명"
+/vc-meeting "투자자명"
 /daily-fundraise
 ```
 
@@ -213,7 +216,7 @@ vc-funds health --json
 사용 커맨드:
 
 ```bash
-/dd-prep "리드 후보"
+/vc-meeting "리드 후보 DD 요청"
 /fundraise-pipeline "DD"
 /investor-update "라운드 진행 업데이트"
 ```
@@ -238,7 +241,7 @@ vc-funds health --json
 
 기대 행동:
 
-1. `/fundraise-office-hours`가 현재 상태를 묻고 decision mode와 Fundraise Operating Snapshot을 만든다.
+1. `/fundraise`가 현재 상태를 묻고 decision mode와 Fundraise Operating Snapshot을 만든다.
 2. `fundraising-process` 스킬이 readiness, 절차, 자료, 데이터룸 준비를 보강한다.
 3. guide corpus가 있으면 투자유치 용어와 체크리스트를 먼저 설명한다.
 4. `/vc-funds-setup`으로 로컬 DB 준비 상태를 확인한다.
@@ -247,7 +250,7 @@ vc-funds health --json
 PASS 기준:
 
 - 투자자 리스트보다 먼저 readiness, 자료, runway, 목표 금액을 확인한다.
-- Office Hours 결과가 다음 `/deal-sourcing`, `/fundraise-pipeline`, `/daily-fundraise` 입력으로 이어진다.
+- Office Hours 결과가 다음 `/fundraise-data`, `/find-vc`, `/vc-meeting`, `/fundraise-pipeline`, `/daily-fundraise` 입력으로 이어진다.
 - `NOT_READY`인 document/guide import를 실행 가능한 명령처럼 말하지 않는다.
 - TIPS를 "운영사 투자/추천 필요"로 설명한다.
 

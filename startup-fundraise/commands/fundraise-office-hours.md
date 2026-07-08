@@ -1,5 +1,5 @@
 ---
-description: 투자유치 Office Hours — runway 체크, 현황 질문, 라운드 의사결정, 운영 데이터 초기화/업데이트
+description: 투자유치 Office Hours — runway 체크, 소크라테스식 한 질문 진행, 라운드 의사결정, 운영 데이터 초기화/업데이트
 argument-hint: "<회사/라운드/현황 메모>"
 ---
 
@@ -11,7 +11,7 @@ argument-hint: "<회사/라운드/현황 메모>"
 
 `/vc-funds-setup`은 로컬 도구와 MCP를 준비하는 최초 설치 루틴이고, `/fundraise-office-hours`는 투자유치 현황을 묻고 판단하며 계속 업데이트하는 운영 루틴입니다.
 
-gstack의 `/office-hours`에서 가져온 forcing question 방식과 `/plan-ceo-review`의 CEO식 의사결정 모드를 투자유치에 맞게 적용합니다. 첫 질문은 항상 runway check입니다. 답변이 모호하면 더 묻고, 근거가 약하면 근거 약함을 표시하며, 다음 액션은 7일 안에 실행 가능한 형태로 좁힙니다.
+gstack의 `/office-hours`에서 가져온 forcing question 방식, `$deep-interview`의 소크라테스식 한 질문 진행, `/plan-ceo-review`의 CEO식 의사결정 모드를 투자유치에 맞게 적용합니다. 첫 질문은 항상 runway check입니다. 답변이 모호하면 질문을 여러 개 던지지 말고 가장 중요한 불확실성 하나를 좁힙니다. 근거가 약하면 근거 약함을 표시하며, 다음 액션은 7일 안에 실행 가능한 형태로 좁힙니다.
 
 ## 사용법
 
@@ -41,17 +41,50 @@ gstack의 `/office-hours`에서 가져온 forcing question 방식과 `/plan-ceo-
 │  1. Runway check                                                  │
 │     현금잔고, 월 burn, 확정 수금, 현재 runway, 자금 공백 날짜      │
 │  2. forcing questions                                             │
-│     투자 필요성/수요/투자자 행동/리드 가능성/미래 적합성          │
-│  3. 공식 근거 대사                                                │
+│     한 번에 하나씩, 가장 위험한 불확실성부터 질문                 │
+│  3. Socratic problem map                                           │
+│     알고 있는 문제/모르는 문제/인지 못한 문제 분류                │
+│  4. 공식 근거 대사                                                │
 │     vc-funds MCP로 VC/펀드/TIPS/공시 evidence와 data gap 확인      │
-│  4. CEO decision review                                           │
+│  5. CEO decision review                                           │
 │     accelerate / prepare / pause / alternative route              │
-│  5. 운영 데이터 초기화·업데이트                                   │
+│  6. 운영 데이터 초기화·업데이트                                   │
 │     Fundraise Operating Snapshot 작성 또는 갱신                   │
-│  6. 다음 7일 액션                                                 │
+│  7. 다음 7일 액션                                                 │
 │     미팅, 자료, 데이터룸, 딜소싱, 후속 연락                       │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+## 소크라테스식 진행 규칙
+
+Office Hours는 설문지가 아닙니다. 한 번에 많은 질문을 던지지 말고, 창업자의 목표인 투자유치 성공에 가장 큰 영향을 주는 불확실성 하나를 골라 좁힙니다.
+
+반복 루프:
+
+1. 현재 답변을 `confirmed fact`, `evidence`, `assumption`, `decision`, `unknown`으로 분류합니다.
+2. 아래 문제 지도를 업데이트합니다.
+3. fundraising outcome에 가장 큰 영향을 주는 빈칸 하나를 고릅니다.
+4. 한 질문만 합니다.
+5. 답변을 다시 분류하고, 필요하면 같은 주제를 한 단계 더 깊게 묻습니다.
+6. 충분히 좁혀지면 decision mode와 다음 7일 액션으로 전환합니다.
+
+| 분류 | 의미 | 투자유치 예시 | 처리 |
+|---|---|---|---|
+| 알고 있고 인지하는 문제 | 창업자가 알고 있고 말할 수 있음 | runway가 4개월, 목표 20억 | 사실/근거로 기록 |
+| 모르지만 인지하는 문제 | 모른다는 사실을 알고 있음 | 어떤 VC가 TIPS 추천 가능성이 있는지 모름 | data gap과 import/search 액션 생성 |
+| 알고 있지만 인지 못하는 문제 | 자료나 행동에 드러나지만 창업자가 중요성을 못 봄 | 미팅은 많지만 next step이 없음 | 소크라테스식 반문으로 병목화 |
+| 모르고 인지도 못하는 문제 | 아직 질문되지 않아 위험으로 숨어 있음 | 단일 champion 의존, 펀드 목적 불일치, runway 착시 | red flag 질문으로 노출 |
+
+질문 우선순위:
+
+1. runway와 생존 경로
+2. 이번 라운드가 필요한 이유와 목표
+3. 고객/매출/사용 행동 증거
+4. 투자자 말이 아닌 행동 증거
+5. TIPS/운영사/펀드 목적/공식 근거 gap
+6. 다음 7일 안에 검증 가능한 액션
+
+질문은 항상 한 문장 또는 한 덩어리로 끝냅니다. 예: "현재 확정 수금까지 반영하면 현금이 실제로 바닥나는 날짜는 언제인가요?"
 
 ## 질문 순서
 
@@ -140,7 +173,15 @@ gstack의 `/office-hours`에서 가져온 forcing question 방식과 `/plan-ceo-
 | 투자자 행동 |  |  |
 | 공식 펀드 근거 |  |  |
 
-## 3. 업데이트된 Fundraise Operating Snapshot
+## 3. Socratic Problem Map
+| 분류 | 현재 내용 | 다음 질문/액션 |
+|---|---|---|
+| 알고 있고 인지하는 문제 |  |  |
+| 모르지만 인지하는 문제 |  |  |
+| 알고 있지만 인지 못하는 문제 |  |  |
+| 모르고 인지도 못하는 문제 |  |  |
+
+## 4. 업데이트된 Fundraise Operating Snapshot
 | 영역 | 현재값 | 업데이트 |
 |---|---|---|
 | 라운드 목표 |  |  |
@@ -151,18 +192,18 @@ gstack의 `/office-hours`에서 가져온 forcing question 방식과 `/plan-ceo-
 | 리드 후보 |  |  |
 | 데이터룸 상태 |  |  |
 
-## 4. CEO Review
+## 5. CEO Review
 **가장 큰 병목:** [병목]
 **하지 말아야 할 일:** [focus as subtraction]
 **10x로 키울 선택지:** [선택지]
 **줄여야 할 선택지:** [선택지]
 
-## 5. 다음 7일 액션
+## 6. 다음 7일 액션
 1. [ ] [액션] — owner/date/evidence
 2. [ ] [액션] — owner/date/evidence
 3. [ ] [액션] — owner/date/evidence
 
-## 6. 다음에 실행할 커맨드
+## 7. 다음에 실행할 커맨드
 - `/deal-sourcing "[조건]"`
 - `/fundraise-pipeline`
 - `/dd-prep "[투자자]"`

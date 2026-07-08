@@ -38,6 +38,17 @@
 | 6-month survival plan |  |
 | Cost-cut options |  |
 
+## 2.2 Socratic Problem Map
+
+| Category | Current content | Evidence / signal | Next question or action |
+|---|---|---|---|
+| Known and recognized |  |  |  |
+| Unknown but recognized |  |  |  |
+| Known but unrecognized |  |  |  |
+| Unknown and unrecognized |  |  |  |
+
+Use this map to avoid asking many questions at once. Pick the highest-risk blank, ask one question, update the map, and continue only if the answer changes fundraising decisions.
+
 ## 3. Traction Evidence
 
 | Metric | Current | Trend | Evidence | Gap |

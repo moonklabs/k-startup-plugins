@@ -31,10 +31,10 @@ codex plugin add startup-fundraise@startup-plugins
 릴리스 버전을 고정해서 배포하려면 git tag를 만들고 `--ref`에 태그를 지정합니다.
 
 ```bash
-git tag v0.3.4
-git push origin v0.3.4
+git tag v0.3.6
+git push origin v0.3.6
 
-codex plugin marketplace add moonklabs/k-startup-plugins --ref v0.3.4
+codex plugin marketplace add moonklabs/k-startup-plugins --ref v0.3.6
 codex plugin add startup-fundraise@startup-plugins
 ```
 
@@ -46,13 +46,12 @@ codex mcp add vc-funds -- node /Users/moonklabs/workspace-moonklabs/k-startup-pl
 
 처음 투자유치를 준비하는 팀은 `startup-fundraise`의 단계별 운영 가이드부터 시작하세요.
 
-1. `/vc-funds-setup local-dev`로 로컬 공시 DB와 MCP 구조를 확인합니다.
-2. `/fundraise-office-hours "Seed/Pre-A 현황 점검"`으로 현재 상태와 의사결정 모드를 초기화합니다.
-3. `fundraising-process` 스킬로 라운드 readiness와 준비물을 보강합니다.
-4. `vc-funds import kvic|kvca`로 사용자가 확보한 공식 snapshot을 저장합니다.
-5. `/fundraise-data "./fundraise"`로 IR, 아웃리치, 파이프라인, 데이터룸 자료를 표준 구조로 정리합니다.
-6. `/deal-sourcing "뭉클랩 AI B2B SaaS Seed Pre-A Korea"`로 후보 VC를 3단계 미팅 순서로 나눕니다.
-7. `/daily-fundraise`와 `/fundraise-pipeline`으로 매일 후속 액션과 병목을 관리합니다.
+1. `/fundraise`로 생존 목표, 라운드 목표, 이번 주 액션을 정합니다.
+2. `/fundraise-data "./fundraise"`로 IR, 아웃리치, 파이프라인, 데이터룸 자료를 표준 구조로 정리합니다.
+3. `/find-vc "뭉클랩 AI B2B SaaS Seed Pre-A Korea"`로 VC/AC/TIPS 운영사를 3단계 미팅 순서로 나눕니다.
+4. `/vc-meeting "투자자명"`으로 아웃리치, 미팅 준비, 후속조치, DD를 관리합니다.
+
+고급 사용자는 `/vc-funds-setup local-dev`와 `vc-funds import kvic|kvca`로 공식 snapshot을 로컬 DB에 저장하고, `/fundraise-pipeline`, `/daily-fundraise`로 진행 병목을 관리합니다.
 
 자세한 사용법은 [startup-fundraise README](startup-fundraise/README.md)와 [Founder Fundraising Operating Use Cases](startup-fundraise/skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 참고하세요.
 
@@ -75,13 +74,21 @@ codex mcp add vc-funds -- node /Users/moonklabs/workspace-moonklabs/k-startup-pl
 
 > `/business-case` 하나만 실행해도 시장 분석·경쟁 분석·재무 모델이 동시에 완성됩니다.
 
-### 16개 슬래시 커맨드
+### 4개 기본 커맨드
 ```
-/daily-fundraise      # 일일 브리핑 — 오늘의 우선순위, 팔로업, 미팅 준비
-/fundraise-office-hours # 투자유치 Office Hours — 현황 질문, 의사결정, 운영 스냅샷 업데이트
+/fundraise           # 생존 목표, 라운드 목표, 이번 주 액션을 정하는 메인 루틴
 /fundraise-data      # IR, 아웃리치, 파이프라인, 데이터룸 자료 구조화
-/deal-sourcing        # 투자자 타겟 발굴 + Thesis 매칭
+/find-vc             # VC/AC/TIPS 운영사 후보 탐색 + 공식 근거 확인
+/vc-meeting          # 아웃리치, 미팅 준비, 후속조치, DD 관리
+```
+
+### 고급 커맨드
+```
 /vc-funds-setup       # VC/AC 공시·창업자 가이드 로컬 MCP 설치 설계 및 점검
+/fundraise-office-hours # 투자유치 Office Hours — 현황 질문, 의사결정, 운영 스냅샷 업데이트
+/deal-sourcing        # 투자자 타겟 발굴 + Thesis 매칭
+/daily-fundraise      # 일일 브리핑 — 오늘의 우선순위, 팔로업, 미팅 준비
+/fundraise-pipeline   # 파이프라인 건강점수 + 커버리지 분석
 /investor-outreach    # VC 리서치 → 웜인트로 / 콜드 이메일 자동 생성
 /dd-prep              # DD 미팅 준비 — 예상 질문 30개 + 데이터룸 체크리스트
 /pitch-review         # 피치 덱 100점 평가 + 슬라이드별 개선 가이드
