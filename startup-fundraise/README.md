@@ -4,6 +4,7 @@
 웹 검색만으로 단독 작동하며, CRM·이메일·문서 도구를 연결하면 더 강력해집니다.
 
 ```bash
+claude plugins marketplace add moonklabs/k-startup-plugins
 claude plugins install startup-fundraise
 ```
 
@@ -17,7 +18,7 @@ codex plugin add startup-fundraise@startup-plugins
 로컬 개발 checkout을 직접 테스트할 때는 로컬 marketplace 경로를 등록합니다.
 
 ```bash
-codex plugin marketplace add /Users/moonklabs/workspace-moonklabs/k-startup-plugins
+codex plugin marketplace add /path/to/your/local/checkout/k-startup-plugins
 codex plugin add startup-fundraise@startup-plugins
 ```
 
@@ -75,11 +76,7 @@ vc-funds doctor
 
 처음 실행 시 "Windows에서 PC를 보호했습니다" 경고가 뜨면 **추가 정보 → 실행**을 누르세요. 코드사이닝 인증서 발급 전까지 미서명 실행 파일에 나타나는 정상 경고입니다.
 
-Homebrew를 쓴다면(macOS/Linux):
-
-```bash
-brew install moonklabs/tap/vc-funds
-```
+(Homebrew tap는 준비 중입니다. 지금은 위 curl/PowerShell 방법을 사용하세요.)
 
 Claude/Codex MCP 설정은 `setup`이 자동 등록합니다 (Codex는 `vc-funds setup --client codex`). `.mcp.json`을 직접 편집할 필요가 없습니다.
 
@@ -166,7 +163,7 @@ VC/AC 공시·가이드 → 로컬 vc-fund-disclosure-mcp (선택 설치)
 분석          → Mixpanel, Amplitude, ChartMogul
 ```
 
-구현체는 [moonklabs/vc-fund-disclosure](https://github.com/moonklabs/vc-fund-disclosure)입니다. 설치는 위 "선택 설치" 섹션을 참고하세요. `mcp/vc-fund-disclosure/`에는 초기 설계 스펙(source registry, schema, contract 등)이 참고용으로 남아 있습니다.
+구현체는 [moonklabs/vc-fund-disclosure](https://github.com/moonklabs/vc-fund-disclosure)입니다. 설치는 위 "선택 설치" 섹션을 참고하세요.
 
 자세한 내용은 [CONNECTORS.md](CONNECTORS.md)를 참조하세요.
 

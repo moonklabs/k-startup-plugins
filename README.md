@@ -14,6 +14,39 @@ claude plugins marketplace add moonklabs/k-startup-plugins
 claude plugins install startup-fundraise
 ```
 
+설치 후 Claude Code를 재시작하고 아래 4단계로 시작하세요.
+
+1. `/fundraise`로 생존 목표, 라운드 목표, 이번 주 액션을 정합니다.
+2. `/fundraise-data "./fundraise"`로 IR, 아웃리치, 파이프라인, 데이터룸 자료를 표준 구조로 정리합니다.
+3. `/find-vc "뭉클랩 AI B2B SaaS Seed Pre-A Korea"`로 VC/AC/TIPS 운영사를 3단계 미팅 순서로 나눕니다.
+4. `/vc-meeting "투자자명"`으로 아웃리치, 미팅 준비, 후속조치, DD를 관리합니다.
+
+자세한 사용법은 [startup-fundraise README](startup-fundraise/README.md)와 [Founder Fundraising Operating Use Cases](startup-fundraise/skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 참고하세요.
+
+**옵션 — VC/AC 공시 근거 로컬 MCP.** 위 설치만으로도 웹 검색으로 작동합니다. 여기에 [`vc-fund-disclosure`](https://github.com/moonklabs/vc-fund-disclosure)를 설치하면 KVIC/KVCA 공식 공시(운용사, 펀드, 결성일·총액)를 로컬 DB에서 근거와 함께 즉시 조회합니다.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/moonklabs/vc-fund-disclosure/main/install.sh | sh
+vc-funds setup --client claude --db auto
+vc-funds doctor
+```
+
+Windows(PowerShell)는:
+
+```powershell
+irm https://raw.githubusercontent.com/moonklabs/vc-fund-disclosure/main/install.ps1 | iex
+vc-funds setup --client claude --db auto
+vc-funds doctor
+```
+
+처음 실행 시 "Windows에서 PC를 보호했습니다" 경고가 뜨면 **추가 정보 → 실행**을 누르세요. 코드사이닝 인증서 발급 전까지 미서명 실행 파일에 나타나는 정상 경고입니다.
+
+Claude Code MCP 설정은 `setup`이 자동 등록합니다 (Codex는 `--client codex`). DB는 사용자 로컬 머신에만 저장됩니다.
+
+---
+
+### Codex 사용자 / 고급 설치
+
 Codex에서 사용할 때는 marketplace를 추가한 뒤 플러그인을 설치합니다.
 
 ```bash
@@ -24,46 +57,21 @@ codex plugin add startup-fundraise@startup-plugins
 로컬 개발 중인 checkout을 바로 연결하려면 GitHub 대신 로컬 경로를 사용합니다.
 
 ```bash
-codex plugin marketplace add /Users/moonklabs/workspace-moonklabs/k-startup-plugins
+codex plugin marketplace add /path/to/your/local/checkout/k-startup-plugins
 codex plugin add startup-fundraise@startup-plugins
 ```
 
-릴리스 버전을 고정해서 배포하려면 git tag를 만들고 `--ref`에 태그를 지정합니다.
-
-```bash
-git tag v0.3.6
-git push origin v0.3.6
-
-codex plugin marketplace add moonklabs/k-startup-plugins --ref v0.3.6
-codex plugin add startup-fundraise@startup-plugins
-```
-
-**옵션 — VC/AC 공시 근거 로컬 MCP.** 위 설치만으로도 웹 검색으로 작동합니다. 여기에 [`vc-fund-disclosure`](https://github.com/moonklabs/vc-fund-disclosure)를 설치하면 KVIC/KVCA 공식 공시(운용사, 펀드, 결성일·총액)를 로컬 DB에서 근거와 함께 즉시 조회합니다.
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/moonklabs/vc-fund-disclosure/main/install.sh | sh
-vc-funds setup --client claude --db auto
-```
-
-Windows(PowerShell)는:
-
-```powershell
-irm https://raw.githubusercontent.com/moonklabs/vc-fund-disclosure/main/install.ps1 | iex
-vc-funds setup --client claude --db auto
-```
-
-Claude Code MCP 설정은 `setup`이 자동 등록합니다 (Codex는 `--client codex`). DB는 사용자 로컬 머신에만 저장됩니다.
-
-처음 투자유치를 준비하는 팀은 `startup-fundraise`의 단계별 운영 가이드부터 시작하세요.
-
-1. `/fundraise`로 생존 목표, 라운드 목표, 이번 주 액션을 정합니다.
-2. `/fundraise-data "./fundraise"`로 IR, 아웃리치, 파이프라인, 데이터룸 자료를 표준 구조로 정리합니다.
-3. `/find-vc "뭉클랩 AI B2B SaaS Seed Pre-A Korea"`로 VC/AC/TIPS 운영사를 3단계 미팅 순서로 나눕니다.
-4. `/vc-meeting "투자자명"`으로 아웃리치, 미팅 준비, 후속조치, DD를 관리합니다.
+> 아래는 이 저장소를 유지보수하는 사람을 위한 절차입니다 — 일반 사용자는 필요하지 않습니다. 릴리스 버전을 고정해서 배포하려면 git tag를 만들고 `--ref`에 태그를 지정합니다.
+>
+> ```bash
+> git tag v0.3.6
+> git push origin v0.3.6
+>
+> codex plugin marketplace add moonklabs/k-startup-plugins --ref v0.3.6
+> codex plugin add startup-fundraise@startup-plugins
+> ```
 
 고급 사용자는 `/vc-funds-setup local-dev`와 `vc-funds import kvic|kvca`로 공식 snapshot을 로컬 DB에 저장하고, `/fundraise-pipeline`, `/daily-fundraise`로 진행 병목을 관리합니다.
-
-자세한 사용법은 [startup-fundraise README](startup-fundraise/README.md)와 [Founder Fundraising Operating Use Cases](startup-fundraise/skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 참고하세요.
 
 ---
 
@@ -92,21 +100,7 @@ Claude Code MCP 설정은 `setup`이 자동 등록합니다 (Codex는 `--client 
 /vc-meeting          # 아웃리치, 미팅 준비, 후속조치, DD 관리
 ```
 
-### 고급 커맨드
-```
-/vc-funds-setup       # VC/AC 공시·창업자 가이드 로컬 MCP 설치 설계 및 점검
-/fundraise-office-hours # 투자유치 Office Hours — 현황 질문, 의사결정, 운영 스냅샷 업데이트
-/deal-sourcing        # 투자자 타겟 발굴 + Thesis 매칭
-/daily-fundraise      # 일일 브리핑 — 오늘의 우선순위, 팔로업, 미팅 준비
-/fundraise-pipeline   # 파이프라인 건강점수 + 커버리지 분석
-/investor-outreach    # VC 리서치 → 웜인트로 / 콜드 이메일 자동 생성
-/dd-prep              # DD 미팅 준비 — 예상 질문 30개 + 데이터룸 체크리스트
-/pitch-review         # 피치 덱 100점 평가 + 슬라이드별 개선 가이드
-/business-case        # 투자자용 10섹션 비즈니스 케이스 문서
-/market-opportunity   # TAM/SAM/SOM 3방법론 교차 검증
-/fundraise-forecast   # 3-시나리오 예측 + 런웨이 교차점
-...
-```
+전체 커맨드 목록(고급 커맨드 포함)은 [startup-fundraise README](startup-fundraise/README.md#고급-커맨드)를 참고하세요.
 
 ### 16개 도메인 스킬
 대화 맥락에서 자동 활성화되는 VC/창업 지식.
@@ -122,7 +116,7 @@ VC/AC 공시·가이드 → 로컬 vc-fund-disclosure-mcp (선택 설치)
 문서          → Notion, Google Docs, Microsoft 365
 ```
 
-구현체는 [moonklabs/vc-fund-disclosure](https://github.com/moonklabs/vc-fund-disclosure)입니다. 설치는 위 "옵션" 안내를 따르세요. `startup-fundraise/mcp/vc-fund-disclosure/`에는 초기 설계 스펙(source registry, schema, contract 등)이 참고용으로 남아 있습니다.
+구현체는 [moonklabs/vc-fund-disclosure](https://github.com/moonklabs/vc-fund-disclosure)입니다. 설치는 위 "옵션" 안내를 따르세요.
 
 ---
 
