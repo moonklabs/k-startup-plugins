@@ -1,6 +1,6 @@
 ---
 name: vc-fund-disclosure-mcp
-description: VC/AC 공시정보와 창업자 가이드 자료를 개인 로컬 DB/MCP로 설계, 설치, 검증할 때 사용합니다. 현재 P0는 KVIC FundFinder/KVCA DIVA HTML·CSV snapshot import, `vc-funds` CLI, stdio MCP, `search_vc_database`, source authority, collection health, data gap, schema doctor 검증에 집중합니다. PDF/HWP/HWPX/HWPML/Office 창업자 가이드 코퍼스, watch folder, browser capture, guide-source, founder guide import, Homebrew/GitHub Releases 설치는 planned surface로 구분하며 문서 파싱은 `kordoc` CLI/MCP adapter를 우선 사용합니다. "공시 MCP", "VC 데이터 로컬 DB", "KVIC/KVCA 수집", "vc-funds 설치", "FundFinder DB화", "투자유치 가이드 코퍼스 설계" 같은 요청에서 실행합니다.
+description: VC/AC 공시정보와 창업자 가이드 자료를 개인 로컬 DB/MCP로 설계, 설치, 검증할 때 사용합니다. canonical 구현(v0.4.1+, moonklabs/vc-fund-disclosure)은 KVIC FundFinder/KVCA DIVA HTML·CSV snapshot import, `vc-funds` CLI, stdio MCP, `search_vc_database`, PDF/HWP/HWPX/HWPML/Office 창업자 가이드 import(`import guide`, `guide-source add`), watch folder, Homebrew/GitHub Releases 설치, 데이터 부트스트랩(`setup --with-data --consent`)을 모두 갖췄습니다. 문서 파싱은 `kordoc` CLI/MCP adapter를 우선 사용합니다. "공시 MCP", "VC 데이터 로컬 DB", "KVIC/KVCA 수집", "vc-funds 설치", "FundFinder DB화", "투자유치 가이드 코퍼스 설계" 같은 요청에서 실행합니다.
 ---
 
 # VC Fund Disclosure MCP
@@ -23,6 +23,7 @@ description: VC/AC 공시정보와 창업자 가이드 자료를 개인 로컬 D
 |---|---|
 | 로컬 MCP 설치/검증 | SOT의 배포/설치 SOT와 검증 체크리스트를 따른다 |
 | KVIC/KVCA snapshot import 설계 | SOT의 공시 evidence import 흐름을 따른다 |
-| 창업자 PDF/HWP/HWPX 저장 | 현재 P0 런타임은 `NOT_READY`; SOT의 planned guide import와 `kordoc` CLI/MCP adapter 설계만 참조한다 |
-| 죽은 PDF URL 등록 | 현재 P0 런타임은 `NOT_READY`; source URL 보존과 planned guide-source, `kordoc` import 설계만 참조한다 |
+| 창업자 PDF/HWP/HWPX 저장 | SOT의 `import guide` + `kordoc` CLI/MCP adapter 흐름을 따른다 |
+| 죽은 PDF URL 등록 | SOT의 `guide-source add` 흐름을 따른다 (source URL 보존, `access-status remote_gone_410`) |
+| 투자자 리서치용 데이터가 부족함(시드만 있음) | SOT의 데이터 부트스트랩(`setup --with-data --consent`, `fetch kvic`/`fetch diva`/`fetch datago`)을 안내한다 |
 | 투자자 추천/리서치 | `deal-sourcing` 또는 `investor-research` 스킬과 함께 사용한다 |

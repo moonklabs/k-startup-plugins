@@ -19,7 +19,7 @@ vc-funds setup --client claude --db auto
 vc-funds doctor
 ```
 
-설치 직후 데이터 부트스트랩(v0.3.0+, robots 고지 동의 필요):
+**데이터 부트스트랩은 설치의 필수 다음 단계입니다** (v0.3.0+, robots 고지 동의 필요). `setup`만 실행하면 DB에는 번들 시드(모태펀드 자조합 운용사 327개, 공공 개방 데이터)만 들어갑니다. 실제 투자자 리서치·딜소싱에 쓰려면 아래로 온디맨드 수집을 이어서 실행하도록 안내합니다:
 
 ```bash
 vc-funds setup --with-data --consent   # 설치 + KVIC 전체 분류 수집
@@ -27,7 +27,11 @@ vc-funds setup --with-data --consent   # 설치 + KVIC 전체 분류 수집
 vc-funds fetch kvic --list             # 분류코드 29종
 vc-funds fetch kvic --code AA --consent
 vc-funds fetch kvic --all
+vc-funds fetch diva --type tmly --consent      # KVCA 법정 공시 (최신 결성·변경)
+vc-funds fetch datago --preset associations    # 공공데이터포털 API (동의 게이트 없음)
 ```
+
+**DB를 그대로 나눠주지 않는 이유**: KVIC on-demand fetch는 robots 고지 동의(`--consent`)가 필요하고 KVCA DIVA는 법정 전자공시라 재배포 경계가 다릅니다. 완성된 DB를 공유하면 이 동의·라이선스 경계를 우회하므로, 각 사용자가 자신의 동의로 직접 수집하게 합니다. `fetch datago`만 서비스키 발급(공식 허가)으로 게이트 없이 가능합니다.
 
 이 커맨드는 `vc-funds` 설치 상태를 점검하고(`vc-funds doctor`), 미설치 시 위 설치 명령을 안내합니다.
 
@@ -75,15 +79,12 @@ vc-funds doctor
 
 npm scoped package는 기본 설치 경로로 쓰지 않습니다. `@moonklabs/*` npm 배포는 비용/권한/registry 의존 문제가 생길 수 있으므로, 기본 배포는 Homebrew tap과 GitHub Releases 단일 실행 파일로 둡니다.
 
-현재 repo-local 초안 실행:
-
-```bash
-node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs setup --db /tmp/vc-funds.sqlite
-node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs load-sql startup-fundraise/mcp/vc-fund-disclosure/runtime/fixtures/sample-data.sql --db /tmp/vc-funds.sqlite
-node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs doctor --db /tmp/vc-funds.sqlite --json
-node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs search "AI SaaS Seed Pre-A TIPS 가능 투자사" --db /tmp/vc-funds.sqlite --json
-node --test startup-fundraise/mcp/vc-fund-disclosure/runtime/test/*.test.mjs
-```
+> **아카이브 (사용 금지)**: 이 리포의 `mcp/vc-fund-disclosure/runtime/` Node 초안은 canonical 구현 전환 이전의 참고 스텁입니다. 실제 온보딩은 위 "설치" 섹션의 `install.sh` + `vc-funds` 바이너리 경로만 사용합니다. 아래 커맨드는 실행하지 마세요 — 최신 스키마·롤업 fix·데이터 부트스트랩이 반영되지 않은 구버전 스텁을 대상으로 합니다.
+>
+> ```bash
+> # 아카이브 예시 (참고용, 실행 금지)
+> node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs setup --db /tmp/vc-funds.sqlite
+> ```
 
 Homebrew를 쓰지 않는 경우:
 
@@ -197,9 +198,14 @@ vc-funds mcp serve
 
 사용자가 제공한 KVIC PDF 링크처럼 원격 링크가 사라졌거나 접근이 막힌 자료는 URL 후보와 실제 파일 import를 분리합니다.
 
-현재 P0 런타임에는 `guide-source add`와 `import guide` 명령이 없습니다. 해당 흐름은 planned guide/document adapter로 유지하고, 현재는 로컬 파일을 보유했는지와 원본 `source_url`만 설계 메모에 기록합니다.
+canonical 구현(v0.4.1+)에는 `guide-source add`와 `import guide` 명령이 이미 있습니다:
 
-planned adapter는 `kordoc` CLI/MCP를 기본 문서 파서로 사용합니다.
+```bash
+vc-funds guide-source add --publisher KVIC --url "<원격 URL>" --access-status remote_gone_410
+vc-funds import guide --file "./guides/seed-fundraising-guide.pdf" --role founder_education
+```
+
+문서 파서는 `kordoc` CLI/MCP를 기본으로 사용합니다.
 
 ```bash
 npx -y kordoc setup
