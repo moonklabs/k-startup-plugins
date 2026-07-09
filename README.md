@@ -38,11 +38,21 @@ codex plugin marketplace add moonklabs/k-startup-plugins --ref v0.3.6
 codex plugin add startup-fundraise@startup-plugins
 ```
 
-`vc-funds` 로컬 MCP는 현재 별도 등록합니다. 플러그인 설치로 Slack, HubSpot, Notion, Microsoft 365 remote MCP는 노출되지만, 로컬 공시 DB 서버는 사용자별 DB 경로가 필요하기 때문입니다.
+**옵션 — VC/AC 공시 근거 로컬 MCP.** 위 설치만으로도 웹 검색으로 작동합니다. 여기에 [`vc-fund-disclosure`](https://github.com/moonklabs/vc-fund-disclosure)를 설치하면 KVIC/KVCA 공식 공시(운용사, 펀드, 결성일·총액)를 로컬 DB에서 근거와 함께 즉시 조회합니다.
 
 ```bash
-codex mcp add vc-funds -- node /Users/moonklabs/workspace-moonklabs/k-startup-plugins/startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs mcp serve --db ~/.local/share/vc-funds/vc-funds.sqlite
+curl -fsSL https://raw.githubusercontent.com/moonklabs/vc-fund-disclosure/main/install.sh | sh
+vc-funds setup --client claude --db auto
 ```
+
+Windows(PowerShell)는:
+
+```powershell
+irm https://raw.githubusercontent.com/moonklabs/vc-fund-disclosure/main/install.ps1 | iex
+vc-funds setup --client claude --db auto
+```
+
+Claude Code MCP 설정은 `setup`이 자동 등록합니다 (Codex는 `--client codex`). DB는 사용자 로컬 머신에만 저장됩니다.
 
 처음 투자유치를 준비하는 팀은 `startup-fundraise`의 단계별 운영 가이드부터 시작하세요.
 
@@ -108,11 +118,11 @@ codex mcp add vc-funds -- node /Users/moonklabs/workspace-moonklabs/k-startup-pl
 CRM          → HubSpot, Notion, Relate
 이메일·캘린더 → Microsoft 365, Gmail
 데이터 보강   → OpenDART, THE VC, 혁신의숲 (웹 검색)
-VC/AC 공시·가이드 → 로컬 vc-fund-disclosure-mcp (Draft)
+VC/AC 공시·가이드 → 로컬 vc-fund-disclosure-mcp (선택 설치)
 문서          → Notion, Google Docs, Microsoft 365
 ```
 
-로컬 공시 MCP 구현 스펙은 `startup-fundraise/mcp/vc-fund-disclosure/`에 있습니다. source registry, SQLite schema, seed, source trust/input resolution contract, 검색/랭킹 contract, tool contract, display query, quality check pack을 함께 관리합니다.
+구현체는 [moonklabs/vc-fund-disclosure](https://github.com/moonklabs/vc-fund-disclosure)입니다. 설치는 위 "옵션" 안내를 따르세요. `startup-fundraise/mcp/vc-fund-disclosure/`에는 초기 설계 스펙(source registry, schema, contract 등)이 참고용으로 남아 있습니다.
 
 ---
 

@@ -16,7 +16,7 @@
 | 채팅 | `~~chat` | Slack | Microsoft Teams |
 | 지식 베이스 | `~~knowledge base` | Notion | Google Drive, Confluence |
 | 데이터 보강 | `~~data enrichment` | — | THE VC, 혁신의숲, 넥스트유니콘 (MCP 미지원 — 웹 검색 기반), OpenDART (MCP 지원 — 상장사 한정) |
-| VC/AC 공시·가이드 데이터 | `~~fund disclosure` | — | Draft: `vc-fund-disclosure-mcp` 로컬 DB, KVIC/KVCA snapshot import, TIPS 운영사/펀드 근거, `kordoc` 기반 창업자 문서 가이드 |
+| VC/AC 공시·가이드 데이터 | `~~fund disclosure` | — | 선택 설치: `vc-fund-disclosure-mcp` 로컬 DB, KVIC/KVCA snapshot import, TIPS 운영사/펀드 근거, `kordoc` 기반 창업자 문서 가이드 |
 | 스프레드시트 | `~~spreadsheet` | Microsoft 365 | Google Sheets |
 | 문서 | `~~docs` | Microsoft 365, Notion | Google Docs, Google Slides |
 | 분석/BI | `~~analytics` | — | Mixpanel, Amplitude, ChartMogul |

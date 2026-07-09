@@ -55,44 +55,41 @@ codex plugin add startup-fundraise@startup-plugins
 
 ---
 
-## 로컬 `vc-funds` CLI 초안 사용
+## 선택 설치: VC/AC 공시 근거 로컬 MCP
 
-현재 repo-local 초안은 `startup-fundraise/mcp/vc-fund-disclosure/runtime/`에서 바로 실행할 수 있습니다.
-
-```bash
-node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs setup --db /tmp/vc-funds.sqlite --json
-node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs doctor --db /tmp/vc-funds.sqlite --json
-node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs load-sql startup-fundraise/mcp/vc-fund-disclosure/runtime/fixtures/sample-data.sql --db /tmp/vc-funds.sqlite --json
-node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs search "뭉클랩 AI SaaS Seed Pre-A 투자사" --db /tmp/vc-funds.sqlite --json
-```
-
-사용자가 저장한 KVIC/KVCA HTML 또는 CSV snapshot을 import합니다.
+`startup-fundraise`는 위 설치만으로 웹 검색을 통해 단독 작동합니다. 여기에 [`vc-fund-disclosure`](https://github.com/moonklabs/vc-fund-disclosure)를 설치하면 KVIC/KVCA 공식 공시(운용사, 펀드, 결성일·총액)를 로컬 SQLite DB에서 근거와 함께 조회합니다.
 
 ```bash
-node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs import kvic \
-  --file ./snapshots/fundfinder-AA02.html \
-  --source-url http://fundfinder.k-vic.co.kr/rsh/rsh/RshMacFnd \
-  --captured-at 2026-07-04T00:00:00.000Z \
-  --db /tmp/vc-funds.sqlite \
-  --json
-
-node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs import kvca \
-  --file ./snapshots/kvca-primer.csv \
-  --source-url http://diva.kvca.or.kr/div/cmn/DivDisclsMainInq \
-  --captured-at 2026-07-04T00:00:00.000Z \
-  --db /tmp/vc-funds.sqlite \
-  --json
+curl -fsSL https://raw.githubusercontent.com/moonklabs/vc-fund-disclosure/main/install.sh | sh
+vc-funds setup --client claude --db auto
+vc-funds doctor
 ```
 
-현재 P0 런타임은 HTML/CSV snapshot import와 검색에 집중합니다. XLS/XLSX snapshot은 `unsupported_format`으로 거절하고, PDF/HWP/HWPX/HWPML/Office 문서 import는 planned surface입니다. 문서 파싱은 직접 파서를 만들지 않고 [kordoc](https://github.com/chrisryugj/kordoc) CLI/MCP adapter를 사용합니다.
+Windows(PowerShell)는:
 
-Codex에서 로컬 MCP 서버로 연결하려면 사용자별 DB 경로를 정한 뒤 등록합니다.
+```powershell
+irm https://raw.githubusercontent.com/moonklabs/vc-fund-disclosure/main/install.ps1 | iex
+vc-funds setup --client claude --db auto
+vc-funds doctor
+```
+
+처음 실행 시 "Windows에서 PC를 보호했습니다" 경고가 뜨면 **추가 정보 → 실행**을 누르세요. 코드사이닝 인증서 발급 전까지 미서명 실행 파일에 나타나는 정상 경고입니다.
+
+Homebrew를 쓴다면(macOS/Linux):
 
 ```bash
-codex mcp add vc-funds -- node /Users/moonklabs/workspace-moonklabs/k-startup-plugins/startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs mcp serve --db ~/.local/share/vc-funds/vc-funds.sqlite
+brew install moonklabs/tap/vc-funds
 ```
 
-현재 플러그인 `.mcp.json`은 Slack, HubSpot, Notion, Microsoft 365 remote MCP를 포함합니다. `vc-funds`는 로컬 DB 경로가 필요하므로 P0에서는 별도 등록하고, 패키징이 안정화되면 플러그인 MCP 엔트리로 승격합니다.
+Claude/Codex MCP 설정은 `setup`이 자동 등록합니다 (Codex는 `vc-funds setup --client codex`). `.mcp.json`을 직접 편집할 필요가 없습니다.
+
+설치 직후에는 번들 시드(공공 개방 데이터, 운용사 327개)만 들어 있습니다. 투자자 리서치에 실사용하려면 데이터를 이어서 채웁니다:
+
+```bash
+vc-funds setup --with-data --consent   # KVIC 전체 분류코드 온디맨드 수집
+```
+
+DB는 사용자 로컬 머신에만 저장됩니다 (macOS/Linux `~/.local/share/moonklabs/vc-funds/`, Windows `%LOCALAPPDATA%\MoonkLabs\vc-funds\`). 상세 사용법은 [vc-fund-disclosure README](https://github.com/moonklabs/vc-fund-disclosure#readme)를 참고하세요.
 
 ---
 
@@ -164,12 +161,12 @@ codex mcp add vc-funds -- node /Users/moonklabs/workspace-moonklabs/k-startup-pl
 CRM          → HubSpot, Notion, Relate
 이메일·캘린더 → Microsoft 365, Gmail, Google Calendar
 데이터 보강   → OpenDART, THE VC, 혁신의숲 (웹 검색)
-VC/AC 공시·가이드 → 로컬 vc-fund-disclosure-mcp (Draft)
+VC/AC 공시·가이드 → 로컬 vc-fund-disclosure-mcp (선택 설치)
 문서          → Notion, Google Docs, Microsoft 365
 분석          → Mixpanel, Amplitude, ChartMogul
 ```
 
-로컬 공시 MCP 구현 스펙은 `mcp/vc-fund-disclosure/`에 있습니다. source registry, SQLite schema, seed, source trust/input resolution contract, 검색/랭킹 contract, tool contract, display query, quality check pack을 함께 관리합니다.
+구현체는 [moonklabs/vc-fund-disclosure](https://github.com/moonklabs/vc-fund-disclosure)입니다. 설치는 위 "선택 설치" 섹션을 참고하세요. `mcp/vc-fund-disclosure/`에는 초기 설계 스펙(source registry, schema, contract 등)이 참고용으로 남아 있습니다.
 
 자세한 내용은 [CONNECTORS.md](CONNECTORS.md)를 참조하세요.
 
