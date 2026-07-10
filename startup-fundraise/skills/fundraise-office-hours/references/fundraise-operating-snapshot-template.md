@@ -78,7 +78,7 @@ Behavior evidence examples:
 
 | Entity | Source | Evidence status | Source URL / hash | Gap |
 |---|---|---|---|---|
-| VC / fund / TIPS operator | KVIC / KVCA / DIVA / data.go.kr / user note | verified_official / official_needs_review / guide_only / no_evidence |  |  |
+| VC / fund / TIPS operator | VCS / KVIC / KVCA / DIVA / data.go.kr / user note | verified_official / official_needs_review / guide_only / no_evidence |  |  |
 
 ## 6. Asset Readiness
 

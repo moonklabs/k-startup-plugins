@@ -23,7 +23,7 @@ claude plugins install startup-fundraise
 
 자세한 사용법은 [startup-fundraise README](startup-fundraise/README.md)와 [Founder Fundraising Operating Use Cases](startup-fundraise/skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 참고하세요.
 
-**옵션 — VC/AC 공시 근거 로컬 MCP.** 위 설치만으로도 웹 검색으로 작동합니다. 여기에 [`vc-fund-disclosure`](https://github.com/moonklabs/vc-fund-disclosure)를 설치하면 KVIC/KVCA 공식 공시(운용사, 펀드, 결성일·총액)를 로컬 DB에서 근거와 함께 즉시 조회합니다.
+**옵션 — VC/AC 공시 근거 로컬 MCP.** 위 설치만으로도 VCS 투자자·모태출자펀드 검색과 웹 리서치로 작동합니다. 여기에 [`vc-fund-disclosure`](https://github.com/moonklabs/vc-fund-disclosure)를 설치하면 현재 지원되는 KVIC/KVCA 공식 공시를 로컬 DB에서 근거와 함께 즉시 조회합니다.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/moonklabs/vc-fund-disclosure/main/install.sh | sh
@@ -64,10 +64,10 @@ codex plugin add startup-fundraise@startup-plugins
 > 아래는 이 저장소를 유지보수하는 사람을 위한 절차입니다 — 일반 사용자는 필요하지 않습니다. 릴리스 버전을 고정해서 배포하려면 git tag를 만들고 `--ref`에 태그를 지정합니다.
 >
 > ```bash
-> git tag v0.3.6
-> git push origin v0.3.6
+> git tag v0.3.7
+> git push origin v0.3.7
 >
-> codex plugin marketplace add moonklabs/k-startup-plugins --ref v0.3.6
+> codex plugin marketplace add moonklabs/k-startup-plugins --ref v0.3.7
 > codex plugin add startup-fundraise@startup-plugins
 > ```
 

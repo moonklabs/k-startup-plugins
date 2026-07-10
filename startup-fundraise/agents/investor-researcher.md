@@ -1,6 +1,6 @@
 ---
 name: investor-researcher
-description: 투자자 리서치 및 Thesis 매칭을 수행합니다. "투자자 분석", "VC 리서치", "투자자 프로필", "Thesis 매칭", "투자자 적합도", "딜 소싱", "투자자 찾기", "모태펀드", "KVIC", "KVCA", "펀드 보유 현황", "investor research" 등의 요청 시 사용합니다. 한국 VC는 KVIC FundFinder와 KVCA DIVA 조합현황을 확인합니다. 투자자별 7-10쿼리 웹리서치 → 공식 펀드 근거 → 프로필 → Thesis 매칭(GREEN/YELLOW/RED) → 접근경로 도출까지 한 번에 처리합니다. 투자자 N명을 병렬 리서치할 수 있습니다.
+description: 투자자 리서치 및 Thesis 매칭을 수행합니다. "투자자 분석", "VC 리서치", "투자자 프로필", "Thesis 매칭", "투자자 적합도", "딜 소싱", "투자자 찾기", "모태펀드", "VCS", "KVIC", "KVCA", "펀드 보유 현황", "investor research" 등의 요청 시 사용합니다. 한국 VC는 VCS 투자자/모태출자펀드 검색 후 KVIC FundFinder와 KVCA DIVA 조합현황을 대사합니다. 투자자별 7-10쿼리 웹리서치 → 공식 펀드 근거 → 프로필 → Thesis 매칭(GREEN/YELLOW/RED) → 접근경로 도출까지 한 번에 처리합니다. 투자자 N명을 병렬 리서치할 수 있습니다.
 tools: WebSearch, Read
 model: sonnet
 ---
@@ -43,6 +43,14 @@ WebSearch: "[VC 펀드] news announcement 2025"
 한국 VC/AC인 경우 공식 펀드 보유 현황을 추가 확인합니다:
 
 ```
+VCS 투자자 검색: https://www.vcs.go.kr/web/portal/investor/list
+- 주요투자업종, 투자성격, 회사 업력, 지역, 투자자 구분으로 후보 발견
+- 투자사 유형, 운영규모, 창업기획자 여부, 소재지 확인
+
+VCS 모태출자펀드 운용사 찾기: https://www.vcs.go.kr/web/portal/rsh/list
+- 펀드명, 결성일, 결성총액, 투자금액, 존속기간, 운용사 확인
+- 대표자명, 전화번호, 이메일, 상세주소는 저장/출력 제외
+
 KVIC FundFinder: http://fundfinder.k-vic.co.kr/rsh/rsh/RshMacFnd
 - 회사 설립연차/사업 분야에 맞는 모태펀드 출자 펀드 확인
 - FundFinder 조건 코드는 startup-fundraise/skills/deal-sourcing/references/kvic-fundfinder-parameter-catalog.md 기준으로 선택
@@ -66,7 +74,7 @@ KVCA DIVA 조합현황: http://diva.kvca.or.kr/div/cmn/DivDisclsMainInq
 | 지역 선호 | Korea-only / Asia / Global |
 | 체크 사이즈 | $X00K ~ $XM |
 | 리드 여부 | Lead / Follow / Co-invest |
-| 공식 펀드 근거 | KVIC FundFinder / KVCA DIVA / 미확인 |
+| 공식 펀드 근거 | VCS / KVIC FundFinder / KVCA DIVA / 미확인 |
 | FundFinder 조회 조건 | ASCT_CLSS_GRP_CD_FND, ASCT_CLSS_CD_FND, 대분류/소분류명 |
 | 보유 조합/펀드 | 펀드명, 결성일, 결성총액, 투자 집행액 |
 | 포트폴리오 유사사 | 우리 회사와 유사한 투자 기업 |
@@ -111,7 +119,7 @@ EVENT — 데모데이, 컨퍼런스, 네트워킹 이벤트
 - **지역:** [선호 지역]
 - **체크 사이즈:** [범위]
 - **리드 여부:** [Lead/Follow]
-- **공식 펀드 근거:** [KVIC FundFinder / KVCA DIVA / 미확인]
+- **공식 펀드 근거:** [VCS / KVIC FundFinder / KVCA DIVA / 미확인]
 - **보유 조합/펀드:** [펀드명, 결성일, 결성총액, 투자 집행액, 한계]
 
 ### 포트폴리오 유사사

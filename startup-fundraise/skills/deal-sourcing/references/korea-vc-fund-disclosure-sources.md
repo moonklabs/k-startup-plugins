@@ -2,7 +2,29 @@
 
 한국 VC/AC 투자자 소싱에서는 "이 투자자가 우리 섹터/단계에 맞는 펀드를 실제로 보유하고 있는가"를 반드시 확인한다. 공식 공시/출자 정보를 먼저 보고, THE VC/뉴스/웹 검색은 보강 근거로 쓴다.
 
-## 1. KVIC FundFinder
+## 1. 벤처투자종합포털(VCS)
+
+- 포털: https://www.vcs.go.kr/
+- 투자자 검색: https://www.vcs.go.kr/web/portal/investor/list
+- 모태출자펀드 운용사 찾기: https://www.vcs.go.kr/web/portal/rsh/list
+- 운영 주체: 중소벤처기업부·한국벤처캐피탈협회 벤처투자종합포털
+- 용도: 한국 투자자 후보를 업종, 지역, 운영규모, 투자성격, 회사 업력, 투자자 유형으로 발견하고 모태출자펀드와 운용사를 연결한다.
+
+### 사용 절차
+
+1. 회사 설립일, 사업 분야, 지역, 목표 라운드를 [VCS 검색 파라미터 카탈로그](vcs-search-parameter-catalog.md)의 조건으로 변환한다.
+2. 투자자 검색에서 후보 운용사와 투자자 유형, 창업기획자 여부, 운영규모를 확인한다.
+3. 모태출자펀드 운용사 찾기에서 펀드명, 결성일, 결성총액, 투자금액, 존속기간, 운용사를 확인한다.
+4. 후보 운용사를 KVIC FundFinder와 KVCA DIVA에서 대사하고 최근 투자·공식 홈페이지·TIPS 운영사 여부를 보강한다.
+
+### 한계와 정책
+
+- VCS는 공식 후보 발견과 화면 근거에 강하지만 현재 신규투자 의사나 실제 잔여 투자 여력을 보장하지 않는다.
+- 페이지 내부 `/web/portal/investor/search`, `/web/portal/rsh/search` JSON 경로는 문서화된 공개 API가 아니다.
+- 응답에 대표자명, 전화번호, 이메일, 상세주소가 포함될 수 있으나 저장·출력하지 않는다.
+- `robots.txt`는 포털 검색 경로를 금지하지 않지만 이용약관·저작권 방침상 무단 복제와 타인 제공에 제약이 있다. 사용자 요청 단위 조회와 개인 로컬 snapshot만 기본 허용하고 대량 수집·미러링·재배포는 하지 않는다.
+
+## 2. KVIC FundFinder
 
 - 링크: http://fundfinder.k-vic.co.kr/rsh/rsh/RshMacFnd
 - 제공 주체: 한국벤처투자(KVIC), 모태펀드 출자 펀드 탐색
@@ -39,7 +61,7 @@ Seed/Pre-A 기본 조회는 `AA02`(초기기업), `DA01`(4차산업혁명), `EA0
 | 투자 집행액 | 잔여 투자 여력 추정 |
 | 모태펀드 출자 여부 | 정부 출자 펀드 제약 확인 |
 
-## 2. KVCA DIVA 항목별공시
+## 3. KVCA DIVA 항목별공시
 
 - 링크: http://diva.kvca.or.kr/div/cmn/DivDisclsMainInq
 - 제공 주체: 한국벤처캐피탈협회(KVCA)
@@ -61,7 +83,8 @@ Seed/Pre-A 기본 조회는 `AA02`(초기기업), `DA01`(4차산업혁명), `EA0
 
 ## 리서치 적용 규칙
 
-- 한국 VC를 다룰 때는 THE VC/뉴스만으로 판단하지 말고, 가능한 경우 KVIC 또는 KVCA 중 하나 이상을 확인한다.
+- 한국 VC를 다룰 때는 VCS 투자자 검색으로 후보를 발견하고, 가능한 경우 VCS 모태출자펀드·KVIC·KVCA 중 둘 이상의 근거를 대사한다.
+- VCS는 "조건에 맞는 투자자와 모태출자펀드 운용사 후보 발견"에 강하다.
 - KVIC는 "우리 회사 조건에 맞는 펀드/운용사 찾기"에 강하다.
 - KVCA DIVA는 "특정 VC가 보유한 벤처투자조합 확인"에 강하다.
 - 두 출처 모두 실제 투자 가능성을 보장하지 않는다. 최종 판단은 최근 투자, 포트폴리오, 파트너 thesis, 펀드 잔여 여력, 네트워크 접근 가능성을 함께 본다.
@@ -69,14 +92,17 @@ Seed/Pre-A 기본 조회는 `AA02`(초기기업), `DA01`(4차산업혁명), `EA0
 
 ## 자동화 검증 메모
 
-검증일: 2026-07-04
+검증일: 2026-07-10
 
+- VCS 투자자 검색은 `GET /web/portal/investor/search`, 모태출자펀드 검색은 `GET /web/portal/rsh/search`의 JSON 응답을 사용한다. 이는 공개 API 계약이 아니라 화면 내부 요청이다.
+- VCS는 `comIndCdArr`, `localCdArr`, `operScaleCdArr`, `invstCharcCdArr`, `comBzcarrCdArr`, `invstorTpCdArr`, `sc`, `sv`, `cp` 조건을 사용한다.
+- VCS `robots.txt`는 `/web/portal/investor/`를 명시적으로 허용하며 `/cms` 외 포털 경로를 막지 않는다. 다만 이용약관·저작권 방침에 따라 대량 수집과 재배포는 별도 허가 전까지 금지한다.
 - KVIC FundFinder는 브라우저 User-Agent로 `GET /rsh/rsh/RshMacFndInq` 접근 시 카테고리 화면이 HTML로 내려온다.
 - KVIC 카테고리 목록은 `POST /rsh/rsh/RshMacFndLstInq`에 `ASCT_CLSS_GRP_CD_FND=AA` 같은 카테고리 코드를 보내면 HTML 테이블로 조회된다.
 - KVIC FundFinder 목록 화면은 `ASCT_CLSS_CD_FND=AA02` 같은 소분류 코드도 사용한다. 대분류만 보내면 첫 소분류가 기본 선택될 수 있으므로 정확한 조건 재현에는 대분류와 소분류를 함께 저장한다.
 - KVCA DIVA 조합현황은 `GET/POST /div/dii/DivItmAssoInq`에서 HTML 테이블로 조회된다. `S_OPER_INST_NM`으로 VC명 검색이 가능하다.
 - KVCA DIVA는 목록 row의 `ASCT_ID`로 `POST /div/cmn/DivCreatStatInq/pop1` 상세 조회가 가능하고, `OPER_INST_ID`로 `POST /div/cmn/DivCmnComInfo/pop1` 운용사 상세 조회가 가능하다.
-- 두 사이트 모두 `robots.txt`가 `User-agent: *` 및 `Disallow: /`를 반환한다. 따라서 허가 없는 주기적 크롤링/대량 스크래핑은 하지 않는다.
+- KVIC/KVCA 기존 사이트는 2026-07-04 조사에서 전체 수집 제한으로 기록했다. VCS도 정책이 더 개방적이라는 이유만으로 대량 미러링하지 않는다.
 
 ## MCP/DB화 권장 경계
 
@@ -104,6 +130,7 @@ Seed/Pre-A 기본 조회는 `AA02`(초기기업), `DA01`(4차산업혁명), `EA0
 - `get_source_authority`: 질문 유형별 authoritative/supporting/context-only source 확인
 - `search_vc_database`: 투자사/펀드/공시/가이드 evidence 통합 검색, `evidence_status`, `resolution_status`, `data_gaps`, `recommended_imports` 반환
 - `get_collection_health`: source별 import 상태, parser warning, open quality flag 확인
+- `import_vcs_snapshot`(planned): 사용자가 저장한 VCS 투자자/모태출자펀드 HTML/JSON/CSV snapshot import. canonical 구현 저장소에 추가되기 전에는 지원된 도구처럼 호출하지 않는다.
 - `import_kvic_snapshot`: 사용자가 저장한 KVIC FundFinder HTML/CSV snapshot import
 - `import_kvca_snapshot`: 사용자가 저장한 KVCA DIVA HTML/CSV snapshot import
 

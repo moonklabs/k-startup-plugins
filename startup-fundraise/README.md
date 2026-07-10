@@ -58,7 +58,7 @@ codex plugin add startup-fundraise@startup-plugins
 
 ## 선택 설치: VC/AC 공시 근거 로컬 MCP
 
-`startup-fundraise`는 위 설치만으로 웹 검색을 통해 단독 작동합니다. 여기에 [`vc-fund-disclosure`](https://github.com/moonklabs/vc-fund-disclosure)를 설치하면 KVIC/KVCA 공식 공시(운용사, 펀드, 결성일·총액)를 로컬 SQLite DB에서 근거와 함께 조회합니다.
+`startup-fundraise`는 위 설치만으로 VCS 투자자·모태출자펀드 검색과 웹 리서치를 통해 단독 작동합니다. 여기에 [`vc-fund-disclosure`](https://github.com/moonklabs/vc-fund-disclosure)를 설치하면 현재 지원되는 KVIC/KVCA 공식 공시를 로컬 SQLite DB에서 근거와 함께 조회합니다. VCS snapshot import는 canonical 구현에 추가되기 전까지 지원된 기능으로 안내하지 않습니다.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/moonklabs/vc-fund-disclosure/main/install.sh | sh

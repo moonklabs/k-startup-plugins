@@ -1,11 +1,11 @@
 ---
 name: deal-sourcing
-description: VC, AC, 엔젤, CVC 등 투자자 소싱 방법론과 데이터 소스를 안내합니다. 한국 VC는 KVIC FundFinder, 모태펀드 출자 펀드, KVCA DIVA 조합현황으로 공식 펀드 근거와 보유 조합을 확인하고, Seed/Pre-A 후보를 단계별 미팅 전략으로 정렬합니다. "투자자 찾기", "VC 리스트", "AC 프로그램 찾기", "딜소싱", "투자자 소싱", "VC 발굴", "모태펀드", "KVIC", "KVCA", "조합현황", "신규 펀드", "Seed VC", "Pre-A VC", "[섹터] 투자자", "[단계] VC" 등으로 실행합니다.
+description: VC, AC, 엔젤, CVC 등 투자자 소싱 방법론과 데이터 소스를 안내합니다. 한국 VC는 벤처투자종합포털(VCS) 투자자 검색과 모태출자펀드 운용사 찾기로 후보를 발견하고, KVIC FundFinder와 KVCA DIVA로 공식 펀드 근거와 보유 조합을 대사한 뒤 Seed/Pre-A 후보를 단계별 미팅 전략으로 정렬합니다. "투자자 찾기", "VC 리스트", "AC 프로그램 찾기", "딜소싱", "투자자 소싱", "VC 발굴", "모태펀드", "VCS", "KVIC", "KVCA", "조합현황", "신규 펀드", "Seed VC", "Pre-A VC", "[섹터] 투자자", "[단계] VC" 등으로 실행합니다.
 ---
 
 # 딜소싱 (Deal Sourcing)
 
-신규 VC, AC, 엔젤, CVC 투자자를 체계적으로 발굴하고, thesis 적합도를 평가하며, 접근 경로를 매핑하는 방법론입니다. 이 스킬은 웹 검색만으로도 항상 작동하며, 한국 VC는 공식 펀드 근거(KVIC/KVCA)를 웹/뉴스 근거와 분리해 확인합니다.
+신규 VC, AC, 엔젤, CVC 투자자를 체계적으로 발굴하고, thesis 적합도를 평가하며, 접근 경로를 매핑하는 방법론입니다. 이 스킬은 웹 검색만으로도 항상 작동하며, 한국 VC는 공식 후보/펀드 근거(VCS/KVIC/KVCA)를 웹/뉴스 근거와 분리해 확인합니다.
 
 ## 작동 방식
 
@@ -16,7 +16,7 @@ description: VC, AC, 엔젤, CVC 등 투자자 소싱 방법론과 데이터 소
 │  기본 기능 (웹 검색으로 단독 작동)                                 │
 │  ✓ 투자자 유형별 소싱 전략 (VC/AC/엔젤/CVC)                       │
 │  ✓ 10-query 웹 검색 패턴: thesis, 포트폴리오, 투자 이력          │
-│  ✓ 한국 VC 공식 펀드 확인: KVIC FundFinder, KVCA DIVA 조합현황   │
+│  ✓ 한국 VC 후보/펀드 확인: VCS → KVIC FundFinder → KVCA DIVA    │
 │  ✓ Seed/Pre-A 단계별 미팅 전략: 연습 → 투자 가능성 검증 → 리드 클로징 │
 │  ✓ Thesis 매칭 프레임워크: 섹터·단계·체크·지역 4차원 평가         │
 │  ✓ 접근 경로 매핑: 웜인트로/콜드/AC지원                           │
@@ -51,6 +51,7 @@ description: VC, AC, 엔젤, CVC 등 투자자 소싱 방법론과 데이터 소
 | 상황 | 읽을 reference |
 |---|---|
 | 한국 VC/AC 공식 펀드 근거가 필요함 | [한국 VC 펀드 보유 현황 조회 소스](references/korea-vc-fund-disclosure-sources.md) |
+| VCS 검색 조건이나 응답 필드를 골라야 함 | [VCS 검색 파라미터 카탈로그](references/vcs-search-parameter-catalog.md) |
 | FundFinder 조건 코드를 골라야 함 | [KVIC FundFinder 파라미터 카탈로그](references/kvic-fundfinder-parameter-catalog.md) |
 | TIPS 운영사/추천 가능성/펀드 목적을 함께 판단해야 함 | [Korea TIPS Investor-Led Process](references/korea-tips-investor-led-process.md) |
 | Seed/Pre-A 샘플 실행 또는 MoonkLabs류 API/MCP 스타트업 전략이 필요함 | [MoonkLabs Seed/Pre-A Fundraising Playbook](references/moonklabs-seed-prea-fundraising-playbook.md) |
@@ -63,7 +64,7 @@ description: VC, AC, 엔젤, CVC 등 투자자 소싱 방법론과 데이터 소
 
 | 커넥터 | 추가 기능 |
 |--------|----------|
-| **VC/AC 공시 데이터** | 로컬 `vc-fund-disclosure-mcp`가 있을 때 KVIC/KVCA snapshot, 신규 공시, TIPS 운영사/펀드 근거를 조회 |
+| **VC/AC 공시 데이터** | VCS는 공식 웹에서 조회하고, 로컬 `vc-fund-disclosure-mcp`가 있을 때 현재 지원되는 KVIC/KVCA snapshot과 신규 공시를 조회. VCS import는 planned |
 | **데이터 보강** | THE VC (투자 라운드·포트폴리오), 혁신의숲 (성장 지표), OpenDART (상장사 공시) — 웹 검색 기반, OpenDART는 MCP 연결 가능 |
 | **CRM** | 기존 투자자 네트워크 분석, 인트로 경로 자동 매핑 |
 | **지식 베이스** | Notion, Google Drive — 팀의 인트로 이력, 커넥션 DB 검색 |
@@ -199,7 +200,9 @@ MoonkLabs처럼 API/MCP/운영 데이터 스타트업은 "API wrapper"가 아니
 
 2순위: 데이터베이스
    - ~~fund disclosure 연결 시: 로컬 공시 DB에서 투자사 프로필, 보유 펀드, 신규 공시 이벤트, TIPS 운영사 여부 조회
-   - 한국 VC: KVIC FundFinder, KVCA DIVA 조합현황으로 보유 펀드 확인
+   - 한국 VC 후보 발견: VCS 투자자 검색에서 업종, 투자성격, 업력, 지역, 투자자 유형으로 필터링
+   - 모태출자펀드: VCS 운용사 찾기에서 펀드/운용사/결성일/규모/투자금액 확인
+   - 상세 대사: KVIC FundFinder의 출자 목적과 KVCA DIVA 조합현황으로 보유 펀드 확인
    - TIPS: 운영사 여부, 접수처, 추천 가능성, 추천/선정 실적 확인
    - ~~data enrichment 연결 시: THE VC, 혁신의숲, OpenDART (웹 검색 기반)
    - 미연결 시: 웹 검색 (아래 10-query 패턴)
@@ -221,16 +224,21 @@ MoonkLabs처럼 API/MCP/운영 데이터 스타트업은 "API wrapper"가 아니
 
 #### 한국 VC 공식 펀드 확인 루틴
 
-한국 VC/AC를 찾을 때는 아래 두 출처를 먼저 확인합니다. 자세한 절차는 [한국 VC 펀드 보유 현황 조회 소스](references/korea-vc-fund-disclosure-sources.md)를 따릅니다. FundFinder 조건 조회는 [KVIC FundFinder 파라미터 카탈로그](references/kvic-fundfinder-parameter-catalog.md)를 기준으로 `ASCT_CLSS_GRP_CD_FND`와 `ASCT_CLSS_CD_FND`를 고릅니다. Seed-Pre-A 샘플 실행은 [MoonkLabs Seed/Pre-A Fundraising Playbook](references/moonklabs-seed-prea-fundraising-playbook.md)을 기준으로 회귀 검증합니다.
+한국 VC/AC를 찾을 때는 VCS로 후보를 발견한 뒤 KVIC/KVCA로 상세 근거를 대사합니다. 자세한 절차는 [한국 VC 펀드 보유 현황 조회 소스](references/korea-vc-fund-disclosure-sources.md)를 따릅니다. VCS 조건은 [VCS 검색 파라미터 카탈로그](references/vcs-search-parameter-catalog.md), FundFinder 조건은 [KVIC FundFinder 파라미터 카탈로그](references/kvic-fundfinder-parameter-catalog.md)를 기준으로 고릅니다. Seed-Pre-A 샘플 실행은 [MoonkLabs Seed/Pre-A Fundraising Playbook](references/moonklabs-seed-prea-fundraising-playbook.md)을 기준으로 회귀 검증합니다.
 
 `~~fund disclosure` MCP가 연결되어 있으면 웹에서 매번 다시 찾기 전에 먼저 로컬 DB를 조회합니다. 이 MCP는 사용자가 직접 확보한 snapshot, watch folder import, browser capture import, 공식 허가된 feed만 근거로 삼고, 허가 없는 주기 크롤링 결과를 기본 근거로 쓰지 않습니다.
 
 | 출처 | 링크 | 사용 목적 | 주의 |
 |---|---|---|---|
+| VCS 투자자 검색 | https://www.vcs.go.kr/web/portal/investor/list | 업종·투자성격·업력·유형별 투자자 후보 발견 | 내부 JSON 경로는 공개 API 계약이 아님 |
+| VCS 모태출자펀드 | https://www.vcs.go.kr/web/portal/rsh/list | 모태출자 펀드, 운용사, 결성/투자 현황 확인 | 개인정보 필드 제외, 대량 미러링 금지 |
 | KVIC FundFinder | http://fundfinder.k-vic.co.kr/rsh/rsh/RshMacFnd | 모태펀드 출자 펀드 중 회사의 설립연차·사업 분야에 맞는 펀드와 운용사 찾기 | 모태펀드 출자 펀드 중심 |
 | KVCA DIVA 항목별공시 | http://diva.kvca.or.kr/div/cmn/DivDisclsMainInq | VC명으로 보유 벤처투자조합 현황 확인 | 개인투자조합, 신기사, PEF 등은 누락 가능 |
 
 **추출 필드:**
+- VCS 조회 조건: 주요투자업종, 투자성격, 회사 업력, 지역, 투자자 구분, 운영규모
+- VCS 후보: `operInstId`, 투자사명/유형, 창업기획자 여부, 주요투자업종, 운영규모
+- VCS 모태출자펀드: 펀드명, 운용사, 결성일, 결성총액, 투자금액, 존속기간
 - FundFinder 조회 조건: `ASCT_CLSS_GRP_CD_FND`, `ASCT_CLSS_CD_FND`, 대분류명, 소분류명
 - KVCA DIVA 대사 키: `ASCT_ID`, 운용사명, 조합명, 등록일, 만기일
 - 펀드명, 운용사, 주력 투자 분야
@@ -248,7 +256,7 @@ MoonkLabs처럼 API/MCP/운영 데이터 스타트업은 "API wrapper"가 아니
 - 첨부 공시를 `kordoc` adapter로 파싱한 신규 정보는 항상 원본 공시 근거와 함께 제시합니다. 파싱 품질이 낮으면 "추정"이 아니라 `원본 확인 필요`로 표시합니다.
 
 **출력 검증:**
-- 한국 VC 리포트에는 FundFinder 조건 코드와 KVCA 대사 여부를 함께 남깁니다.
+- 한국 VC 리포트에는 VCS 검색 조건, FundFinder 조건 코드, KVCA 대사 여부를 함께 남깁니다.
 - KVCA에 없는 후보는 `미확인/보류`로 두고, 제외 이유를 단정하지 않습니다.
 - Seed/Pre-A 요청에는 최종 후보 리스트와 별도로 1단계/2단계/3단계 미팅 순서를 제안합니다.
 
