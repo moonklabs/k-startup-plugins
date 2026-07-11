@@ -47,7 +47,8 @@ argument-hint: "<회사/라운드/현재 고민>"
 | IR, 미팅 노트, 파이프라인, 데이터룸이 흩어져 있음 | AI가 읽을 자료 구조가 없음 | `/fundraise-data` |
 | 후보 VC/AC/TIPS 운영사가 부족함 | pipeline top-of-funnel 부족 | `/find-vc` |
 | 특정 VC와 연락/미팅/후속조치 중 | 관계와 next step 관리 필요 | `/vc-meeting` |
-| 투자자 수는 있으나 진행이 느림 | 병목과 stage 기준 확인 필요 | `/fundraise-pipeline` |
+| 투자자 수는 있으나 진행이 느림 | 병목과 stage 기준 심층 진단 필요 | `/fundraise-pipeline` |
+| 전체 리드 현황을 빠르게 조망하고 싶음 | 스냅샷 대시보드 필요 | `/lead-dashboard` |
 | 오늘 할 일이 불명확함 | 일일 실행 우선순위 필요 | `/daily-fundraise` |
 
 ## Decision Mode

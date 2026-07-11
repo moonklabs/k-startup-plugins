@@ -124,8 +124,8 @@ DB는 사용자 로컬 머신에만 저장됩니다 (macOS/Linux `~/.local/share
 /fundraise-office-hours # 투자유치 Office Hours — 현황 질문, 의사결정, 운영 스냅샷 업데이트
 /deal-sourcing        # 투자자 타겟 발굴 + Thesis 매칭
 /daily-fundraise      # 일일 브리핑 — 오늘의 우선순위, 팔로업, 미팅 준비
-/fundraise-pipeline   # 파이프라인 건강점수 + 커버리지 분석
-/lead-dashboard       # 파이프라인 건강점수 + 단계별 현황 + 리스크 플래그
+/fundraise-pipeline   # 심층 건강진단 — 4차원 건강점수, 3x 커버리지, 병목 분석 (주 1회)
+/lead-dashboard       # 빠른 스냅샷 — 단계별 현황과 오늘의 액션 조망 (매일/수시)
 /investor-outreach    # VC 리서치 → 웜인트로 / 콜드 이메일 자동 생성
 /dd-prep              # DD 미팅 준비 — 예상 질문 30개 + 데이터룸 체크리스트
 /investor-update      # 월간 투자자 업데이트 — 지표, 하이라이트, 도움 요청
