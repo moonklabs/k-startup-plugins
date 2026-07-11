@@ -75,7 +75,28 @@ codex plugin add startup-fundraise@startup-plugins
 
 ---
 
-## 특장점
+## startup-apply
+
+정부/민간 지원사업 사업계획서를 자동화하는 플러그인.
+지식베이스를 구축하고, 공고를 소싱·적합도 분석하며, 사업계획서를 작성해 HWPX로 출력합니다.
+
+```bash
+claude plugins marketplace add moonklabs/k-startup-plugins
+claude plugins install startup-apply
+```
+
+설치 후 Claude Code를 재시작하고 아래 흐름으로 시작하세요.
+
+1. `/apply-find "AI SaaS 초기창업"`으로 지원사업 공고를 소싱합니다 — 지식베이스 없이도 바로 사용할 수 있습니다.
+2. `/apply-check "공고명"`으로 자격요건 적합도를 분석합니다.
+3. `/kb-init ./과거문서`로 과거 사업계획서·IR 자료에서 회사 지식베이스를 구축합니다.
+4. `/apply-write "공고명"` → `/apply-export "공고명"`으로 사업계획서를 작성해 HWPX로 출력합니다.
+
+매일 아침 `/apply-daily`로 마감 임박 공고와 작성 진행률을 확인합니다. 자세한 사용법은 [startup-apply README](startup-apply/README.md)를 참고하세요.
+
+---
+
+## startup-fundraise 특장점
 
 ### 병렬 에이전트
 반복 작업을 전담 에이전트가 동시에 처리합니다.

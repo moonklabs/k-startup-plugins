@@ -4,8 +4,11 @@
 지식베이스를 구축하고, 공고를 소싱하며, 사업계획서를 자동 작성해 HWPX로 출력합니다.
 
 ```bash
+claude plugins marketplace add moonklabs/k-startup-plugins
 claude plugins install startup-apply
 ```
+
+설치 또는 제거 후 Claude Code를 재시작해야 변경사항이 적용됩니다.
 
 ---
 

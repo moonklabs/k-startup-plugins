@@ -233,7 +233,7 @@ argument-hint: "<섹터, 단계, 또는 지역>"
 
 한국 VC/AC 후보는 웹 검색 후 아래 두 출처로 펀드 보유 현황을 보강합니다.
 
-`~~fund disclosure` MCP가 연결되어 있으면 먼저 로컬 공시 DB에서 `search_vc_database`를 canonical `intent_hint`와 함께 호출하고, 필요하면 `get_source_authority`, `get_collection_health`로 근거 범위와 import 상태를 확인합니다. 이 로컬 DB는 사용자가 직접 확보한 snapshot, watch folder import, browser capture import, 공식 허가된 feed만 근거로 사용하고, 허가 없는 주기 crawler 결과를 기본 근거로 쓰지 않습니다.
+`~~fund disclosure` MCP가 연결되어 있으면 먼저 로컬 공시 DB에서 `search_investors`/`search_funds`로 투자사·펀드 근거를 조회하고, 신규 펀드 이벤트는 `list_events`, 필요하면 `get_status`로 수집 범위와 import 상태를 확인합니다. 이 로컬 DB는 사용자가 직접 확보한 snapshot, watch folder import, browser capture import, 공식 허가된 feed만 근거로 사용하고, 허가 없는 주기 crawler 결과를 기본 근거로 쓰지 않습니다.
 
 | 출처 | 링크 | 확인 내용 | 한계 |
 |---|---|---|---|

@@ -124,21 +124,22 @@ Seed/Pre-A 기본 조회는 `AA02`(초기기업), `DA01`(4차산업혁명), `EA0
 | `official_feed_fetch` | 공식 API/허가/유료 계약 기반 fetch | 근거 확인 후 허용 |
 | `site_background_crawler` | 사이트 전체를 주기적으로 순회 | 초기 금지 |
 
-현재 P0 MCP가 제공하는 핵심 조회:
+현재 canonical MCP(v0.4.1+)가 실제 제공하는 조회 도구 8종:
 
-- `resolve_user_input`: 투자사명, 펀드명, 단계, 섹터, 지역 조건을 canonical intent와 후보 entity로 해석
-- `get_source_authority`: 질문 유형별 authoritative/supporting/context-only source 확인
-- `search_vc_database`: 투자사/펀드/공시/가이드 evidence 통합 검색, `evidence_status`, `resolution_status`, `data_gaps`, `recommended_imports` 반환
-- `get_collection_health`: source별 import 상태, parser warning, open quality flag 확인
-- `import_vcs_snapshot`(planned): 사용자가 저장한 VCS 투자자/모태출자펀드 HTML/JSON/CSV snapshot import. canonical 구현 저장소에 추가되기 전에는 지원된 도구처럼 호출하지 않는다.
-- `import_kvic_snapshot`: 사용자가 저장한 KVIC FundFinder HTML/CSV snapshot import
-- `import_kvca_snapshot`: 사용자가 저장한 KVCA DIVA HTML/CSV snapshot import
+- `search_investors`: 투자사명 검색 (공시처별 중복은 회사 단위로 롤업되어 `sources[]`, `evidence_count` 반환)
+- `search_funds`: 펀드명 또는 운용사명으로 펀드 검색
+- `search_guides`: 창업자 가이드 전문 검색
+- `list_events`: 신규 펀드 결성 등 공시 이벤트 시간순 조회
+- `list_guide_sources`: 가이드 원격 URL 후보 목록
+- `fetch_and_import`: KVIC 온디맨드 수집 + import (동의 필요)
+- `fetch_diva_disclosures`: KVCA DIVA 법정 공시 수집 (동의 필요)
+- `get_status`: 테이블별 레코드 수와 수집 경계 정책 상태
 
-다음 도구명은 planned surface입니다. 현재 런타임에서는 별도 도구로 호출하지 말고 `search_vc_database`의 canonical `intent_hint`와 `get_source_authority`/`get_collection_health` 조합으로 처리합니다.
+snapshot 파일 import는 MCP 도구가 아니라 `vc-funds import kvic|kvca` CLI로 처리합니다. `resolve_user_input`, `get_source_authority`, `search_vc_database`, `get_collection_health`, `import_vcs_snapshot`, `import_kvic_snapshot`, `import_kvca_snapshot` 같은 이름은 canonical 전환 이전 설계안이며 실제로 존재하지 않으므로 호출하지 않습니다.
 
-- 투자사 deep dive: `search_vc_database` + `intent_hint=investor_fund_holding`
-- 회사 조건별 펀드 탐색: `search_vc_database` + `intent_hint=startup_fund_search`
-- 신규 펀드 이벤트: `search_vc_database` + `intent_hint=new_fund_event`
+- 투자사 deep dive: `search_investors` → `search_funds`(운용사명 검색) 조합
+- 회사 조건별 펀드 탐색: `search_funds` + KVIC 파라미터 카탈로그로 좁힌 조건
+- 신규 펀드 이벤트: `list_events`
 - evidence pack export: 현재는 검색 결과의 source URL/hash/caveat를 응답에서 구성
 
 ## 신규 공시/첨부파일 처리 규칙
@@ -166,7 +167,7 @@ Seed/Pre-A 기본 조회는 `AA02`(초기기업), `DA01`(4차산업혁명), `EA0
 
 ### MCP tool 설계 메모
 
-- 로컬 MCP P0: 사용자의 로컬 파일 경로를 받는 `import_kvic_snapshot`, `import_kvca_snapshot`만 실행 도구로 제공한다.
+- 로컬 MCP P0: 수집 실행 도구는 `fetch_and_import`(KVIC), `fetch_diva_disclosures`(KVCA)로 제공하고, snapshot 파일 import는 `vc-funds import kvic|kvca` CLI로 처리한다.
 - 로컬 MCP planned: `import_disclosure_document`, `parse_disclosure_file`, `configure_collection_source`, `run_personal_collection`은 후속 adapter 단계에서 제공할 수 있다. 이때 `parse_disclosure_file`은 직접 포맷 파서가 아니라 `kordoc` CLI/MCP wrapper로 구현한다.
 - 원격 MCP: 서버 파일시스템 접근 도구를 노출하지 않고, 이미 import된 `document_id` 기반 조회만 제공한다.
-- 공통 조회 P0: `search_vc_database`를 canonical intent와 함께 사용하고, `data_gaps`/`recommended_imports`를 답변에 포함한다.
+- 공통 조회 P0: `search_investors`/`search_funds`/`search_guides`/`list_events`를 사용하고, 데이터 공백은 `get_status`로 확인해 답변에 포함한다.
