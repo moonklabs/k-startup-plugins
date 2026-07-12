@@ -129,11 +129,14 @@ hwp-generator MCP 서버에서 제공하는 도구 (`skills/hwp-format/SKILL.md`
 
 ## hwp-generator MCP 서버 설정
 
-hwp-generator 서버는 플러그인의 `.mcp.json`에 stdio 서버로 등록되어 있어 Claude Code가 자동으로 실행합니다. 사용자가 직접 서버를 띄울 필요는 없고, Python 의존성만 설치하면 됩니다:
+hwp-generator 서버는 플러그인의 `.mcp.json`에 stdio 서버로 등록되어 있어 Claude Code가 자동으로 실행합니다. 첫 실행 시 부트스트랩 런처가 전용 venv(`~/.cache/startup-apply/hwp-venv`)를 자동 생성해 의존성(mcp, lxml)을 설치하므로 **사용자가 수동으로 설치할 것은 없습니다** (첫 실행만 1~2분 소요). macOS Homebrew처럼 시스템 Python이 PEP 668로 pip 설치를 막는 환경에서도 그대로 작동합니다.
+
+자동 설치가 실패하면(예: 오프라인) 수동으로 설치할 수 있습니다:
 
 ```bash
 # 플러그인 설치 경로의 hwp_server에서
-pip install -r requirements.txt
+python3 -m venv ~/.cache/startup-apply/hwp-venv
+~/.cache/startup-apply/hwp-venv/bin/pip install -r requirements.txt
 ```
 
 구형 .hwp 양식 변환(`convert_hwp_to_hwpx`)까지 쓰려면 추가로:

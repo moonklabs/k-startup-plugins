@@ -15,7 +15,7 @@
     "hwp-generator": {
       "type": "stdio",
       "command": "python3",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/hwp_server/server.py"],
+      "args": ["${CLAUDE_PLUGIN_ROOT}/hwp_server/bootstrap.py"],
       "env": {}
     }
   }
