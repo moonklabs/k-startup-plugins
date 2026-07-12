@@ -11,7 +11,7 @@ argument-hint: "<회사/라운드/현황 메모>"
 
 `/vc-funds-setup`은 로컬 도구와 MCP를 준비하는 최초 설치 루틴이고, `/fundraise-office-hours`는 투자유치 현황을 묻고 판단하며 계속 업데이트하는 운영 루틴입니다.
 
-gstack의 `/office-hours`에서 가져온 forcing question 방식, `$deep-interview`의 소크라테스식 한 질문 진행, `/plan-ceo-review`의 CEO식 의사결정 모드를 투자유치에 맞게 적용합니다. 첫 질문은 항상 runway check입니다. 답변이 모호하면 질문을 여러 개 던지지 말고 가장 중요한 불확실성 하나를 좁힙니다. 근거가 약하면 근거 약함을 표시하며, 다음 액션은 7일 안에 실행 가능한 형태로 좁힙니다.
+YC office hours의 forcing question 방식, 소크라테스식 한 질문 진행, CEO식 의사결정 모드를 투자유치에 맞게 적용합니다. 첫 질문은 항상 runway check입니다. 답변이 모호하면 질문을 여러 개 던지지 말고 가장 중요한 불확실성 하나를 좁힙니다. 근거가 약하면 근거 약함을 표시하며, 다음 액션은 7일 안에 실행 가능한 형태로 좁힙니다.
 
 ## 사용법
 

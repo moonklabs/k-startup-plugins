@@ -662,7 +662,7 @@ startup-apply 플러그인의 `/kb-init`으로 구축한 `.kb/` 폴더가 프로
 
 ## 관련 커맨드
 
-- `/pitch-craft` 스킬 — 피치 덱 작성 가이드
+- `pitch-craft` 스킬 — 피치 덱 작성 가이드
 - `/dd-prep` — 특정 투자자 미팅 준비
 - `/investor-outreach` — 피치 덱 공유 전 아웃리치
 - `/business-case` — 더 상세한 비즈니스 케이스 (보조 자료)

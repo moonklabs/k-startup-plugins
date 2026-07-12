@@ -9,7 +9,7 @@ argument-hint: "<client: claude|codex, 또는 local-dev>"
 
 VC/AC 투자사 공시정보와 초기 창업자용 투자유치 PDF/HWP/HWPX/HWPML/Office 가이드를 개인 로컬 DB에 축적하고, `~~fund disclosure` MCP로 조회하기 위한 설치/점검 루틴입니다. 문서 파싱은 `kordoc` CLI/MCP adapter를 우선 사용합니다.
 
-**구현체 안내**: canonical 구현은 [moonklabs/vc-fund-disclosure](https://github.com/moonklabs/vc-fund-disclosure)입니다 (Bun 단일 바이너리, v0.2.0+). 계약 YAML의 canonical 사본도 해당 리포의 `docs/contracts/`로 이관되었습니다. 이 리포의 `mcp/vc-fund-disclosure/runtime/` Node 초안은 아카이브(참고용)입니다.
+**구현체 안내**: canonical 구현은 [moonklabs/vc-fund-disclosure](https://github.com/moonklabs/vc-fund-disclosure)입니다 (Bun 단일 바이너리, 이 문서는 v0.4.1+ 기준 — 기능별 최소 버전은 SOT 에이전트 참조). 계약 YAML의 canonical 사본도 해당 리포의 `docs/contracts/`로 이관되었습니다. 이 리포의 `docs/archive/vc-fund-disclosure-design/runtime/` Node 초안은 아카이브(참고용)입니다.
 
 설치:
 
@@ -19,7 +19,7 @@ vc-funds setup --client claude --db auto
 vc-funds doctor
 ```
 
-**데이터 부트스트랩은 설치의 필수 다음 단계입니다** (v0.3.0+, robots 고지 동의 필요). `setup`만 실행하면 DB에는 번들 시드(모태펀드 자조합 운용사 327개, 공공 개방 데이터)만 들어갑니다. 실제 투자자 리서치·딜소싱에 쓰려면 아래로 온디맨드 수집을 이어서 실행하도록 안내합니다:
+**데이터 부트스트랩은 설치의 필수 다음 단계입니다** (robots 고지 동의 필요). `setup`만 실행하면 DB에는 번들 시드(모태펀드 자조합 운용사 327개, 공공 개방 데이터)만 들어갑니다. 실제 투자자 리서치·딜소싱에 쓰려면 아래로 온디맨드 수집을 이어서 실행하도록 안내합니다:
 
 ```bash
 vc-funds setup --with-data --consent   # 설치 + KVIC 전체 분류 수집
@@ -56,7 +56,7 @@ core/search/import/report/db
   └─ future HTTP MCP: 파일 경로 도구 OFF, 조회 중심
 ```
 
-상세 모듈 설계는 `startup-fundraise/mcp/vc-fund-disclosure/implementation-blueprint.md`를 따릅니다.
+상세 모듈 설계는 `docs/archive/vc-fund-disclosure-design/implementation-blueprint.md`를 따릅니다.
 
 ## 사용법
 
@@ -97,11 +97,11 @@ vc-funds doctor
 
 npm scoped package는 기본 설치 경로로 쓰지 않습니다. `@moonklabs/*` npm 배포는 비용/권한/registry 의존 문제가 생길 수 있으므로, 기본 배포는 Homebrew tap과 GitHub Releases 단일 실행 파일로 둡니다.
 
-> **아카이브 (사용 금지)**: 이 리포의 `mcp/vc-fund-disclosure/runtime/` Node 초안은 canonical 구현 전환 이전의 참고 스텁입니다. 실제 온보딩은 위 "설치" 섹션의 `install.sh` + `vc-funds` 바이너리 경로만 사용합니다. 아래 커맨드는 실행하지 마세요 — 최신 스키마·롤업 fix·데이터 부트스트랩이 반영되지 않은 구버전 스텁을 대상으로 합니다.
+> **아카이브 (사용 금지)**:이 리포의 `docs/archive/vc-fund-disclosure-design/runtime/` Node 초안은 canonical 구현 전환 이전의 참고 스텁입니다. 실제 온보딩은 위 "설치" 섹션의 `install.sh` + `vc-funds` 바이너리 경로만 사용합니다. 아래 커맨드는 실행하지 마세요 — 최신 스키마·롤업 fix·데이터 부트스트랩이 반영되지 않은 구버전 스텁을 대상으로 합니다.
 >
 > ```bash
 > # 아카이브 예시 (참고용, 실행 금지)
-> node startup-fundraise/mcp/vc-fund-disclosure/runtime/bin/vc-funds.mjs setup --db /tmp/vc-funds.sqlite
+> node docs/archive/vc-fund-disclosure-design/runtime/bin/vc-funds.mjs setup --db /tmp/vc-funds.sqlite
 > ```
 
 Homebrew를 쓰지 않는 경우:
@@ -161,7 +161,7 @@ vc-funds doctor
 
 기본 OFF:
 
-- `on_demand_fetch`: 사용자 명령 실행 시에만 KVIC FundFinder를 분류코드당 1회 조회. 대상 robots.txt가 `Disallow: /`이므로 고지 후 `--consent` 동의로만 활성화 (v0.3.0+)
+- `on_demand_fetch`: 사용자 명령 실행 시에만 KVIC FundFinder를 분류코드당 1회 조회. 대상 robots.txt가 `Disallow: /`이므로 고지 후 `--consent` 동의로만 활성화
 - `official_feed_fetch`: 공식 허가, 제휴, 유료 계약 후에만 활성화
 - `site_background_crawler`: 초기 금지
 

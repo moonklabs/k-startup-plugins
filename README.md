@@ -162,10 +162,10 @@ codex plugin add startup-apply@startup-plugins
 
 전체 커맨드 목록(고급 커맨드 포함)은 [startup-fundraise README](startup-fundraise/README.md#고급-커맨드)를 참고하세요.
 
-### 16개 도메인 스킬
+### 17개 도메인 스킬
 대화 맥락에서 자동 활성화되는 VC/창업 지식.
 `fundraise-office-hours` `fundraise-data` `fundraising-process` `investor-research` `deal-sourcing` `vc-fund-disclosure-mcp`
-`pitch-craft` `financial-modeling` `term-sheet-knowledge` 외 7개.
+`pitch-craft` `financial-modeling` `term-sheet-knowledge` `fundraise-command-router`(Codex용) 외 7개.
 
 ### MCP 연동
 ```

@@ -31,7 +31,7 @@
 | `vc-funds` CLI | 로컬 DB 초기화, setup, doctor, 파일 import, guide library, watch folder, evidence export |
 | `vc-fund-disclosure-mcp` | 투자사/펀드 검색, 신규 공시 이벤트, 창업자 가이드 검색, 근거 pack 조회 — 실제 등록된 도구 8종: `search_investors`, `search_funds`, `search_guides`, `list_events`, `list_guide_sources`, `fetch_and_import`, `fetch_diva_disclosures`, `get_status` |
 
-`startup-fundraise/mcp/vc-fund-disclosure/`에는 canonical 전환 이전의 초기 설계 문서(아카이브, 참고용)가 남아 있습니다 — 도구명 등 세부사항이 실제 구현과 다를 수 있습니다.
+`docs/archive/vc-fund-disclosure-design/`에는 canonical 전환 이전의 초기 설계 문서(아카이브, 참고용)가 남아 있습니다 — 도구명 등 세부사항이 실제 구현과 다를 수 있습니다.
 
 기본 수집 모드는 사용자가 직접 확보한 자료를 로컬에서 자동 처리하는 방식입니다.
 

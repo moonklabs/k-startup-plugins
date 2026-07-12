@@ -33,20 +33,24 @@ k-startup-plugins/
 │   └── marketplace.json          # 마켓플레이스 정의 (이 레포가 제공하는 플러그인 목록)
 ├── startup-fundraise/            # 플러그인 루트 (투자유치)
 │   ├── .claude-plugin/
-│   │   └── plugin.json           # 플러그인 메타데이터 (name, version, author)
+│   │   └── plugin.json           # Claude Code 매니페스트 (name, version, author)
+│   ├── .codex-plugin/
+│   │   └── plugin.json           # Codex CLI 매니페스트 (version은 .claude-plugin과 동기화)
 │   ├── .mcp.json                 # MCP 서버 사전 구성 (Slack, HubSpot, Notion, MS365 등)
-│   ├── commands/                 # 슬래시 커맨드 (각 파일 = 하나의 /커맨드)
-│   ├── skills/                   # 도메인 지식 스킬 (각 디렉토리 = 하나의 스킬)
+│   ├── commands/                 # 슬래시 커맨드 (각 파일 = 하나의 /커맨드, Claude 전용)
+│   ├── skills/                   # 도메인 지식 스킬 + command-router (Codex 겸용)
 │   │   └── [skill-name]/
 │   │       ├── SKILL.md          # 스킬 본문
 │   │       └── references/       # (선택) 보조 참조 문서
-│   └── agents/                   # 병렬 실행 가능한 서브에이전트
+│   └── agents/                   # 병렬 실행 가능한 서브에이전트 (Claude 전용)
 │       └── [agent-name].md       # 에이전트 시스템 프롬프트
 └── startup-apply/                # 플러그인 루트 (지원사업)
     ├── .claude-plugin/plugin.json
-    ├── .mcp.json                 # Notion, Slack, MS365 + 로컬 hwp-generator(stdio)
+    ├── .codex-plugin/plugin.json # Codex 매니페스트 → .mcp.codex.json 포인터
+    ├── .mcp.json                 # Claude용 — ${CLAUDE_PLUGIN_ROOT} 변수 사용
+    ├── .mcp.codex.json           # Codex용 — 상대경로 + cwd:"." (변수 미치환 대응)
     ├── commands/  skills/  agents/
-    └── hwp_server/               # HWPX 생성 로컬 MCP 서버 (Python)
+    └── hwp_server/               # HWPX 생성 로컬 MCP 서버 (Python, kordoc의 폴백)
 ```
 
 **핵심 규칙**: `.claude-plugin/` 디렉토리에는 `plugin.json`과 `marketplace.json` 매니페스트 파일만 위치합니다. commands, skills 등 모든 컴포넌트는 플러그인 루트에 있어야 합니다.

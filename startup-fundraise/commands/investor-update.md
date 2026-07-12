@@ -591,7 +591,7 @@ SMART 목표:
 ## 관련 커맨드
 
 - `/daily-fundraise` — 일일 브리핑에서 업데이트 주요 항목 확인
-- `/fundraise-comms` 스킬 — 이메일 템플릿 & 스타일 가이드
+- `fundraise-comms` 스킬 — 이메일 템플릿 & 스타일 가이드
 - `/fundraise-pipeline` — 파이프라인 건강점수 → 투자 진행 섹션 참조
 - `/pitch-review` — 업데이트에 피치 요소 반영
 
