@@ -1,6 +1,6 @@
 {
   "name": "startup-fundraise",
-  "version": "0.3.9",
+  "version": "0.4.0",
   "description": "한국 스타트업의 VC/AC 투자유치 루틴을 실행합니다 — /fundraise 메인 루틴, 자료 구조화, VC/AC/TIPS 운영사 탐색, VC 미팅 운영, 공시 근거 확인. 웹 검색만으로 단독 작동하며, CRM·이메일·문서 도구 연결 시 더욱 강력해집니다.",
   "author": {
     "name": "Moonklabs"

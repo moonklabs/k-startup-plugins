@@ -108,6 +108,8 @@ claude plugins install startup-apply
 
 막히면 언제든 `/fundraise-help` 또는 `/apply-help`를 실행하세요 — 전체 커맨드 지도와 상황별 추천을 플러그인 안에서 바로 보여줍니다.
 
+**두 플러그인을 같은 폴더에서 함께 쓴다면 `/kb-init`을 가장 먼저 실행하세요.** `.kb/`가 회사 사실(지표·시장·팀·실적)의 공통 저장소가 되어 IR 커맨드(`/business-case`, `/investor-update` 등)와 사업계획서 커맨드가 같은 수치를 사용합니다. 역할 분담: `.kb/` = 사실(팩트), `./fundraise/` = 활동(파이프라인·미팅·근거).
+
 ---
 
 ## startup-fundraise 특장점

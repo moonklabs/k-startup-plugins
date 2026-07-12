@@ -16,8 +16,11 @@ argument-hint: "<카테고리|--from 파일|--check>"
 /kb-update financials             # 특정 카테고리 업데이트
 /kb-update market                 # 시장 분석 데이터 갱신
 /kb-update --from 파일.docx       # 새 문서에서 자동 추출
+/kb-update --from ./fundraise/ir/투자자업데이트_6월.md   # fundraise 산출물에서 추출
 /kb-update --check                # 미갱신 항목 점검
 ```
+
+> **startup-fundraise 연동:** `/investor-update`, `/business-case`, 재무 모델 등 fundraise 플러그인의 산출물도 `--from`의 입력이 됩니다. IR에서 최신 지표를 갱신했다면 그 파일로 `/kb-update --from`을 실행해 KB를 동기화하세요 — IR과 사업계획서의 수치 불일치를 막는 역방향 흐름입니다.
 
 ---
 

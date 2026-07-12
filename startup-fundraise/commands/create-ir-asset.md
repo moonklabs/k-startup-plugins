@@ -110,6 +110,23 @@ Claude가 다음 정보를 수집합니다:
 
 ---
 
+## 지식베이스 연동 (.kb/)
+
+startup-apply 플러그인의 `/kb-init`으로 구축한 `.kb/` 폴더가 프로젝트에 있으면, 사용자에게 묻기 전에 회사 사실을 먼저 그곳에서 읽습니다:
+
+| 필요한 정보 | KB 파일 |
+|---|---|
+| 회사 개요·팀 | `.kb/company-profile.md` |
+| 제품·기술·IP | `.kb/product.md` |
+| 시장 (TAM/SAM/SOM) | `.kb/market.md` |
+| 비즈니스 모델·가격 | `.kb/business-model.md` |
+| 재무·지표 (MRR/ARR, 런웨이) | `.kb/financials.md` |
+| 실적·수상·투자 이력 | `.kb/track-record.md` |
+
+사용자 입력과 KB 수치가 다르면 KB 값을 제시하며 어느 쪽이 최신인지 확인하고, 새 값으로 확정되면 `/kb-update [카테고리]` 실행을 안내합니다 (IR과 사업계획서의 수치 불일치 방지). `.kb/`가 없으면 기존 방식대로 질문하되, 반복 입력이 감지되면 `/kb-init`을 안내합니다.
+
+---
+
 ## 출력
 
 ### Executive Summary 랜딩 페이지

@@ -51,6 +51,7 @@ argument-hint: "<회사/라운드/현재 고민>"
 | 상태 | 판단 | 다음 루틴 |
 |---|---|---|
 | runway, 목표 금액, 마감일이 불명확함 | 목표 설정이 먼저 | `/fundraise-office-hours` |
+| 회사 사실(지표·시장·팀)을 매번 다시 입력함 | 공통 사실 저장소(`.kb/`)가 없음 | `/kb-init` (startup-apply 설치 시) — IR·사업계획서 수치 단일화 |
 | IR, 미팅 노트, 파이프라인, 데이터룸이 흩어져 있음 | AI가 읽을 자료 구조가 없음 | `/fundraise-data` |
 | 후보 VC/AC/TIPS 운영사가 부족함 | pipeline top-of-funnel 부족 | `/find-vc` |
 | 특정 VC와 연락/미팅/후속조치 중 | 관계와 next step 관리 필요 | `/vc-meeting` |

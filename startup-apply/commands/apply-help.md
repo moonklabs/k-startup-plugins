@@ -46,6 +46,8 @@ startup-apply 플러그인의 자기 완결적 도움말입니다. README를 읽
 
 이후 매일 아침 `/apply-daily`로 마감 임박과 진행률을 확인합니다.
 
+> **startup-fundraise를 함께 설치했다면** `.kb/`가 두 플러그인의 공통 사실 저장소가 됩니다. `/business-case`, `/investor-update`, `/pitch-review` 등 IR 커맨드도 `.kb/`를 자동으로 읽으므로, kb-init을 먼저 해두면 투자유치와 지원사업 양쪽에서 같은 수치를 씁니다. IR 쪽에서 지표가 갱신되면 `/kb-update --from [IR 파일]`로 동기화하세요.
+
 ## 전체 커맨드 지도
 
 ```
