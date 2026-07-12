@@ -15,7 +15,8 @@
     "hwp-generator": {
       "command": "python3",
       "args": ["./hwp_server/bootstrap.py"],
-      "cwd": "."
+      "cwd": ".",
+      "default_tools_approval_mode": "approve"
     }
   }
 }
