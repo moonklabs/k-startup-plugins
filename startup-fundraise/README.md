@@ -120,6 +120,7 @@ DB는 사용자 로컬 머신에만 저장됩니다 (macOS/Linux `~/.local/share
 ## 고급 커맨드
 
 ```
+/fundraise-help       # 도움말 — 전체 커맨드 지도, 상황별 추천, 시작 가이드
 /vc-funds-setup       # VC/AC 공시·창업자 가이드 로컬 MCP 설치 설계 및 점검
 /fundraise-office-hours # 투자유치 Office Hours — 현황 질문, 의사결정, 운영 스냅샷 업데이트
 /deal-sourcing        # 투자자 타겟 발굴 + Thesis 매칭

@@ -20,6 +20,13 @@ argument-hint: "<회사/라운드/현재 고민>"
 /fundraise "이번 주 VC 미팅 후속조치 정리"
 ```
 
+**인수 없이 실행하면** 목표 설정에 들어가기 전에 먼저 다음을 출력합니다:
+
+1. **빠른 시작 4단계** — `/fundraise` → `/fundraise-data` → `/find-vc` → `/vc-meeting` 순서와 각 단계의 목적
+2. **가장 먼저 답해야 할 질문 6개** — 현금잔고/burn/runway, 라운드 목표 금액과 희석률 상한, traction 숫자 3개, 시작/마감 희망일, 리드 후보 5곳, TIPS 필수 여부
+
+사용자가 질문에 답하기 시작하면 아래 기본 판단 흐름으로 진입합니다. 전체 커맨드 지도가 필요하면 `/fundraise-help`를 안내합니다.
+
 ## 기본 판단 흐름
 
 ```
@@ -98,6 +105,7 @@ argument-hint: "<회사/라운드/현재 고민>"
 
 ## 관련 루틴
 
+- `/fundraise-help` — 전체 커맨드 지도와 상황별 추천
 - `/fundraise-office-hours` — 목표/생존/decision mode를 깊게 좁힘
 - `/fundraise-data` — 자료와 근거를 AI-readable 구조로 정리
 - `/find-vc` — VC/AC/TIPS 운영사 후보와 공식 근거 확인

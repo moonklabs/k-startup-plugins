@@ -16,6 +16,7 @@ claude plugins install startup-fundraise
 
 설치 후 Claude Code를 재시작하고 아래 4단계로 시작하세요.
 
+0. 막히면 언제든 `/fundraise-help` — 전체 커맨드 지도와 상황별 추천을 보여줍니다.
 1. `/fundraise`로 생존 목표, 라운드 목표, 이번 주 액션을 정합니다.
 2. `/fundraise-data "./fundraise"`로 IR, 아웃리치, 파이프라인, 데이터룸 자료를 표준 구조로 정리합니다.
 3. `/find-vc "뭉클랩 AI B2B SaaS Seed Pre-A Korea"`로 VC/AC/TIPS 운영사를 3단계 미팅 순서로 나눕니다.
@@ -87,6 +88,7 @@ claude plugins install startup-apply
 
 설치 후 Claude Code를 재시작하고 아래 흐름으로 시작하세요.
 
+0. 막히면 언제든 `/apply-help` — 전체 커맨드 지도와 상황별 추천을 보여줍니다.
 1. `/apply-find "AI SaaS 초기창업"`으로 지원사업 공고를 소싱합니다 — 지식베이스 없이도 바로 사용할 수 있습니다.
 2. `/apply-check "공고명"`으로 자격요건 적합도를 분석합니다.
 3. `/kb-init ./과거문서`로 과거 사업계획서·IR 자료에서 회사 지식베이스를 구축합니다.
