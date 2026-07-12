@@ -96,14 +96,15 @@ startup-apply 플러그인의 자기 완결적 도움말입니다. README를 읽
 
 ## HWP 내보내기 상태 점검
 
-`/apply-export`는 로컬 hwp-generator MCP 서버를 사용합니다. **`/apply-export --doctor`를 실행하면 아래 항목을 자동으로 점검해 줍니다.** 수동으로 확인하려면:
+`/apply-export`의 기본 엔진은 **kordoc CLI**(`npx -y kordoc`)로, Node가 있는 Claude Code 환경에서는 별도 설치 없이 바로 작동합니다. **`/apply-export --doctor`를 실행하면 아래 항목을 자동으로 점검해 줍니다.** 수동으로 확인하려면:
 
 | 증상 | 확인/해결 |
 |---|---|
-| HWPX 대신 Markdown만 나옴 | hwp-generator 미연결. Claude Code 재시작 후 재시도 |
-| 첫 실행이 오래 걸림 | 정상 — 전용 venv(`~/.cache/startup-apply/hwp-venv`) 자동 생성 중 (1~2분, 최초 1회) |
-| 자동 설치 실패 (오프라인 등) | `python3 -m venv ~/.cache/startup-apply/hwp-venv && ~/.cache/startup-apply/hwp-venv/bin/pip install mcp lxml` |
-| .hwp 양식 변환 실패 | Java 11+ 설치 + [hwp2hwpx releases](https://github.com/neolord0/hwp2hwpx/releases)에서 `hwp2hwpx-all.jar`를 받아 플러그인 `hwp_server/`에 배치 |
+| HWPX 대신 Markdown만 나옴 | `npx -y kordoc --version` 실행 확인. 실패 시 Node.js 상태 점검, 성공하면 재시도 |
+| kordoc 첫 실행이 느림 | 정상 — npx가 패키지를 처음 받는 중 (이후 캐시됨). `npm i -g kordoc`으로 상시 설치 가능 |
+| 양식 채우기에서 필드가 안 잡힘 | `npx -y kordoc fill 양식.hwpx --dry-run`으로 감지 필드 확인 → 없으면 양식에 `{{마커}}` 삽입 후 재시도 |
+| 과거 .hwp 문서를 KB로 읽고 싶음 | `/kb-init`에 그대로 업로드 — kordoc이 직접 파싱 (한컴 변환 불필요) |
+| kordoc 자체가 안 되는 환경 | 레거시 폴백(hwp-generator MCP) 사용 — `hwp-format` 스킬의 폴백 절차 참조 |
 | 이미지/PDF가 필요함 | 미지원 — HWPX 생성 후 한컴오피스에서 이미지 삽입, "PDF로 저장" |
 
 ## 관련 스킬

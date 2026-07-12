@@ -2,6 +2,7 @@
 
 **지원사업 사업계획서 자동화 플러그인**
 지식베이스를 구축하고, 공고를 소싱하며, 사업계획서를 자동 작성해 HWPX로 출력합니다.
+HWP/HWPX/PDF/Office 문서 처리는 [kordoc](https://github.com/chrisryugj/kordoc) 엔진(Node 기반, 설치 불필요)을 사용합니다 — 과거 .hwp 사업계획서도 그대로 업로드하면 자동 파싱됩니다.
 
 ```bash
 claude plugins marketplace add moonklabs/k-startup-plugins

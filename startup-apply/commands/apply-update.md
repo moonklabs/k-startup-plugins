@@ -49,6 +49,8 @@ argument-hint: "<기존파일> → <새 공고명>"
         ▼
 1. 기존 문서 파싱 → 섹션별 분리
    (기업개요, 기술개발, 시장분석, 재무계획 등)
+   .hwp/.hwpx/.pdf/.docx는 kordoc으로 Markdown 변환:
+   npx -y kordoc 기존계획서.hwp -o 기존계획서.md
         │
         ▼
 2. 새 공고 요강 분석 (웹 검색)

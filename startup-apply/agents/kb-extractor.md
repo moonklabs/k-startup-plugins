@@ -1,7 +1,7 @@
 ---
 name: kb-extractor
 description: 과거 사업계획서, IR자료, 회사 문서에서 정보를 자동 추출하여 지식베이스 카테고리별로 분류합니다. "문서 추출", "정보 추출", "사업계획서 파싱", "KB 추출", "kb-init", "문서에서 정보" 등의 요청 시 사용합니다.
-tools: Read, Write, WebFetch
+tools: Read, Write, WebFetch, Bash
 model: sonnet
 ---
 
@@ -21,12 +21,18 @@ model: sonnet
 
 ### Step 1: 문서 로드 및 텍스트 추출
 
-```
-Read: [문서 파일 경로]
+파일 형식에 따라 추출 경로를 분기합니다:
+
+**Markdown / TXT:** `Read`로 직접 읽습니다.
+
+**HWP / HWPX / HWPML / PDF / DOCX / XLSX:** `kordoc` CLI로 Markdown 변환 후 읽습니다 (Node 내장 환경이므로 별도 설치 불필요):
+
+```bash
+npx -y kordoc "[문서 파일 경로]" -o /tmp/kb-extract-[파일명].md --silent
 ```
 
-HWP 파일은 텍스트 추출이 제한될 수 있습니다. 이 경우 사용자에게 안내:
-> "HWP 파일은 직접 읽기가 어렵습니다. 한컴오피스에서 .txt 또는 .docx로 저장 후 다시 올려주시면 자동 추출합니다."
+변환된 Markdown을 `Read`로 읽어 다음 단계로 진행합니다. 표는 Markdown 테이블로 복원되므로 재무 수치·팀 구성 표를 그대로 활용합니다. kordoc 변환이 실패한 파일만 사용자에게 안내:
+> "이 파일은 자동 변환에 실패했습니다 (파서 경고: [경고 내용]). 한컴오피스에서 .txt로 저장 후 다시 올려주시면 추출합니다."
 
 ### Step 2: 섹션 식별 및 카테고리 매핑
 
