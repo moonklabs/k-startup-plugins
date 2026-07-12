@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "notion": {
+      "type": "http",
+      "url": "https://mcp.notion.com/mcp"
+    },
+    "slack": {
+      "type": "http",
+      "url": "https://mcp.slack.com/mcp"
+    },
+    "ms365": {
+      "type": "http",
+      "url": "https://microsoft365.mcp.claude.com/mcp"
+    },
+    "hwp-generator": {
+      "command": "python3",
+      "args": ["./hwp_server/bootstrap.py"],
+      "cwd": "."
+    }
+  }
+}

@@ -53,7 +53,17 @@ Codex에서 사용할 때는 marketplace를 추가한 뒤 플러그인을 설치
 ```bash
 codex plugin marketplace add moonklabs/k-startup-plugins --ref main
 codex plugin add startup-fundraise@startup-plugins
+codex plugin add startup-apply@startup-plugins
 ```
+
+**Codex 지원 범위** (Codex CLI 0.144+ 실측):
+
+| 기능 | Codex 동작 |
+|---|---|
+| 스킬 (도메인 지식, 자동 트리거) | ✅ 그대로 작동 |
+| MCP 서버 (Notion 등 HTTP + hwp-generator 로컬) | ✅ 그대로 작동 (`.codex-plugin` 매니페스트 경유) |
+| `/커맨드` (슬래시 커맨드) | Codex에는 커맨드 개념이 없음 → **자연어로 요청하면 command-router 스킬이 같은 워크플로우를 실행** (예: "지원사업 찾아줘", "투자자 미팅 준비해줘") |
+| 병렬 서브에이전트 | Codex 미지원 → 본체가 순차 수행 (결과 동일, 속도만 차이) |
 
 로컬 개발 중인 checkout을 바로 연결하려면 GitHub 대신 로컬 경로를 사용합니다.
 
