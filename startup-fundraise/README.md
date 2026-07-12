@@ -15,6 +15,8 @@ codex plugin marketplace add moonklabs/k-startup-plugins --ref main
 codex plugin add startup-fundraise@startup-plugins
 ```
 
+Codex에는 슬래시 커맨드가 없으므로 자연어로 요청하세요 (예: "투자유치 뭐부터 하면 돼?", "AI B2B SaaS에 맞는 VC 찾아줘") — `fundraise-command-router` 스킬이 같은 커맨드 워크플로우를 실행합니다. 아래 문서의 `/커맨드` 표기는 Claude Code 기준입니다.
+
 로컬 개발 checkout을 직접 테스트할 때는 로컬 marketplace 경로를 등록합니다.
 
 ```bash

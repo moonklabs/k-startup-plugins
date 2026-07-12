@@ -10,17 +10,22 @@ VC/AC 투자 유치 일상을 자동화하는 Startup OS 플러그인.
 웹 검색만으로 단독 작동하며, CRM·이메일·문서 도구를 연결하면 더 강력해집니다.
 
 ```bash
+# Claude Code
 claude plugins marketplace add moonklabs/k-startup-plugins
 claude plugins install startup-fundraise
+
+# Codex CLI
+codex plugin marketplace add moonklabs/k-startup-plugins --ref main
+codex plugin add startup-fundraise@startup-plugins
 ```
 
-설치 후 Claude Code를 재시작하고 아래 4단계로 시작하세요.
+설치 후(Claude Code는 재시작 필요) 아래 4단계로 시작하세요. Codex에서는 슬래시 커맨드 대신 괄호의 자연어로 요청하면 같은 워크플로우가 실행됩니다.
 
-0. 막히면 언제든 `/fundraise-help` — 전체 커맨드 지도와 상황별 추천을 보여줍니다.
-1. `/fundraise`로 생존 목표, 라운드 목표, 이번 주 액션을 정합니다.
-2. `/fundraise-data "./fundraise"`로 IR, 아웃리치, 파이프라인, 데이터룸 자료를 표준 구조로 정리합니다.
-3. `/find-vc "뭉클랩 AI B2B SaaS Seed Pre-A Korea"`로 VC/AC/TIPS 운영사를 3단계 미팅 순서로 나눕니다.
-4. `/vc-meeting "투자자명"`으로 아웃리치, 미팅 준비, 후속조치, DD를 관리합니다.
+0. 막히면 언제든 `/fundraise-help` (Codex: "투자유치 도움말") — 전체 커맨드 지도와 상황별 추천을 보여줍니다.
+1. `/fundraise` (Codex: "투자유치 시작하자")로 생존 목표, 라운드 목표, 이번 주 액션을 정합니다.
+2. `/fundraise-data "./fundraise"` (Codex: "fundraise 폴더를 표준 구조로 정리해줘")로 IR, 아웃리치, 파이프라인, 데이터룸 자료를 정리합니다.
+3. `/find-vc "뭉클랩 AI B2B SaaS Seed Pre-A Korea"` (Codex: "AI B2B SaaS Seed에 맞는 VC 찾아줘")로 VC/AC/TIPS 운영사를 3단계 미팅 순서로 나눕니다.
+4. `/vc-meeting "투자자명"` (Codex: "○○벤처스 미팅 준비해줘")으로 아웃리치, 미팅 준비, 후속조치, DD를 관리합니다.
 
 자세한 사용법은 [startup-fundraise README](startup-fundraise/README.md)와 [Founder Fundraising Operating Use Cases](startup-fundraise/skills/fundraising-process/references/founder-fundraising-operating-use-cases.md)를 참고하세요.
 
@@ -46,24 +51,27 @@ Claude Code MCP 설정은 `setup`이 자동 등록합니다 (Codex는 `--client 
 
 ---
 
-### Codex 사용자 / 고급 설치
+### Codex에서 사용하기
 
-Codex에서 사용할 때는 marketplace를 추가한 뒤 플러그인을 설치합니다.
-
-```bash
-codex plugin marketplace add moonklabs/k-startup-plugins --ref main
-codex plugin add startup-fundraise@startup-plugins
-codex plugin add startup-apply@startup-plugins
-```
-
-**Codex 지원 범위** (Codex CLI 0.144+ 실측):
+두 플러그인은 Claude Code와 Codex CLI를 **동등하게 지원**합니다 (설치 명령은 각 플러그인 섹션 참조). Codex 지원 범위 (Codex CLI 0.144+ 실측):
 
 | 기능 | Codex 동작 |
 |---|---|
 | 스킬 (도메인 지식, 자동 트리거) | ✅ 그대로 작동 |
-| MCP 서버 (Notion 등 HTTP + hwp-generator 로컬) | ✅ 그대로 작동 (`.codex-plugin` 매니페스트 경유) |
+| MCP 서버 (Notion 등 HTTP + hwp-generator 로컬) | ✅ 그대로 작동 (`.codex-plugin` 매니페스트 경유, HWPX 생성 도구는 자동 승인) |
 | `/커맨드` (슬래시 커맨드) | Codex에는 커맨드 개념이 없음 → **자연어로 요청하면 command-router 스킬이 같은 워크플로우를 실행** (예: "지원사업 찾아줘", "투자자 미팅 준비해줘") |
 | 병렬 서브에이전트 | Codex 미지원 → 본체가 순차 수행 (결과 동일, 속도만 차이) |
+
+Codex 대화형 세션 사용 예시:
+
+```
+codex
+> AI SaaS 법인 2년차인데 지원사업 공고 찾아줘
+> 투자유치 뭐부터 하면 돼?
+> 사업계획서 작성해서 HWPX로 내보내줘
+```
+
+`codex exec`(비대화형/CI)에서도 동일하게 작동합니다 — HWPX 생성 MCP 도구는 승인 프롬프트 없이 실행되도록 구성돼 있습니다.
 
 로컬 개발 중인 checkout을 바로 연결하려면 GitHub 대신 로컬 경로를 사용합니다.
 
@@ -92,17 +100,22 @@ codex plugin add startup-fundraise@startup-plugins
 지식베이스를 구축하고, 공고를 소싱·적합도 분석하며, 사업계획서를 작성해 HWPX로 출력합니다.
 
 ```bash
+# Claude Code
 claude plugins marketplace add moonklabs/k-startup-plugins
 claude plugins install startup-apply
+
+# Codex CLI
+codex plugin marketplace add moonklabs/k-startup-plugins --ref main
+codex plugin add startup-apply@startup-plugins
 ```
 
-설치 후 Claude Code를 재시작하고 아래 흐름으로 시작하세요.
+설치 후(Claude Code는 재시작 필요) 아래 흐름으로 시작하세요. Codex에서는 슬래시 커맨드 대신 괄호의 자연어로 요청하면 같은 워크플로우가 실행됩니다.
 
-0. 막히면 언제든 `/apply-help` — 전체 커맨드 지도와 상황별 추천을 보여줍니다.
-1. `/apply-find "AI SaaS 초기창업"`으로 지원사업 공고를 소싱합니다 — 지식베이스 없이도 바로 사용할 수 있습니다.
-2. `/apply-check "공고명"`으로 자격요건 적합도를 분석합니다.
-3. `/kb-init ./과거문서`로 과거 사업계획서·IR 자료에서 회사 지식베이스를 구축합니다.
-4. `/apply-write "공고명"` → `/apply-export "공고명"`으로 사업계획서를 작성해 HWPX로 출력합니다.
+0. 막히면 언제든 `/apply-help` (Codex: "지원사업 도움말") — 전체 커맨드 지도와 상황별 추천을 보여줍니다.
+1. `/apply-find "AI SaaS 초기창업"` (Codex: "AI SaaS 초기 스타트업 지원사업 공고 찾아줘")으로 공고를 소싱합니다 — 지식베이스 없이도 바로 사용할 수 있습니다.
+2. `/apply-check "공고명"` (Codex: "○○ 공고 적합도 분석해줘")으로 자격요건 적합도를 분석합니다.
+3. `/kb-init ./과거문서` (Codex: "이 문서들로 지식베이스 만들어줘")로 과거 사업계획서·IR 자료에서 회사 지식베이스를 구축합니다.
+4. `/apply-write "공고명"` → `/apply-export "공고명"` (Codex: "사업계획서 작성해서 HWPX로 내보내줘")으로 제출본을 만듭니다.
 
 매일 아침 `/apply-daily`로 마감 임박 공고와 작성 진행률을 확인합니다. 자세한 사용법은 [startup-apply README](startup-apply/README.md)를 참고하세요.
 
@@ -116,7 +129,7 @@ claude plugins install startup-apply
 | **초기** (pre-seed/seed, 법인 1~3년) | 투자유치: `/fundraise` 4단계 루틴 · 지원사업: `/apply-find` → `/apply-check` 병행. TIPS는 `/find-vc`가 운영사 관점으로 함께 다룹니다. |
 | **중기** (Series A/B, 3~7년) | 투자유치: `/fundraise-pipeline`, `/fundraise-forecast`, `/business-case` 중심 · 지원사업: `/apply-update`(기존 계획서 재활용), `/kb-update --from 분기보고서`(실적 반영) 중심. |
 
-막히면 언제든 `/fundraise-help` 또는 `/apply-help`를 실행하세요 — 전체 커맨드 지도와 상황별 추천을 플러그인 안에서 바로 보여줍니다.
+막히면 언제든 `/fundraise-help` 또는 `/apply-help`를 실행하세요 — 전체 커맨드 지도와 상황별 추천을 플러그인 안에서 바로 보여줍니다. 표의 `/커맨드`는 Claude Code 기준이며, Codex에서는 같은 내용을 자연어로 요청하면 됩니다 (예: `/apply-find "예비창업패키지"` → "예비창업패키지 공고 찾아줘").
 
 **두 플러그인을 같은 폴더에서 함께 쓴다면 `/kb-init`을 가장 먼저 실행하세요.** `.kb/`가 회사 사실(지표·시장·팀·실적)의 공통 저장소가 되어 IR 커맨드(`/business-case`, `/investor-update` 등)와 사업계획서 커맨드가 같은 수치를 사용합니다. 역할 분담: `.kb/` = 사실(팩트), `./fundraise/` = 활동(파이프라인·미팅·근거).
 

@@ -5,11 +5,16 @@
 HWP/HWPX/PDF/Office 문서 처리는 [kordoc](https://github.com/chrisryugj/kordoc) 엔진(Node 기반, 설치 불필요)을 사용합니다 — 과거 .hwp 사업계획서도 그대로 업로드하면 자동 파싱됩니다.
 
 ```bash
+# Claude Code
 claude plugins marketplace add moonklabs/k-startup-plugins
 claude plugins install startup-apply
+
+# Codex CLI
+codex plugin marketplace add moonklabs/k-startup-plugins --ref main
+codex plugin add startup-apply@startup-plugins
 ```
 
-설치 또는 제거 후 Claude Code를 재시작해야 변경사항이 적용됩니다.
+Claude Code는 설치·제거 후 재시작해야 변경사항이 적용됩니다. Codex에서는 슬래시 커맨드 대신 자연어로 요청하세요 (예: "지원사업 공고 찾아줘") — `apply-command-router` 스킬이 같은 워크플로우를 실행하며, HWPX 생성 MCP도 동일하게 작동합니다.
 
 ---
 
