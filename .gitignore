@@ -3,6 +3,12 @@
 .claude/prompts/
 CLAUDE.local.md
 
+# 개인 로컬 MCP 설정 — 라이브 토큰 포함, 커밋 금지 (루트만; 플러그인별 .mcp.json은 배포 대상)
+/.mcp.json
+
+# 개인 워크스페이스 문서
+SPRINTABLE_ONBOARDING.md
+
 # Cursor 로컬 설정
 .cursor/mcp.json
 
