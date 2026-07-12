@@ -98,6 +98,18 @@ claude plugins install startup-apply
 
 ---
 
+## 어디서부터 시작할까 — 페르소나별 가이드
+
+| 상황 | 추천 경로 |
+|---|---|
+| **예비창업자** (법인 설립 전) | `/kb-init --interview`로 질문-답변 KB 구축 → `/apply-find "예비창업패키지"` 소싱. 업력·매출 항목은 채점에서 자동 제외됩니다. |
+| **초기** (pre-seed/seed, 법인 1~3년) | 투자유치: `/fundraise` 4단계 루틴 · 지원사업: `/apply-find` → `/apply-check` 병행. TIPS는 `/find-vc`가 운영사 관점으로 함께 다룹니다. |
+| **중기** (Series A/B, 3~7년) | 투자유치: `/fundraise-pipeline`, `/fundraise-forecast`, `/business-case` 중심 · 지원사업: `/apply-update`(기존 계획서 재활용), `/kb-update --from 분기보고서`(실적 반영) 중심. |
+
+막히면 언제든 `/fundraise-help` 또는 `/apply-help`를 실행하세요 — 전체 커맨드 지도와 상황별 추천을 플러그인 안에서 바로 보여줍니다.
+
+---
+
 ## startup-fundraise 특장점
 
 ### 병렬 에이전트

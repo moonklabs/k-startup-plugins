@@ -1,6 +1,5 @@
 ---
 description: 지원사업 데일리 리포트 — 마감 임박, 작성 진행률, 신규 공고, 지식베이스 상태를 한눈에
-argument-hint: ""
 ---
 
 # /apply-daily
@@ -178,3 +177,9 @@ Notion DB 또는 로컬 파일로 다음 항목을 관리합니다:
 - `/apply-write` — 사업계획서 작성 시작 또는 이어쓰기
 - `/apply-check` — 특정 공고 적합도 확인
 - `/kb-update` — 지식베이스 갱신
+
+---
+
+## 관련 스킬
+
+이 커맨드 실행 시 `gov-program-knowledge`, `kb-structure` 스킬이 자동 활성화됩니다.

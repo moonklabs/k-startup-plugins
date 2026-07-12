@@ -1,6 +1,6 @@
 ---
 description: 사업계획서를 HWPX 파일로 내보냅니다 — Markdown → HWPX 변환, {{placeholder}} 양식 채우기
-argument-hint: "<공고명> [--template 양식파일]"
+argument-hint: "<공고명> [--template 양식파일] | --doctor"
 ---
 
 # /apply-export
@@ -15,6 +15,7 @@ argument-hint: "<공고명> [--template 양식파일]"
 /apply-export 창업성장기술개발                           # HWPX 생성
 /apply-export TIPS --template 양식.hwpx                # 양식 기반 (HWPX 양식)
 /apply-export TIPS --template 양식.hwp                 # 양식 기반 (구형 HWP 자동 변환)
+/apply-export --doctor                                 # 의존성 상태 진단
 ```
 
 ---
@@ -111,6 +112,32 @@ hwp-generator MCP 서버에서 제공하는 도구 (`skills/hwp-format/SKILL.md`
 
 → 한컴오피스에서 열어 페이지 수 제한(공고 요강 확인)과 서식을 최종 확인 후 제출하세요.
 → .hwp로 변환 필요 시: 한컴오피스에서 "다른 이름으로 저장 → HWP"
+```
+
+---
+
+## 진단 모드 (--doctor)
+
+`/apply-export --doctor`를 실행하면 파일을 생성하지 않고 의존성 상태만 점검해 보고합니다. 다음 항목을 순서대로 확인합니다:
+
+1. **hwp-generator MCP 연결**: `get_document_info` 도구를 호출해 응답 여부 확인. 도구 자체가 없으면 "미연결 — Claude Code 재시작 필요 또는 플러그인 재설치" 안내
+2. **전용 venv 상태**: `~/.cache/startup-apply/hwp-venv/bin/python -c "import mcp, lxml"` 실행 결과 확인 (없으면 첫 export 시 자동 생성됨을 안내)
+3. **Java 런타임**: `java -version` 실행 — 없으면 ".hwp 양식 변환만 불가, HWPX 직접 생성은 가능" 안내
+4. **hwp2hwpx-all.jar**: 플러그인 `hwp_server/` 및 `hwp_server/lib/`에서 파일 존재 확인 — 없으면 다운로드 링크 안내
+
+출력 형식:
+
+```markdown
+# apply-export 진단 결과
+
+| 항목 | 상태 | 조치 |
+|------|------|------|
+| hwp-generator MCP | ✅ 연결됨 | - |
+| 전용 venv (mcp, lxml) | ✅ 정상 | - |
+| Java 런타임 | ⚠️ 없음 | .hwp 변환 필요 시 JRE 11+ 설치 |
+| hwp2hwpx-all.jar | ⚠️ 없음 | github.com/neolord0/hwp2hwpx/releases에서 다운로드 |
+
+→ 기본 HWPX 생성: 가능 / .hwp 양식 변환: 불가
 ```
 
 ---

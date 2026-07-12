@@ -552,3 +552,9 @@ investor-researcher × N  ←  병렬 동시 리서치
 - `/dd-prep` — 미팅 확정 후 준비
 - `/investor-update` — 정기 업데이트로 관계 유지
 - `/pitch-review` — 아웃리치 전 피치 덱 점검
+
+---
+
+## 관련 스킬
+
+이 커맨드 실행 시 `investor-research`, `fundraise-comms` 스킬이 자동 활성화됩니다.

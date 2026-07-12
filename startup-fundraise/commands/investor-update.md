@@ -579,3 +579,9 @@ SMART 목표:
 - `/fundraise-comms` 스킬 — 이메일 템플릿 & 스타일 가이드
 - `/fundraise-pipeline` — 파이프라인 건강점수 → 투자 진행 섹션 참조
 - `/pitch-review` — 업데이트에 피치 요소 반영
+
+---
+
+## 관련 스킬
+
+이 커맨드 실행 시 `fundraise-comms`, `startup-metrics` 스킬이 자동 활성화됩니다.

@@ -521,3 +521,9 @@ LOW 적합도: 0.1x (거의 무시)
 - `/investor-outreach` — 특정 투자자 맞춤 아웃리치
 - `/dd-prep` — DD 단계 투자자 미팅 준비
 - `/fundraise-forecast` — 투자 유치 예측 시나리오
+
+---
+
+## 관련 스킬
+
+이 커맨드 실행 시 `fundraising-process`, `investor-research` 스킬이 자동 활성화됩니다.

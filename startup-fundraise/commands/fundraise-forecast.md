@@ -430,3 +430,9 @@ Seed 라운드 (현재):
 - `/lead-dashboard` — 투자자 리드 리스트 전체 현황
 - `/investor-outreach` — 신규 타겟 발굴 및 아웃리치
 - `/daily-fundraise` — 일일 브리핑에 예측 요약 포함
+
+---
+
+## 관련 스킬
+
+이 커맨드 실행 시 `financial-modeling`, `fundraising-process` 스킬이 자동 활성화됩니다.

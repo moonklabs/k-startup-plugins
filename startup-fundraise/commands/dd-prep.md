@@ -534,3 +534,9 @@ argument-hint: "<투자자 이름 또는 VC 펀드명>"
 - `/pitch-review` — 피치 덱 사전 점검
 - `/fundraise-pipeline` — 전체 파이프라인 중 이 투자자 위치
 - `/investor-update` — DD 후 정기 업데이트
+
+---
+
+## 관련 스킬
+
+이 커맨드 실행 시 `investor-research`, `fundraising-process` 스킬이 자동 활성화됩니다.

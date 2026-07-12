@@ -96,7 +96,7 @@ startup-apply 플러그인의 자기 완결적 도움말입니다. README를 읽
 
 ## HWP 내보내기 상태 점검
 
-`/apply-export`는 로컬 hwp-generator MCP 서버를 사용합니다. 문제가 있을 때 순서대로 확인하세요:
+`/apply-export`는 로컬 hwp-generator MCP 서버를 사용합니다. **`/apply-export --doctor`를 실행하면 아래 항목을 자동으로 점검해 줍니다.** 수동으로 확인하려면:
 
 | 증상 | 확인/해결 |
 |---|---|
