@@ -1,3 +1,8 @@
+# Claude Code — 전역 gitignore(**/.claude)를 이 레포에서만 해제하고 프로젝트 스킬을 추적
+!.claude/
+!.claude/skills/
+!.claude/skills/**
+
 # Claude Code 로컬 설정
 .claude/settings.local.json
 .claude/prompts/
