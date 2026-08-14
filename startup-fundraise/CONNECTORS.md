@@ -13,7 +13,7 @@
 | CRM / 투자자 관리 | `~~CRM` | HubSpot, Notion | Relate (한국 IR 특화, MCP 미지원 — 수동 운영), Affinity, Attio, Airtable |
 | 이메일 | `~~email` | Microsoft 365 | Gmail |
 | 캘린더 | `~~calendar` | Microsoft 365 | Google Calendar |
-| 채팅 | `~~chat` | Slack | Microsoft Teams |
+| 채팅 | `~~chat` | — | Microsoft Teams |
 | 지식 베이스 | `~~knowledge base` | Notion | Google Drive, Confluence |
 | 데이터 보강 | `~~data enrichment` | — | THE VC, 혁신의숲, 넥스트유니콘 (MCP 미지원 — 웹 검색 기반), OpenDART (MCP 지원 — 상장사 한정) |
 | VC/AC 공시·가이드 데이터 | `~~fund disclosure` | — | 선택 설치: `vc-fund-disclosure-mcp` 로컬 DB, KVIC/KVCA snapshot import, TIPS 운영사/펀드 근거, `kordoc` 기반 창업자 문서 가이드 |

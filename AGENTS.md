@@ -30,7 +30,7 @@ startup-plugins/
 └── startup-fundraise/                  # 플러그인 루트
     ├── .Codex-plugin/
     │   └── plugin.json           # 플러그인 메타데이터 (name, version, author)
-    ├── .mcp.json                 # MCP 서버 사전 구성 (Slack, HubSpot, Notion, Clay 등)
+    ├── .mcp.json                 # MCP 서버 사전 구성 (HubSpot, Notion 등)
     ├── commands/                 # 슬래시 커맨드 (각 파일 = 하나의 /커맨드)
     ├── skills/                   # 도메인 지식 스킬 (각 디렉토리 = 하나의 스킬)
     │   └── [skill-name]/
@@ -106,7 +106,7 @@ description: 자동 트리거될 상황 설명 및 키워드 (자연어로 기�
 | `~~docs` | Notion, Microsoft 365, Google Docs |
 | `~~knowledge base` | Notion, Confluence |
 | `~~analytics` | Mixpanel, Amplitude, ChartMogul |
-| `~~chat` | Slack, Microsoft Teams |
+| `~~chat` | Microsoft Teams |
 
 이 규칙 덕분에 플러그인은 특정 도구에 종속되지 않습니다. `.mcp.json`에 사전 구성된 서버는 대표 예시이며, 동일 카테고리의 어떤 MCP 서버든 사용 가능합니다.
 

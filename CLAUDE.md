@@ -36,7 +36,7 @@ k-startup-plugins/
 │   │   └── plugin.json           # Claude Code 매니페스트 (name, version, author)
 │   ├── .codex-plugin/
 │   │   └── plugin.json           # Codex CLI 매니페스트 (version은 .claude-plugin과 동기화)
-│   ├── .mcp.json                 # MCP 서버 사전 구성 (Slack, HubSpot, Notion, MS365 등)
+│   ├── .mcp.json                 # MCP 서버 사전 구성 (HubSpot, Notion, MS365 등)
 │   ├── commands/                 # 슬래시 커맨드 (각 파일 = 하나의 /커맨드, Claude 전용)
 │   ├── skills/                   # 도메인 지식 스킬 + command-router (Codex 겸용)
 │   │   └── [skill-name]/
@@ -119,7 +119,7 @@ description: 자동 트리거될 상황 설명 및 키워드 (자연어로 기�
 | `~~docs` | Notion, Microsoft 365, Google Docs |
 | `~~knowledge base` | Notion, Confluence |
 | `~~analytics` | Mixpanel, Amplitude, ChartMogul |
-| `~~chat` | Slack, Microsoft Teams |
+| `~~chat` | Microsoft Teams |
 
 이 규칙 덕분에 플러그인은 특정 도구에 종속되지 않습니다. `.mcp.json`에 사전 구성된 서버는 대표 예시이며, 동일 카테고리의 어떤 MCP 서버든 사용 가능합니다.
 
